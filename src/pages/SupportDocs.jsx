@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, Book, Play, FileText, Clock, ChevronRight, Star } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Search, Book, Play, FileText, Clock, ChevronRight, Star, ArrowRight } from 'lucide-react';
 
 const SupportDocs = () => {
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [docs, setDocs] = useState([]);
@@ -111,7 +112,14 @@ const SupportDocs = () => {
     ];
     setDocs(sampleDocs);
     setFilteredDocs(sampleDocs);
-  }, []);
+
+    // Check for search parameter in URL
+    const urlParams = new URLSearchParams(location.search);
+    const searchParam = urlParams.get('search');
+    if (searchParam) {
+      setSearchTerm(searchParam);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     let filtered = docs;
@@ -160,183 +168,234 @@ const SupportDocs = () => {
   const popularDocs = docs.filter(doc => doc.views > 700).slice(0, 3);
 
   return (
-    <div className="bg-bg-primary min-h-screen">
-      <div className="container py-16">
-        <div className="text-center mb-16">
-          <h1 className="text-6xl font-bold text-purple mb-6">Support Documentation</h1>
-          <p className="text-text-secondary text-2xl max-w-4xl mx-auto leading-relaxed">
-            Comprehensive guides, tutorials, and references to help you master ENBOQ
-          </p>
+    <div className="min-h-screen">
+      {/* Hero Section with Modern Gradient */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="absolute top-0 left-0 w-full h-full">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+          <div className="absolute top-40 right-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-40 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-          <div className="lg:col-span-3">
-            <div className="modern-search mb-12">
-              <Search className="h-5 w-5 text-purple ml-2" />
-              <input
-                type="text"
-                placeholder="Search documentation..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                <option value="all">All Categories</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-          {filteredDocs.length === 0 ? (
-            <div className="card text-center py-16">
-              <Book className="mx-auto h-16 w-16 text-light-purple mb-6" />
-              <h3 className="text-2xl font-semibold text-text-primary mb-2">No documentation found</h3>
-              <p className="text-text-secondary">
-                Try adjusting your search terms or category filter.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {filteredDocs.map((doc) => {
-                const TypeIcon = getTypeIcon(doc.type);
-                return (
-                  <Link
-                    key={doc.id}
-                    to={`/docs/${doc.id}`}
-                    className="group"
-                  >
-                    <div className="card hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                      <div className="flex items-start space-x-8">
-                        <div className="flex-shrink-0">
-                          <div className="bg-purple p-6 rounded-3xl group-hover:bg-pink transition-colors">
-                            <TypeIcon className="h-10 w-10 text-white" />
-                          </div>
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between mb-4">
-                            <h3 className="text-purple font-semibold text-3xl group-hover:text-pink transition-colors">
-                              {doc.title}
-                            </h3>
-                            <ChevronRight className="h-7 w-7 text-text-muted flex-shrink-0 ml-6 group-hover:translate-x-1 transition-transform" />
-                          </div>
-
-                          <p className="text-text-secondary mb-6 line-clamp-2 text-xl leading-relaxed">
-                            {doc.description}
-                          </p>
-
-                          <div className="flex flex-wrap items-center gap-4 mb-6">
-                            <span className={`text-sm font-semibold px-4 py-2 rounded-full ${getDifficultyColor(doc.difficulty)}`}>
-                              {doc.difficulty}
-                            </span>
-                            <span className="text-sm font-semibold text-purple bg-light-purple px-4 py-2 rounded-full">
-                              {doc.category}
-                            </span>
-                            {doc.hasVideo && (
-                              <span className="text-sm font-semibold text-pink bg-light-pink px-4 py-2 rounded-full flex items-center space-x-2">
-                                <Play className="h-4 w-4" />
-                                <span>Video</span>
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="flex items-center justify-between text-base text-text-muted">
-                            <div className="flex items-center space-x-8">
-                              <div className="flex items-center space-x-2">
-                                <Clock className="h-5 w-5" />
-                                <span>{doc.readTime}</span>
-                              </div>
-                              {doc.steps > 0 && (
-                                <div className="flex items-center space-x-2">
-                                  <span>{doc.steps} steps</span>
-                                </div>
-                              )}
-                              <div className="flex items-center space-x-2">
-                                <Star className="h-5 w-5 fill-current text-orange" />
-                                <span>{doc.rating}</span>
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-8">
-                              <span>{doc.views} views</span>
-                              <span>Updated {formatDate(doc.lastUpdated)}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-10">
-          <div className="card">
-            <h3 className="text-purple text-2xl font-semibold mb-8">Popular Guides</h3>
-            <div className="space-y-6">
-              {popularDocs.map((doc, index) => (
-                <Link
-                  key={doc.id}
-                  to={`/docs/${doc.id}`}
-                  className="block p-6 rounded-2xl hover:bg-light-purple transition-colors group"
-                >
-                  <div className="flex items-center space-x-6">
-                    <div className="bg-purple text-white rounded-full w-12 h-12 flex items-center justify-center text-lg font-bold group-hover:bg-pink transition-colors">
-                      {index + 1}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-text-primary truncate mb-2 text-lg">
-                        {doc.title}
-                      </h4>
-                      <p className="text-base text-text-muted">
-                        {doc.views} views
-                      </p>
-                    </div>
+        
+        <div className="relative container py-24 md:py-32">
+          <div className="text-center max-w-5xl mx-auto">
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mb-8 leading-tight">
+              Support Documentation
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
+              Comprehensive guides, tutorials, and references to help you master ENBOQ
+            </p>
+            
+            {/* Modern Search Bar */}
+            <div className="max-w-3xl mx-auto mb-12">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+                <div className="relative bg-white rounded-2xl p-2 shadow-2xl border border-gray-200">
+                  <div className="flex items-center">
+                    <Search className="w-6 h-6 text-gray-400 ml-4" />
+                    <input
+                      type="text"
+                      placeholder="Search documentation... Try 'API setup' or 'getting started'"
+                      className="modern-search-input"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <select
+                      className="modern-search-select"
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
+                      <option value="all">All Categories</option>
+                      {categories.map(category => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Popular Topics */}
+            <div className="flex flex-wrap justify-center items-center gap-3 text-sm">
+              <span className="text-gray-500 font-medium mr-2">Popular topics:</span>
+              {['Getting Started', 'API Integration', 'Project Setup', 'Troubleshooting'].map((topic, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedCategory(topic)}
+                  className="group relative px-5 py-2.5 bg-gradient-to-r from-white to-gray-50 backdrop-blur-sm rounded-full border border-gray-200/60 hover:border-purple-300/80 hover:shadow-lg hover:shadow-purple-100/50 transition-all duration-300 text-gray-700 hover:text-purple-600 font-medium overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-50/0 via-purple-50/50 to-pink-50/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <span className="relative z-10 flex items-center">
+                    {topic}
+                    <div className="ml-2 w-1.5 h-1.5 bg-purple-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100"></div>
+                  </span>
+                </button>
               ))}
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="card">
-            <h3 className="text-purple text-2xl font-semibold mb-8">Quick Links</h3>
-            <div className="space-y-4">
-              <Link to="/faq" className="block text-orange hover:text-pink font-medium py-4 px-4 rounded-xl hover:bg-bg-secondary transition-all text-lg">
-                → Frequently Asked Questions
-              </Link>
-              <Link to="/tickets/new" className="block text-orange hover:text-pink font-medium py-4 px-4 rounded-xl hover:bg-bg-secondary transition-all text-lg">
-                → Submit Support Ticket
-              </Link>
-              <Link to="/features" className="block text-orange hover:text-pink font-medium py-4 px-4 rounded-xl hover:bg-bg-secondary transition-all text-lg">
-                → Request New Feature
-              </Link>
-              <a 
-                href="mailto:support@enboq.com" 
-                className="block text-orange hover:text-pink font-medium py-4 px-4 rounded-xl hover:bg-bg-secondary transition-all text-lg"
-              >
-                → Contact Support Team
-              </a>
+      {/* Documentation Content Section */}
+      <section className="py-24 bg-white">
+        <div className="container">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+            <div className="lg:col-span-3">
+
+              {filteredDocs.length === 0 ? (
+                <div className="bg-white rounded-3xl p-16 border border-gray-100 shadow-xl text-center">
+                  <Book className="mx-auto h-20 w-20 text-purple-300 mb-6" />
+                  <h3 className="text-3xl font-bold text-gray-900 mb-4">No documentation found</h3>
+                  <p className="text-xl text-gray-600">
+                    Try adjusting your search terms or category filter.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-8">
+                  {filteredDocs.map((doc) => {
+                    const TypeIcon = getTypeIcon(doc.type);
+                    return (
+                      <Link
+                        key={doc.id}
+                        to={`/docs/${doc.id}`}
+                        className="group"
+                      >
+                        <div className="bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                          <div className="flex items-start space-x-8">
+                            <div className="flex-shrink-0">
+                              <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                <TypeIcon className="h-8 w-8 text-white" />
+                              </div>
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between mb-4">
+                                <h3 className="text-2xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
+                                  {doc.title}
+                                </h3>
+                                <ArrowRight className="h-6 w-6 text-gray-400 flex-shrink-0 ml-6 group-hover:translate-x-2 group-hover:text-purple-600 transition-all" />
+                              </div>
+
+                              <p className="text-lg text-gray-600 mb-6 line-clamp-2 leading-relaxed">
+                                {doc.description}
+                              </p>
+
+                              <div className="flex flex-wrap items-center gap-3 mb-6">
+                                <span className={`text-sm font-semibold px-3 py-1 rounded-full ${getDifficultyColor(doc.difficulty)}`}>
+                                  {doc.difficulty}
+                                </span>
+                                <span className="text-sm font-semibold text-purple-700 bg-purple-100 px-3 py-1 rounded-full">
+                                  {doc.category}
+                                </span>
+                                {doc.hasVideo && (
+                                  <span className="text-sm font-semibold text-pink-700 bg-pink-100 px-3 py-1 rounded-full flex items-center space-x-1">
+                                    <Play className="h-3 w-3" />
+                                    <span>Video</span>
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex items-center justify-between text-sm text-gray-500">
+                                <div className="flex items-center space-x-6">
+                                  <div className="flex items-center space-x-1">
+                                    <Clock className="h-4 w-4" />
+                                    <span>{doc.readTime}</span>
+                                  </div>
+                                  {doc.steps > 0 && (
+                                    <span>{doc.steps} steps</span>
+                                  )}
+                                  <div className="flex items-center space-x-1">
+                                    <Star className="h-4 w-4 fill-current text-orange-400" />
+                                    <span>{doc.rating}</span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-6">
+                                  <span>{doc.views} views</span>
+                                  <span>Updated {formatDate(doc.lastUpdated)}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+        </div>
+
+            <div className="space-y-8">
+              <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-lg">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Popular Guides</h3>
+                <div className="space-y-4">
+                  {popularDocs.map((doc, index) => (
+                    <Link
+                      key={doc.id}
+                      to={`/docs/${doc.id}`}
+                      className="block p-4 rounded-2xl hover:bg-purple-50 transition-colors group"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full flex items-center justify-center text-sm font-bold group-hover:scale-110 transition-transform">
+                          {index + 1}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-gray-900 truncate mb-1">
+                            {doc.title}
+                          </h4>
+                          <p className="text-sm text-gray-500">
+                            {doc.views} views
+                          </p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-gray-400 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-lg">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Quick Links</h3>
+                <div className="space-y-3">
+                  <Link to="/faq" className="flex items-center justify-between p-4 rounded-xl hover:bg-purple-50 transition-colors group">
+                    <span className="font-medium text-gray-700 group-hover:text-purple-600">Frequently Asked Questions</span>
+                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:translate-x-1 group-hover:text-purple-600 transition-all" />
+                  </Link>
+                  <Link to="/tickets/new" className="flex items-center justify-between p-4 rounded-xl hover:bg-purple-50 transition-colors group">
+                    <span className="font-medium text-gray-700 group-hover:text-purple-600">Submit Support Ticket</span>
+                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:translate-x-1 group-hover:text-purple-600 transition-all" />
+                  </Link>
+                  <Link to="/features" className="flex items-center justify-between p-4 rounded-xl hover:bg-purple-50 transition-colors group">
+                    <span className="font-medium text-gray-700 group-hover:text-purple-600">Request New Feature</span>
+                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:translate-x-1 group-hover:text-purple-600 transition-all" />
+                  </Link>
+                  <a 
+                    href="mailto:support@enboq.com" 
+                    className="flex items-center justify-between p-4 rounded-xl hover:bg-purple-50 transition-colors group"
+                  >
+                    <span className="font-medium text-gray-700 group-hover:text-purple-600">Contact Support Team</span>
+                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:translate-x-1 group-hover:text-purple-600 transition-all" />
+                  </a>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border border-purple-100">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Need Personal Help?</h3>
+                <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                  Can't find what you're looking for? Our support team is ready to help.
+                </p>
+                <Link to="/tickets/new" className="modern-cta-button w-full justify-center">
+                  Get Support
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </div>
             </div>
           </div>
-
-          <div className="card hero-gradient">
-            <h3 className="text-purple text-2xl font-semibold mb-4">Need Personal Help?</h3>
-            <p className="text-text-secondary mb-8 leading-relaxed text-lg">
-              Can't find what you're looking for? Our support team is ready to help.
-            </p>
-            <Link to="/tickets/new" className="btn btn-primary w-full text-lg">
-              Get Support
-            </Link>
-          </div>
         </div>
-      </div>
-    </div>
+      </section>
     </div>
   );
 };

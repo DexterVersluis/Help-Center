@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/Layout/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
+import Login from './pages/Login';
 import SupportDocs from './pages/SupportDocs';
 import DocDetail from './pages/DocDetail';
 import TicketForm from './pages/TicketForm';
@@ -14,19 +17,43 @@ import './styles/globals.css';
 function App() {
   return (
     <Router>
-      <Layout>
+      <AuthProvider>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/docs" element={<SupportDocs />} />
-          <Route path="/docs/:id" element={<DocDetail />} />
-          <Route path="/tickets" element={<TicketList />} />
-          <Route path="/tickets/new" element={<TicketForm />} />
-          <Route path="/tickets/:id" element={<TicketDetail />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/features" element={<FeatureRequests />} />
-          <Route path="/features/new" element={<FeatureRequestForm />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/*" element={
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/docs" element={<SupportDocs />} />
+                <Route path="/docs/getting-started" element={<DocDetail />} />
+                <Route path="/docs/:id" element={<DocDetail />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/tickets" element={
+                  <ProtectedRoute>
+                    <TicketList />
+                  </ProtectedRoute>
+                } />
+                <Route path="/tickets/new" element={
+                  <ProtectedRoute>
+                    <TicketForm />
+                  </ProtectedRoute>
+                } />
+                <Route path="/tickets/:id" element={
+                  <ProtectedRoute>
+                    <TicketDetail />
+                  </ProtectedRoute>
+                } />
+                <Route path="/features" element={<FeatureRequests />} />
+                <Route path="/features/new" element={
+                  <ProtectedRoute>
+                    <FeatureRequestForm />
+                  </ProtectedRoute>
+                } />
+              </Routes>
+            </Layout>
+          } />
         </Routes>
-      </Layout>
+      </AuthProvider>
     </Router>
   );
 }

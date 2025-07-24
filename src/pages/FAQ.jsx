@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Search, ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Search, ChevronDown, ChevronUp, HelpCircle, ArrowRight, MessageCircle } from 'lucide-react';
 
 const FAQ = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -116,141 +117,190 @@ const FAQ = () => {
   };
 
   return (
-    <div className="container py-8">
-      <div className="text-center mb-8">
-        <h1>Frequently Asked Questions</h1>
-        <p className="text-gray-text">
-          Find quick answers to common questions about ENBOQ
-        </p>
-      </div>
-
-      <div className="max-w-4xl mx-auto">
-        <div className="card mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-purple" />
-              <input
-                type="text"
-                placeholder="Search FAQs..."
-                className="form-input pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+    <div className="min-h-screen">
+      {/* Hero Section with Modern Gradient */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="absolute top-0 left-0 w-full h-full">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+          <div className="absolute top-40 right-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-40 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+        </div>
+        
+        <div className="relative container py-24 md:py-32">
+          <div className="text-center max-w-5xl mx-auto">
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mb-8 leading-tight">
+              Frequently Asked Questions
+            </h1>
             
-            <select
-              className="form-select md:w-64"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="all">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
+              Find quick answers to common questions about ENBOQ
+            </p>
+            
+            {/* Modern Search Bar */}
+            <div className="max-w-3xl mx-auto mb-12">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+                <div className="relative bg-white rounded-2xl p-2 shadow-2xl border border-gray-200">
+                  <div className="flex items-center">
+                    <Search className="w-6 h-6 text-gray-400 ml-4" />
+                    <input
+                      type="text"
+                      placeholder="Search FAQs... Try 'How do I reset my password?'"
+                      className="modern-search-input"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <select
+                      className="modern-search-select"
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
+                      <option value="all">All Categories</option>
+                      {categories.map(category => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-          <div className="flex justify-between items-center mt-4 pt-4 border-t border-light-purple">
-            <span className="text-sm text-gray-text">
-              {filteredFAQs.length} question{filteredFAQs.length !== 1 ? 's' : ''} found
-            </span>
-            <div className="flex space-x-2">
+            {/* Quick Actions */}
+            <div className="flex flex-wrap justify-center items-center gap-3 text-sm">
+              <span className="text-gray-500 font-medium mr-2">Quick actions:</span>
               <button
                 onClick={expandAll}
-                className="text-sm text-purple hover:text-pink"
+                className="group relative px-5 py-2.5 bg-gradient-to-r from-white to-gray-50 backdrop-blur-sm rounded-full border border-gray-200/60 hover:border-purple-300/80 hover:shadow-lg hover:shadow-purple-100/50 transition-all duration-300 text-gray-700 hover:text-purple-600 font-medium overflow-hidden"
               >
-                Expand All
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-50/0 via-purple-50/50 to-pink-50/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span className="relative z-10 flex items-center">
+                  Expand All
+                  <div className="ml-2 w-1.5 h-1.5 bg-purple-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100"></div>
+                </span>
               </button>
-              <span className="text-gray-text">|</span>
               <button
                 onClick={collapseAll}
-                className="text-sm text-purple hover:text-pink"
+                className="group relative px-5 py-2.5 bg-gradient-to-r from-white to-gray-50 backdrop-blur-sm rounded-full border border-gray-200/60 hover:border-purple-300/80 hover:shadow-lg hover:shadow-purple-100/50 transition-all duration-300 text-gray-700 hover:text-purple-600 font-medium overflow-hidden"
               >
-                Collapse All
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-50/0 via-purple-50/50 to-pink-50/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span className="relative z-10 flex items-center">
+                  Collapse All
+                  <div className="ml-2 w-1.5 h-1.5 bg-purple-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100"></div>
+                </span>
               </button>
             </div>
           </div>
         </div>
+      </section>
 
-        {filteredFAQs.length === 0 ? (
-          <div className="card text-center py-12">
-            <HelpCircle className="mx-auto h-16 w-16 text-light-purple mb-4" />
-            <h3>No FAQs found</h3>
-            <p className="text-gray-text mb-4">
-              Try adjusting your search terms or category filter.
-            </p>
-            <button
-              onClick={() => {
-                setSearchTerm('');
-                setSelectedCategory('all');
-              }}
-              className="btn btn-secondary"
-            >
-              Clear Filters
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredFAQs.map((faq) => (
-              <div key={faq.id} className="card">
+      {/* FAQ Content Section */}
+      <section className="py-24 bg-white">
+        <div className="container">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <span className="text-lg text-gray-600">
+                {filteredFAQs.length} question{filteredFAQs.length !== 1 ? 's' : ''} found
+              </span>
+            </div>
+
+            {filteredFAQs.length === 0 ? (
+              <div className="bg-white rounded-3xl p-12 border border-gray-100 shadow-xl text-center">
+                <HelpCircle className="mx-auto h-20 w-20 text-purple-300 mb-6" />
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">No FAQs found</h3>
+                <p className="text-xl text-gray-600 mb-8">
+                  Try adjusting your search terms or category filter.
+                </p>
                 <button
-                  onClick={() => toggleExpanded(faq.id)}
-                  className="w-full text-left flex items-center justify-between"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCategory('all');
+                  }}
+                  className="modern-secondary-button"
                 >
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <span className="text-xs font-semibold text-pink bg-light-pink px-2 py-1 rounded">
-                        {faq.category}
-                      </span>
-                    </div>
-                    <h3 className="text-purple font-semibold text-lg">
-                      {faq.question}
-                    </h3>
-                  </div>
-                  <div className="ml-4">
-                    {expandedItems.has(faq.id) ? (
-                      <ChevronUp className="h-5 w-5 text-purple" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-purple" />
-                    )}
-                  </div>
+                  Clear Filters
                 </button>
-
-                {expandedItems.has(faq.id) && (
-                  <div className="mt-4 pt-4 border-t border-light-purple">
-                    <p className="text-gray-text leading-relaxed">
-                      {faq.answer}
-                    </p>
-                  </div>
-                )}
               </div>
-            ))}
-          </div>
-        )}
+            ) : (
+              <div className="space-y-4">
+                {filteredFAQs.map((faq) => (
+                  <div key={faq.id} className="group">
+                    <div className="bg-white rounded-2xl border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all duration-300">
+                      <button
+                        onClick={() => toggleExpanded(faq.id)}
+                        className="w-full text-left p-6 flex items-start justify-between"
+                      >
+                        <div className="flex-1 pr-4">
+                          <div className="flex items-center space-x-3 mb-3">
+                            <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
+                              {faq.category}
+                            </span>
+                          </div>
+                          <h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors leading-tight">
+                            {faq.question}
+                          </h3>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <div className="w-8 h-8 bg-gray-100 group-hover:bg-purple-100 rounded-lg flex items-center justify-center transition-all duration-300">
+                            {expandedItems.has(faq.id) ? (
+                              <ChevronUp className="h-4 w-4 text-gray-600 group-hover:text-purple-600" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4 text-gray-600 group-hover:text-purple-600" />
+                            )}
+                          </div>
+                        </div>
+                      </button>
 
-        <div className="card mt-8 text-center gradient-bg">
-          <h3>Still have questions?</h3>
-          <p className="text-gray-text mb-4">
-            Can't find what you're looking for? Our support team is here to help.
+                      {expandedItems.has(faq.id) && (
+                        <div className="px-6 pb-6">
+                          <div className="pt-4 border-t border-gray-100">
+                            <p className="text-gray-600 leading-relaxed">
+                              {faq.answer}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative container text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
+            Still have questions?
+          </h2>
+          <p className="text-xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
+            Can't find what you're looking for? Our support team is here to help with personalized assistance.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/tickets/new"
-              className="btn btn-primary"
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Link 
+              to="/tickets/new" 
+              className="modern-primary-button"
             >
-              Submit a Ticket
-            </a>
-            <a
-              href="mailto:support@enboq.com"
-              className="btn btn-secondary"
+              <MessageCircle className="w-5 h-5 mr-2" />
+              Submit Support Ticket
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Link>
+            <a 
+              href="mailto:support@enboq.com" 
+              className="modern-secondary-button"
             >
-              Email Support
+              Email Support Team
             </a>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 };

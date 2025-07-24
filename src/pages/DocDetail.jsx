@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Play, Clock, Star, Eye, Calendar, CheckCircle, Circle, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ArrowLeft, Play, Clock, Calendar, CheckCircle, Circle, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 const DocDetail = () => {
   const { id } = useParams();
   const [doc, setDoc] = useState(null);
-  const [completedSteps, setCompletedSteps] = useState(new Set());
   const [isHelpful, setIsHelpful] = useState(null);
 
   useEffect(() => {
@@ -69,15 +68,7 @@ const DocDetail = () => {
     setDoc(sampleDoc);
   }, [id]);
 
-  const toggleStepCompletion = (stepId) => {
-    const newCompleted = new Set(completedSteps);
-    if (newCompleted.has(stepId)) {
-      newCompleted.delete(stepId);
-    } else {
-      newCompleted.add(stepId);
-    }
-    setCompletedSteps(newCompleted);
-  };
+
 
   const getDifficultyColor = (difficulty) => {
     const colors = {
@@ -116,7 +107,7 @@ const DocDetail = () => {
     );
   }
 
-  const completionPercentage = Math.round((completedSteps.size / doc.steps.length) * 100);
+
 
   return (
     <div className="container py-8">
@@ -133,7 +124,7 @@ const DocDetail = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-3">
           <div className="card mb-6">
-            <div className="flex items-start justify-between mb-4">
+            <div className="flex items-start justify-between mb-6">
               <div className="flex-1">
                 <h1 className="text-3xl font-bold text-purple mb-2">
                   {doc.title}
@@ -141,36 +132,14 @@ const DocDetail = () => {
                 <p className="text-gray-text text-lg mb-4">
                   {doc.description}
                 </p>
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className={`text-xs font-semibold px-3 py-1 rounded ${getDifficultyColor(doc.difficulty)}`}>
-                    {doc.difficulty}
-                  </span>
-                  <span className="text-xs font-semibold text-purple bg-light-purple px-3 py-1 rounded">
-                    {doc.category}
-                  </span>
-                  <div className="flex items-center space-x-1 text-sm text-gray-text">
-                    <Clock className="h-4 w-4" />
-                    <span>{doc.readTime}</span>
-                  </div>
-                  <div className="flex items-center space-x-1 text-sm text-gray-text">
-                    <Star className="h-4 w-4 fill-current text-orange" />
-                    <span>{doc.rating}</span>
-                  </div>
-                  <div className="flex items-center space-x-1 text-sm text-gray-text">
-                    <Eye className="h-4 w-4" />
-                    <span>{doc.views} views</span>
-                  </div>
+                <div className="flex items-center space-x-1 text-sm text-gray-text">
+                  <Clock className="h-4 w-4" />
+                  <span>{doc.readTime}</span>
                 </div>
               </div>
-            </div>
-
-            <div className="flex items-center justify-between text-sm text-gray-text mb-6 pt-4 border-t border-light-purple">
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center space-x-1 text-sm text-gray-text">
                 <Calendar className="h-4 w-4" />
                 <span>Last updated {formatDate(doc.lastUpdated)}</span>
-              </div>
-              <div className="text-purple font-semibold">
-                Progress: {completionPercentage}% ({completedSteps.size}/{doc.steps.length} steps)
               </div>
             </div>
 
@@ -198,22 +167,10 @@ const DocDetail = () => {
                 <div key={step.id} className="border border-light-purple rounded-lg overflow-hidden">
                   <div className="bg-light-purple p-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <button
-                          onClick={() => toggleStepCompletion(step.id)}
-                          className="flex-shrink-0"
-                        >
-                          {completedSteps.has(step.id) ? (
-                            <CheckCircle className="h-6 w-6 text-green" />
-                          ) : (
-                            <Circle className="h-6 w-6 text-gray-text hover:text-purple" />
-                          )}
-                        </button>
-                        <div>
-                          <h4 className="font-semibold text-purple">
-                            Step {index + 1}: {step.title}
-                          </h4>
-                        </div>
+                      <div>
+                        <h4 className="font-semibold text-purple">
+                          Step {index + 1}: {step.title}
+                        </h4>
                       </div>
                       <div className="text-sm text-purple font-semibold">
                         {index + 1} of {doc.steps.length}
@@ -283,25 +240,6 @@ const DocDetail = () => {
         </div>
 
         <div className="space-y-6">
-          <div className="card">
-            <h3>Progress Tracker</h3>
-            <div className="mb-4">
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-purple font-semibold">Completion</span>
-                <span className="text-purple font-semibold">{completionPercentage}%</span>
-              </div>
-              <div className="w-full bg-light-purple rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-purple to-pink h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${completionPercentage}%` }}
-                />
-              </div>
-            </div>
-            <p className="text-sm text-gray-text">
-              {completedSteps.size} of {doc.steps.length} steps completed
-            </p>
-          </div>
-
           <div className="card">
             <h3>Related Documentation</h3>
             <div className="space-y-3">
