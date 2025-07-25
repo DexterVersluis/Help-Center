@@ -8,6 +8,12 @@ const DocDetail = () => {
   const [isHelpful, setIsHelpful] = useState(null);
 
   useEffect(() => {
+    // If the ID is for the platform demo, redirect to the OnboardingDoc component
+    if (id === 'onboarding-platform-demo-enboq') {
+      window.location.href = '/docs/onboarding-platform-demo-enboq';
+      return;
+    }
+    
     const sampleDoc = {
       id: 'doc-001',
       title: 'Getting Started with ENBOQ',

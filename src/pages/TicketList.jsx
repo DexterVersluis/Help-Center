@@ -211,8 +211,9 @@ const TicketList = () => {
                           <span className="font-medium">{ticket.id}</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <span className="w-2 h-2 bg-purple-600 rounded-full"></span>
-                          <span>{ticket.category}</span>
+                          <span className="px-3 py-1 text-sm font-medium rounded-full" style={{ backgroundColor: 'rgba(255, 142, 0, 0.1)', color: '#FF8E00' }}>
+                            {ticket.category}
+                          </span>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">

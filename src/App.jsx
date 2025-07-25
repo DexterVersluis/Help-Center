@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import SupportDocs from './pages/SupportDocs';
 import DocDetail from './pages/DocDetail';
+import OnboardingDoc from './pages/OnboardingDoc';
 import TicketForm from './pages/TicketForm';
 import TicketList from './pages/TicketList';
 import TicketDetail from './pages/TicketDetail';
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/docs" element={<SupportDocs />} />
                 <Route path="/docs/getting-started" element={<DocDetail />} />
                 <Route path="/docs/:id" element={<DocDetail />} />
+                <Route path="/docs/onboarding-platform-demo-enboq" element={<OnboardingDoc />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/tickets" element={
                   <ProtectedRoute>

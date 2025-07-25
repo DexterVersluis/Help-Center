@@ -70,7 +70,7 @@ const Header = () => {
     { label: 'Account Setup and Management', value: '/docs/account-setup', icon: '⚙️', description: 'Manage your account' },
     { label: 'Project Collaboration', value: '/docs/collaboration', icon: '👥', description: 'Work with your team' },
     { label: 'Advanced Features', value: '/docs/advanced', icon: '⚡', description: 'Power user features' },
-    { label: 'API Documentation', value: '/docs/api', icon: '🔧', description: 'Developer resources' }
+    { label: 'Setup Integrations', value: '/docs/integrations', icon: '🔧', description: 'Configure third-party integrations' }
   ];
 
   const ticketsOptions = [

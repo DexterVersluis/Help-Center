@@ -234,7 +234,11 @@ const TicketDetail = () => {
               </div>
               <div>
                 <span className="text-sm font-semibold text-purple">Category:</span>
-                <div className="mt-1 text-gray-text">{ticket.category}</div>
+                <div className="mt-1">
+                  <span className="px-3 py-1 text-sm font-medium rounded-full" style={{ backgroundColor: 'rgba(255, 142, 0, 0.1)', color: '#FF8E00' }}>
+                    {ticket.category}
+                  </span>
+                </div>
               </div>
               <div>
                 <span className="text-sm font-semibold text-purple">Created:</span>

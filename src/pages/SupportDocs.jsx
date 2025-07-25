@@ -17,7 +17,7 @@ const SupportDocs = () => {
     'Advanced Features',
     'Integrations',
     'Troubleshooting',
-    'API Documentation'
+    'Setup Integrations'
   ];
 
   useEffect(() => {
@@ -83,9 +83,9 @@ const SupportDocs = () => {
       },
       {
         id: 'doc-005',
-        title: 'API Authentication & Setup',
-        description: 'Complete guide to setting up API access and authentication methods',
-        category: 'API Documentation',
+        title: 'Third-Party Integration Setup',
+        description: 'Complete guide to setting up and configuring third-party integrations',
+        category: 'Setup Integrations',
         type: 'reference',
         readTime: '15 min',
         difficulty: 'Advanced',
@@ -108,6 +108,21 @@ const SupportDocs = () => {
         rating: 4.4,
         views: 1100,
         lastUpdated: '2024-01-25T13:10:00Z'
+      },
+      {
+        id: 'onboarding-platform-demo-enboq',
+        title: 'Full ENBOQ Platform Demo',
+        description: 'Comprehensive walkthrough of the ENBOQ platform features and capabilities, showcasing how to create engaging onboarding experiences',
+        category: 'Getting Started',
+        type: 'guide',
+        readTime: '10 min',
+        difficulty: 'Beginner',
+        hasVideo: true,
+        videoUrl: 'https://loom.com/share/3faa8ae6cc5b46a59a51b69bfdaf4107',
+        steps: 10,
+        rating: 4.9,
+        views: 1250,
+        lastUpdated: '2024-07-20T09:30:00Z'
       }
     ];
     setDocs(sampleDocs);
@@ -220,20 +235,20 @@ const SupportDocs = () => {
             </div>
 
             {/* Popular Topics */}
-            <div className="flex flex-wrap justify-center items-center gap-3 text-sm">
-              <span className="text-gray-500 font-medium mr-2">Popular topics:</span>
-              {['Getting Started', 'API Integration', 'Project Setup', 'Troubleshooting'].map((topic, index) => (
-                <button
+            <div className="flex flex-wrap justify-center items-center gap-8 text-lg">
+              <span className="text-gray-600 font-semibold text-xl">Popular topics:</span>
+              {['Getting Started', 'Setup Integrations', 'Project Setup', 'Troubleshooting'].map((topic, index) => (
+                <Link
                   key={index}
-                  onClick={() => setSelectedCategory(topic)}
-                  className="group relative px-5 py-2.5 bg-gradient-to-r from-white to-gray-50 backdrop-blur-sm rounded-full border border-gray-200/60 hover:border-purple-300/80 hover:shadow-lg hover:shadow-purple-100/50 transition-all duration-300 text-gray-700 hover:text-purple-600 font-medium overflow-hidden"
+                  to="/docs"
+                  className="group bg-white backdrop-blur-sm rounded-2xl border-2 border-purple-200/80 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-300/40 transition-all duration-300 text-gray-800 hover:text-purple-700 font-semibold text-lg transform hover:-translate-y-1 hover:scale-105"
+                  style={{ padding: '5px 10px' }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-50/0 via-purple-50/50 to-pink-50/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <span className="relative z-10 flex items-center">
+                  <span className="flex items-center whitespace-nowrap">
                     {topic}
-                    <div className="ml-2 w-1.5 h-1.5 bg-purple-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100"></div>
+                    <div className="ml-4 w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100"></div>
                   </span>
-                </button>
+                </Link>
               ))}
             </div>
           </div>
@@ -288,7 +303,7 @@ const SupportDocs = () => {
                                 <span className={`text-sm font-semibold px-3 py-1 rounded-full ${getDifficultyColor(doc.difficulty)}`}>
                                   {doc.difficulty}
                                 </span>
-                                <span className="text-sm font-semibold text-purple-700 bg-purple-100 px-3 py-1 rounded-full">
+                                <span className="text-sm font-semibold px-3 py-1 rounded-full" style={{ backgroundColor: 'rgba(255, 142, 0, 0.1)', color: '#FF8E00' }}>
                                   {doc.category}
                                 </span>
                                 {doc.hasVideo && (

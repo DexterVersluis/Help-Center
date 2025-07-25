@@ -288,7 +288,7 @@ const FeatureRequests = () => {
                             <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeClass(feature.status)}`}>
                               {getStatusLabel(feature.status)}
                             </span>
-                            <span className="px-3 py-1 bg-orange-100 text-orange-700 text-sm font-medium rounded-full">
+                            <span className="px-3 py-1 text-sm font-medium rounded-full" style={{ backgroundColor: 'rgba(255, 142, 0, 0.1)', color: '#FF8E00' }}>
                               {feature.category}
                             </span>
                           </div>
