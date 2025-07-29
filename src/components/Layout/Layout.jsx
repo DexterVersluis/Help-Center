@@ -1,15 +1,16 @@
 import Header from './Header';
 import Footer from './Footer';
+import { Box } from '@mui/material';
 
 const Layout = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col w-full">
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header />
-      <main className="flex-1 w-full">
+      <Box component="main" sx={{ flexGrow: 1 }}>
         {children}
-      </main>
+      </Box>
       <Footer />
-    </div>
+    </Box>
   );
 };
 

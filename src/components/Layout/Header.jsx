@@ -1,298 +1,351 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Menu,
+  MenuItem,
+  IconButton,
+  Box,
+  Avatar,
+  Divider,
+  ListItemIcon,
+  ListItemText,
+  useTheme,
+  useMediaQuery,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  Collapse
+} from '@mui/material';
+import {
+  ExpandMore,
+  ExpandLess,
+  Menu as MenuIcon,
+  AccountCircle,
+  Logout,
+  Description,
+  Help,
+  BugReport,
+  Lightbulb,
+  Dashboard,
+  Launch
+} from '@mui/icons-material';
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuth();
-  const [scrolled, setScrolled] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [userMenuAnchor, setUserMenuAnchor] = useState(null);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [expandedMenu, setExpandedMenu] = useState(null);
 
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const userDropdownRef = useRef(null);
-  const navDropdownRef = useRef(null);
 
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    // Add blur effect to main content when dropdown is active
-    const body = document.body;
-    const html = document.documentElement;
-    
-    if (activeDropdown) {
-      body.classList.add('dropdown-blur-active');
-      html.classList.add('dropdown-blur-active');
-    } else {
-      body.classList.remove('dropdown-blur-active');
-      html.classList.remove('dropdown-blur-active');
-    }
-
-    return () => {
-      body.classList.remove('dropdown-blur-active');
-      html.classList.remove('dropdown-blur-active');
-    };
-  }, [activeDropdown]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
-        setUserDropdownOpen(false);
-      }
-      if (navDropdownRef.current && !navDropdownRef.current.contains(event.target)) {
-        setActiveDropdown(null);
-      }
-    };
-
-    if (userDropdownOpen || activeDropdown) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [userDropdownOpen, activeDropdown]);
 
 
 
   const supportDocsOptions = [
-    { label: 'All Documentation', value: '/docs', icon: '📚', description: 'Browse all documentation' },
-    { label: 'FAQ', value: '/faq', icon: '❓', description: 'Frequently asked questions' },
-    { label: 'Account Setup and Management', value: '/docs/account-setup', icon: '⚙️', description: 'Manage your account' },
-    { label: 'Project Collaboration', value: '/docs/collaboration', icon: '👥', description: 'Work with your team' },
-    { label: 'Advanced Features', value: '/docs/advanced', icon: '⚡', description: 'Power user features' },
-    { label: 'Setup Integrations', value: '/docs/integrations', icon: '🔧', description: 'Configure third-party integrations' }
+    { label: 'All Documentation', value: '/docs', icon: <Description />, description: 'Browse all documentation' },
+    { label: 'Account Setup and Management', value: '/docs/account-setup', icon: <AccountCircle />, description: 'Manage your account' },
+    { label: 'Project Collaboration', value: '/docs/collaboration', icon: <Description />, description: 'Work with your team' },
+    { label: 'Advanced Features', value: '/docs/advanced', icon: <Description />, description: 'Power user features' },
+    { label: 'Setup Integrations', value: '/docs/integrations', icon: <Description />, description: 'Configure third-party integrations' }
   ];
 
   const ticketsOptions = [
-    { label: 'Submit Ticket', value: '/tickets/new', icon: '✉️', description: 'Create a new support ticket' },
-    { label: 'My Tickets', value: '/tickets', icon: '📋', description: 'View your tickets' },
-    { label: 'Open Tickets', value: '/tickets?status=open', icon: '🔓', description: 'Active support requests' },
-    { label: 'Closed Tickets', value: '/tickets?status=closed', icon: '✅', description: 'Resolved tickets' }
+    { label: 'Submit Ticket', value: '/tickets/new', icon: <BugReport />, description: 'Create a new support ticket' },
+    { label: 'My Tickets', value: '/tickets', icon: <Description />, description: 'View your tickets' },
+    { label: 'Open Tickets', value: '/tickets?status=open', icon: <Description />, description: 'Active support requests' },
+    { label: 'Closed Tickets', value: '/tickets?status=closed', icon: <Description />, description: 'Resolved tickets' }
   ];
 
   const featureRequestsOptions = [
-    { label: 'Feature Requests', value: '/features', icon: '💡', description: 'Browse all feature requests' },
-    { label: 'Popular Requests', value: '/features?sort=popular', icon: '🔥', description: 'Most requested features' },
-    { label: 'Recently Added', value: '/features?sort=recent', icon: '🆕', description: 'Latest feature requests' }
+    { label: 'Feature Requests', value: '/features', icon: <Lightbulb />, description: 'Browse all feature requests' },
+    { label: 'Popular Requests', value: '/features?sort=popular', icon: <Lightbulb />, description: 'Most requested features' }
   ];
 
 
 
   const handleOptionClick = (value) => {
     navigate(value);
-    setActiveDropdown(null);
-    setIsMobileMenuOpen(false);
+    setAnchorEl(null);
+    setUserMenuAnchor(null);
+    setMobileDrawerOpen(false);
+    setExpandedMenu(null);
   };
 
   const handleLogout = async () => {
     try {
       await logout();
       navigate('/');
+      setUserMenuAnchor(null);
     } catch (error) {
       console.error('Logout failed:', error);
     }
   };
 
-  const handleMobileToggle = (dropdown) => {
-    // On mobile, still use click behavior
-    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
+  const handleMenuClick = (event, menuType) => {
+    setAnchorEl(event.currentTarget);
+    setExpandedMenu(menuType);
   };
 
-  const DropdownMenu = ({ title, options, isActive, isMobile }) => (
-    <div className="relative group">
-      <button
-        onClick={() => handleMobileToggle(title)}
-        className={`modern-nav-item ${isActive ? 'active' : ''}`}
-        aria-expanded={isActive}
-      >
-        <span>{title}</span>
-        <svg 
-          className={`nav-chevron ${isActive ? 'rotate-180' : ''}`}
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-      
-      {isActive && (
-        <div className="modern-dropdown">
-          <div className="dropdown-content">
-            {options.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleOptionClick(option.value)}
-                className="dropdown-item"
-              >
-                <div className="item-icon">{option.icon}</div>
-                <div className="item-content">
-                  <div className="item-title">{option.label}</div>
-                  <div className="item-description">{option.description}</div>
-                </div>
-                <svg className="item-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7-7" />
-                </svg>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+  const handleUserMenuClick = (event) => {
+    setUserMenuAnchor(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setUserMenuAnchor(null);
+    setExpandedMenu(null);
+  };
+
+  const toggleMobileMenu = (menuType) => {
+    setExpandedMenu(expandedMenu === menuType ? null : menuType);
+  };
+
+  const renderMobileMenu = () => (
+    <Drawer
+      anchor="left"
+      open={mobileDrawerOpen}
+      onClose={() => setMobileDrawerOpen(false)}
+      sx={{ '& .MuiDrawer-paper': { width: 280 } }}
+    >
+      <Box sx={{ p: 2 }}>
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+          ENBOQ Support
+        </Typography>
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton component={Link} to="/docs/getting-started" onClick={() => setMobileDrawerOpen(false)}>
+              <ListItemText primary="Getting Started" />
+            </ListItemButton>
+          </ListItem>
+          
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => toggleMobileMenu('Documentation')}>
+              <ListItemText primary="Documentation" />
+              {expandedMenu === 'Documentation' ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+          </ListItem>
+          <Collapse in={expandedMenu === 'Documentation'} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {supportDocsOptions.map((option) => (
+                <ListItem key={option.value} disablePadding sx={{ pl: 4 }}>
+                  <ListItemButton onClick={() => handleOptionClick(option.value)}>
+                    <ListItemIcon>{option.icon}</ListItemIcon>
+                    <ListItemText primary={option.label} secondary={option.description} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+
+          <ListItem disablePadding>
+            <ListItemButton component={Link} to="/faq" onClick={() => setMobileDrawerOpen(false)}>
+              <ListItemText primary="FAQ" />
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => toggleMobileMenu('Feature Requests')}>
+              <ListItemText primary="Feature Requests" />
+              {expandedMenu === 'Feature Requests' ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+          </ListItem>
+          <Collapse in={expandedMenu === 'Feature Requests'} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {featureRequestsOptions.map((option) => (
+                <ListItem key={option.value} disablePadding sx={{ pl: 4 }}>
+                  <ListItemButton onClick={() => handleOptionClick(option.value)}>
+                    <ListItemIcon>{option.icon}</ListItemIcon>
+                    <ListItemText primary={option.label} secondary={option.description} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+        </List>
+      </Box>
+    </Drawer>
   );
 
   return (
-    <header className={`modern-header ${scrolled ? 'scrolled' : ''}`}>
-      <div className="header-container">
-        <Link to="/" className="brand-logo">
-          <div className="logo-text">
-            <span className="logo-primary">ENBOQ</span>
-            <span className="logo-secondary">Support</span>
-          </div>
-          <div className="logo-glow"></div>
-        </Link>
-
-        <nav className={`main-nav ${isMobileMenuOpen ? 'mobile-open' : ''}`} ref={navDropdownRef}>
-          <Link 
-            to="/docs/getting-started" 
-            className={`modern-nav-item ${location.pathname === '/docs/getting-started' ? 'active' : ''}`}
-            onClick={() => setIsMobileMenuOpen(false)}
+    <>
+      <AppBar position="sticky" elevation={1} sx={{ borderRadius: 0 }}>
+        <Toolbar>
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{
+              flexGrow: 1,
+              textDecoration: 'none',
+              color: 'inherit',
+              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center'
+            }}
           >
-            Getting Started
-          </Link>
-          
-          <DropdownMenu
-            title="Documentation"
-            options={supportDocsOptions}
-            isActive={activeDropdown === 'Documentation'}
-            isMobile={isMobileMenuOpen}
-          />
-          
-          <DropdownMenu
-            title="Feature Requests"
-            options={featureRequestsOptions}
-            isActive={activeDropdown === 'Feature Requests'}
-            isMobile={isMobileMenuOpen}
-          />
+            ENBOQ
+            <Typography variant="body2" sx={{ ml: 1, opacity: 0.8 }}>
+              Support
+            </Typography>
+          </Typography>
 
-
-        </nav>
-
-        <div className="auth-section">
-          {isAuthenticated ? (
-            <div 
-              className="user-menu-container"
-              ref={userDropdownRef}
-            >
-              <button 
-                className="user-menu-trigger"
-                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+          {!isMobile && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Button
+                color="inherit"
+                component={Link}
+                to="/docs/getting-started"
+                sx={{ textTransform: 'none' }}
               >
-                <span className="user-greeting">
-                  Welcome, {user?.name || user?.username}
-                </span>
-                <svg 
-                  className={`user-chevron ${userDropdownOpen ? 'rotate-180' : ''}`}
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              
-              {userDropdownOpen && (
-                <div className="user-dropdown">
-                  <div className="user-dropdown-content">
-                    {ticketsOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        onClick={() => {
-                          handleOptionClick(option.value);
-                          setUserDropdownOpen(false);
-                        }}
-                        className="user-dropdown-item"
-                      >
-                        <div className="item-icon">{option.icon}</div>
-                        <div className="item-content">
-                          <div className="item-title">{option.label}</div>
-                          <div className="item-description">{option.description}</div>
-                        </div>
-                        <svg className="item-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    ))}
-                    
-                    <div className="dropdown-divider"></div>
-                    
-                    <button 
-                      onClick={() => {
-                        handleLogout();
-                        setUserDropdownOpen(false);
-                      }}
-                      className="user-dropdown-item logout-item"
-                    >
-                      <div className="item-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                      </div>
-                      <div className="item-content">
-                        <div className="item-title">Logout</div>
-                        <div className="item-description">Sign out of your account</div>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Link 
-              to="/login" 
-              className="header-login-button"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Login
-            </Link>
+                Getting Started
+              </Button>
+
+              <Button
+                color="inherit"
+                endIcon={<ExpandMore />}
+                onClick={(e) => handleMenuClick(e, 'Documentation')}
+                sx={{ textTransform: 'none' }}
+              >
+                Documentation
+              </Button>
+
+              <Button
+                color="inherit"
+                component={Link}
+                to="/faq"
+                sx={{ textTransform: 'none' }}
+              >
+                FAQ
+              </Button>
+
+              <Button
+                color="inherit"
+                endIcon={<ExpandMore />}
+                onClick={(e) => handleMenuClick(e, 'Feature Requests')}
+                sx={{ textTransform: 'none' }}
+              >
+                Feature Requests
+              </Button>
+            </Box>
           )}
 
-          <a 
-            href="https://start.enboq.com/admin/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="admin-button"
-          >
-            <span>Admin Dashboard</span>
-            <svg className="external-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </a>
-        </div>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 2 }}>
+            {isAuthenticated ? (
+              <Button
+                color="inherit"
+                startIcon={<Avatar sx={{ width: 24, height: 24 }}>{user?.name?.[0] || user?.username?.[0] || 'U'}</Avatar>}
+                endIcon={<ExpandMore />}
+                onClick={handleUserMenuClick}
+                sx={{ textTransform: 'none' }}
+              >
+                {user?.name || user?.username}
+              </Button>
+            ) : (
+              <Button
+                color="inherit"
+                component={Link}
+                to="/login"
+                sx={{ textTransform: 'none' }}
+              >
+                Login
+              </Button>
+            )}
 
-        <button 
-          className="mobile-menu-toggle"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle mobile menu"
-        >
-          <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
-          <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
-          <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
-        </button>
-      </div>
+            <Button
+              color="inherit"
+              href="https://start.enboq.com/admin/"
+              target="_blank"
+              rel="noopener noreferrer"
+              startIcon={<Dashboard />}
+              endIcon={<Launch />}
+              sx={{ textTransform: 'none' }}
+            >
+              Admin
+            </Button>
 
+            {isMobile && (
+              <IconButton
+                color="inherit"
+                onClick={() => setMobileDrawerOpen(true)}
+                edge="end"
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
+          </Box>
+        </Toolbar>
+      </AppBar>
 
-    </header>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        PaperProps={{ sx: { minWidth: 280, borderRadius: 0 } }}
+      >
+        {(expandedMenu === 'Documentation' ? supportDocsOptions : featureRequestsOptions).map((option) => (
+          <MenuItem key={option.value} onClick={() => handleOptionClick(option.value)}>
+            <ListItemIcon>{option.icon}</ListItemIcon>
+            <Box>
+              <Typography variant="body2" fontWeight="medium">
+                {option.label}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {option.description}
+              </Typography>
+            </Box>
+          </MenuItem>
+        ))}
+      </Menu>
+
+      <Menu
+        anchorEl={userMenuAnchor}
+        open={Boolean(userMenuAnchor)}
+        onClose={handleClose}
+        PaperProps={{ sx: { minWidth: 280, borderRadius: 0 } }}
+      >
+        {ticketsOptions.map((option) => (
+          <MenuItem key={option.value} onClick={() => handleOptionClick(option.value)}>
+            <ListItemIcon>{option.icon}</ListItemIcon>
+            <Box>
+              <Typography variant="body2" fontWeight="medium">
+                {option.label}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {option.description}
+              </Typography>
+            </Box>
+          </MenuItem>
+        ))}
+        <Divider />
+        <MenuItem onClick={handleLogout}>
+          <ListItemIcon>
+            <Logout />
+          </ListItemIcon>
+          <Box>
+            <Typography variant="body2" fontWeight="medium">
+              Logout
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Sign out of your account
+            </Typography>
+          </Box>
+        </MenuItem>
+      </Menu>
+
+      {renderMobileMenu()}
+    </>
   );
 };
 

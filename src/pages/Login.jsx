@@ -1,6 +1,30 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { AuthService } from '../services/authService'
+import {
+  Box,
+  Container,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  Alert,
+  InputAdornment,
+  CircularProgress,
+  Link as MuiLink,
+  Avatar,
+  Stack,
+  Divider,
+  IconButton
+} from '@mui/material'
+import {
+  Person,
+  Lock,
+  Login as LoginIcon,
+  ArrowForward,
+  Visibility,
+  VisibilityOff
+} from '@mui/icons-material'
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -9,6 +33,7 @@ export default function Login() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -17,6 +42,10 @@ export default function Login() {
       [e.target.name]: e.target.value
     })
     if (error) setError('')
+  }
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
   }
 
   const handleSubmit = async (e) => {
@@ -41,138 +70,222 @@ export default function Login() {
   }
 
   return (
-    <div className="login-container">
-      {/* Background Elements */}
-      <div className="login-bg-gradient"></div>
-      <div className="login-bg-pattern"></div>
-      
-      {/* Floating Elements */}
-      <div className="floating-element floating-element-1"></div>
-      <div className="floating-element floating-element-2"></div>
-      <div className="floating-element floating-element-3"></div>
-      
-      <div className="login-content">
-        <div className="login-card">
-          {/* Logo Section */}
-          <div className="login-header">
-            <div className="login-logo">
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
+      {/* Background decorative elements */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '10%',
+          left: '10%',
+          width: 200,
+          height: 200,
+          borderRadius: '50%',
+          background: 'rgba(255, 255, 255, 0.1)',
+          filter: 'blur(40px)',
+          '@keyframes float': {
+            '0%, 100%': { transform: 'translateY(0px)' },
+            '50%': { transform: 'translateY(-20px)' }
+          },
+          animation: 'float 6s ease-in-out infinite'
+        }}
+      />
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: '10%',
+          right: '10%',
+          width: 150,
+          height: 150,
+          borderRadius: '50%',
+          background: 'rgba(255, 255, 255, 0.1)',
+          filter: 'blur(40px)',
+          '@keyframes floatReverse': {
+            '0%, 100%': { transform: 'translateY(0px)' },
+            '50%': { transform: 'translateY(20px)' }
+          },
+          animation: 'floatReverse 8s ease-in-out infinite'
+        }}
+      />
+
+      <Container maxWidth="sm">
+        <Paper
+          elevation={24}
+          sx={{
+            p: 6,
+            borderRadius: 4,
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
+          }}
+        >
+          {/* Logo and Header */}
+          <Box textAlign="center" mb={4}>
+            <Box sx={{ mb: 3 }}>
               <img 
                 src="/assets/Enboq-Logo-NoPayoff-Svg.svg" 
                 alt="Enboq" 
-                className="logo-image"
+                style={{ width: '120px', height: '120px' }}
               />
-            </div>
-            <h1 className="login-title">Welcome Back</h1>
-            <p className="login-subtitle">Sign in to access your admin dashboard</p>
-          </div>
+            </Box>
+            <Typography variant="h3" component="h1" gutterBottom fontWeight="bold">
+              Welcome Back
+            </Typography>
+            <Typography variant="h6" color="text.secondary">
+              Sign in to access your admin dashboard
+            </Typography>
+          </Box>
 
-          {/* Form Section */}
-          <form className="login-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="username" className="form-label">
-                Username
-              </label>
-              <div className="input-wrapper">
-                <div className="input-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </div>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  autoComplete="username"
-                  className="form-input"
-                  placeholder="Enter your username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-              </div>
-            </div>
+          {/* Admin Account Notice */}
+          <Alert 
+            severity="info" 
+            sx={{ 
+              mb: 3, 
+              borderRadius: 2,
+              backgroundColor: 'rgba(25, 118, 210, 0.08)',
+              border: '1px solid rgba(25, 118, 210, 0.2)'
+            }}
+          >
+            <Typography variant="body2">
+              You can use the same account credentials that you use for the admin environment.
+            </Typography>
+          </Alert>
 
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">
-                Password
-              </label>
-              <div className="input-wrapper">
-                <div className="input-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <circle cx="12" cy="16" r="1"></circle>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                  </svg>
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  className="form-input"
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-              </div>
-            </div>
+          {/* Login Form */}
+          <Box component="form" onSubmit={handleSubmit}>
+            <Stack spacing={3}>
+              <TextField
+                fullWidth
+                id="username"
+                name="username"
+                label="Username"
+                type="text"
+                required
+                autoComplete="username"
+                placeholder="Enter your username"
+                value={formData.username}
+                onChange={handleChange}
+                disabled={loading}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Person color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                  }
+                }}
+              />
 
-            <div className="forgot-password-section">
-              <a 
-                href="https://start.enboq.com/admin/reset-password" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="forgot-password-link"
-              >
-                Forgot your password?
-              </a>
-            </div>
+              <TextField
+                fullWidth
+                id="password"
+                name="password"
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                required
+                autoComplete="current-password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                disabled={loading}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock color="action" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={togglePasswordVisibility}
+                        edge="end"
+                        disabled={loading}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                  }
+                }}
+              />
 
-            {error && (
-              <div className="error-message">
-                <div className="error-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="15" y1="9" x2="9" y2="15"></line>
-                    <line x1="9" y1="9" x2="15" y2="15"></line>
-                  </svg>
-                </div>
-                <span>{error}</span>
-              </div>
-            )}
+              <Box textAlign="right">
+                <MuiLink
+                  href="https://start.enboq.com/admin/reset-password"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  underline="hover"
+                  color="primary"
+                >
+                  Forgot your password?
+                </MuiLink>
+              </Box>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="login-button"
-            >
-              {loading ? (
-                <div className="button-loading">
-                  <div className="loading-spinner"></div>
-                  <span>Signing in...</span>
-                </div>
-              ) : (
-                <div className="button-content">
-                  <span>Sign In</span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M5 12h14"></path>
-                    <path d="M12 5l7 7-7 7"></path>
-                  </svg>
-                </div>
+              {error && (
+                <Alert severity="error" sx={{ borderRadius: 2 }}>
+                  {error}
+                </Alert>
               )}
-            </button>
-          </form>
+
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                disabled={loading}
+                startIcon={loading ? <CircularProgress size={20} /> : <LoginIcon />}
+                sx={{
+                  py: 2,
+                  borderRadius: 2,
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  background: 'linear-gradient(45deg, #1976d2, #dc004e)',
+                  '&:hover': {
+                    background: 'linear-gradient(45deg, #1565c0, #c2185b)',
+                  }
+                }}
+              >
+                {loading ? 'Signing in...' : 'Sign In'}
+              </Button>
+            </Stack>
+          </Box>
+
+          <Divider sx={{ my: 4 }} />
 
           {/* Footer */}
-          <div className="login-footer">
-            <p>Need help? <a href="/docs" className="help-link">Visit our documentation</a></p>
-          </div>
-        </div>
-      </div>
-    </div>
+          <Box textAlign="center">
+            <Typography variant="body2" color="text.secondary">
+              Need help?{' '}
+              <MuiLink
+                component={Link}
+                to="/docs"
+                underline="hover"
+                color="primary"
+                sx={{ fontWeight: 'medium' }}
+              >
+                Visit our documentation
+              </MuiLink>
+            </Typography>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   )
 }

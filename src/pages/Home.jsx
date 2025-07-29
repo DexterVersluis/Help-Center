@@ -1,26 +1,58 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, MessageCircle, Book, Lightbulb, ArrowRight, HelpCircle, Settings, Code, Database, Shield, Workflow, FileText } from 'lucide-react';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Chip,
+  InputAdornment,
+  IconButton,
+  Paper,
+  Stack,
+  Avatar,
+  Divider
+} from '@mui/material';
+import {
+  Search,
+  BugReport,
+  Description,
+  Lightbulb,
+  ArrowForward,
+  Help,
+  Settings,
+  Code,
+  Storage,
+  Security,
+  AccountTree,
+  Article
+} from '@mui/icons-material';
 
 const Home = () => {
+  console.log('Home component loaded - TESTING CHANGES');
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   const quickActions = [
     {
       title: 'Submit a Ticket',
       description: 'Get personalized help from our support team',
-      icon: MessageCircle,
+      icon: BugReport,
       link: '/tickets/new',
       actionText: 'Get started',
-      gradient: 'from-purple-500 to-pink-500'
+      color: 'primary'
     },
     {
       title: 'Browse Documentation',
       description: 'Step-by-step guides and tutorials',
-      icon: Book,
+      icon: Description,
       link: '/docs',
       actionText: 'Get started',
-      gradient: 'from-blue-500 to-purple-500'
+      color: 'secondary'
     },
     {
       title: 'Request a Feature',
@@ -28,15 +60,15 @@ const Home = () => {
       icon: Lightbulb,
       link: '/features',
       actionText: 'Get started',
-      gradient: 'from-orange-500 to-pink-500'
+      color: 'warning'
     },
     {
       title: 'View FAQ',
       description: 'Quick answers to common questions',
-      icon: HelpCircle,
+      icon: Help,
       link: '/faq',
       actionText: 'Get started',
-      gradient: 'from-green-500 to-blue-500'
+      color: 'success'
     }
   ];
 
@@ -48,13 +80,13 @@ const Home = () => {
 
   const enboqFeatures = [
     {
-      icon: Database,
+      icon: Storage,
       title: 'Data Management',
       description: 'Organize and manage your data efficiently with ENBOQ\'s powerful database tools',
       link: '/docs/data-management'
     },
     {
-      icon: Workflow,
+      icon: AccountTree,
       title: 'Workflow Automation',
       description: 'Streamline your processes with automated workflows and custom triggers',
       link: '/docs/workflows'
@@ -66,7 +98,7 @@ const Home = () => {
       link: '/docs/api'
     },
     {
-      icon: Shield,
+      icon: Security,
       title: 'Security & Permissions',
       description: 'Control access and secure your data with advanced permission settings',
       link: '/docs/security'
@@ -119,302 +151,425 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section with Modern Gradient */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-          <div className="absolute top-40 right-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-8 left-40 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-        </div>
-        
-        <div className="relative container py-24 md:py-32">
-          <div className="text-center max-w-5xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mb-8 leading-tight">
+    <Box>
+      {/* Hero Section */}
+      <Box
+        sx={{
+          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+          py: { xs: 8, md: 12 },
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <Container maxWidth="lg">
+          <Box textAlign="center" maxWidth="800px" mx="auto">
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: '2.5rem', md: '4rem' },
+                fontWeight: 'bold',
+                background: 'linear-gradient(45deg, #1976d2, #dc004e)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 3
+              }}
+            >
               Master ENBOQ with ease
-            </h1>
+            </Typography>
             
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
+            <Typography
+              variant="h5"
+              color="text.secondary"
+              sx={{ mb: 6, lineHeight: 1.6 }}
+            >
               Find guides, tutorials, and documentation to help you get the most out of ENBOQ's powerful features
-            </p>
+            </Typography>
             
-            {/* Modern Search Bar */}
-            <div className="max-w-3xl mx-auto mb-12">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
-                <div className="relative bg-white rounded-2xl p-2 shadow-2xl border border-gray-200">
-                  <form onSubmit={handleSearch} className="flex items-center">
-                    <Search className="w-6 h-6 text-gray-400 ml-4" />
-                    <input
-                      type="text"
-                      placeholder="Search ENBOQ docs... Try 'How do I create a workflow?'"
-                      className="modern-search-input"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                    />
-                    <button 
-                      type="submit"
-                      className="modern-search-button"
-                      disabled={!searchTerm.trim()}
-                    >
-                      Search
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
+            {/* Search Bar */}
+            <Paper
+              elevation={3}
+              sx={{
+                p: 1,
+                mb: 6,
+                borderRadius: 3,
+                maxWidth: 600,
+                mx: 'auto'
+              }}
+            >
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search ENBOQ docs... Try 'How do I create a workflow?'"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyPress={handleKeyPress}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Button
+                        variant="contained"
+                        onClick={handleSearch}
+                        disabled={!searchTerm.trim()}
+                        sx={{ borderRadius: 2 }}
+                      >
+                        Search
+                      </Button>
+                    </InputAdornment>
+                  ),
+                  sx: { '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }
+                }}
+              />
+            </Paper>
 
             {/* Popular Topics */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-lg">
-              <span className="text-gray-600 font-semibold text-xl">Popular topics:</span>
-              {['Data Management', 'API Integration', 'Workflow Setup', 'User Permissions'].map((topic, index) => (
-                <Link
-                  key={index}
-                  to="/docs"
-                  className="group bg-white backdrop-blur-sm rounded-2xl border-2 border-purple-200/80 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-300/40 transition-all duration-300 text-gray-800 hover:text-purple-700 font-semibold text-lg transform hover:-translate-y-1 hover:scale-105"
-                  style={{ padding: '5px 10px' }}
+            <Box>
+              <Typography variant="h6" sx={{ mb: 2, color: 'text.secondary' }}>
+                Popular topics:
+              </Typography>
+              <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
+                {['Data Management', 'API Integration', 'Workflow Setup', 'User Permissions'].map((topic) => (
+                  <Chip
+                    key={topic}
+                    label={topic}
+                    component={Link}
+                    to="/docs"
+                    clickable
+                    variant="outlined"
+                    sx={{
+                      borderRadius: 3,
+                      '&:hover': {
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                        transform: 'translateY(-2px)'
+                      },
+                      transition: 'all 0.3s ease'
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+          </Box>
+        </Container>
+      </Box>
+
+      {/* Quick Actions */}
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Box textAlign="center" mb={6}>
+          <Typography variant="h2" gutterBottom>
+            What would you like to do?
+          </Typography>
+          <Typography variant="h6" color="text.secondary">
+            Choose your path to getting the help you need
+          </Typography>
+        </Box>
+
+        <Grid container spacing={3}>
+          {quickActions.map((action, index) => {
+            const Icon = action.icon;
+            return (
+                <Grid item xs={6} sm={3} md={3} lg={3} key={index}>                <Card
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: 6
+                    }
+                  }}
                 >
-                  <span className="flex items-center whitespace-nowrap">
-                    {topic}
-                    <div className="ml-4 w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100"></div>
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+                  <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
+                    <Avatar
+                      sx={{
+                        width: 64,
+                        height: 64,
+                        mx: 'auto',
+                        mb: 2,
+                        bgcolor: `${action.color}.main`
+                      }}
+                    >
+                      <Icon sx={{ fontSize: 32 }} />
+                    </Avatar>
+                    <Typography variant="h5" gutterBottom>
+                      {action.title}
+                    </Typography>
+                    <Typography color="text.secondary">
+                      {action.description}
+                    </Typography>
+                  </CardContent>
+                  <CardActions sx={{ justifyContent: 'center', pb: 2 }}>
+                    <Button
+                      component={Link}
+                      to={action.link}
+                      endIcon={<ArrowForward />}
+                      color={action.color}
+                    >
+                      {action.actionText}
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Container>
 
-      {/* Quick Actions with Modern Cards */}
-      <section className="py-24 bg-white">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              What would you like to do?
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Choose your path to getting the help you need
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {quickActions.map((action, index) => {
-              const Icon = action.icon;
-              return (
-                <div key={index} className="group relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl blur opacity-0 group-hover:opacity-20 transition duration-500"></div>
-                  <div className="relative bg-white rounded-3xl p-8 border border-gray-100 hover:border-gray-200 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 h-full flex flex-col">
-                    <div className="mb-6">
-                      <div className={`w-16 h-16 bg-gradient-to-r ${action.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                        <Icon className="h-8 w-8 text-white" />
-                      </div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">
-                        {action.title}
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        {action.description}
-                      </p>
-                    </div>
-                    <div className="mt-auto">
-                      <Link
-                        to={action.link}
-                        className="inline-flex items-center text-purple-600 hover:text-pink-600 font-semibold group-hover:translate-x-2 transition-all duration-300"
-                      >
-                        <span>{action.actionText}</span>
-                        <ArrowRight className="h-5 w-5 ml-2" />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ENBOQ Features Section */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-white">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+      {/* ENBOQ Features */}
+      <Box sx={{ bgcolor: 'background.default', py: 8 }}>
+        <Container maxWidth="lg">
+          <Box textAlign="center" mb={6}>
+            <Typography variant="h2" gutterBottom>
               Discover ENBOQ Features
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            </Typography>
+            <Typography variant="h6" color="text.secondary">
               Explore the powerful capabilities that make ENBOQ the perfect solution for your business needs
-            </p>
-          </div>
+            </Typography>
+          </Box>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <Grid container spacing={3} mb={4}>
             {enboqFeatures.map((feature, index) => {
               const Icon = feature.icon;
               return (
-                <div key={index} className="group">
-                  <div className="bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                    <div className="flex items-start space-x-6">
-                      <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <Icon className="w-8 h-8 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">
-                          {feature.title}
-                        </h3>
-                        <p className="text-gray-600 mb-6 leading-relaxed">
-                          {feature.description}
-                        </p>
-                        <Link
-                          to={feature.link}
-                          className="inline-flex items-center text-purple-600 hover:text-pink-600 font-semibold group-hover:translate-x-2 transition-all duration-300"
-                        >
-                          Learn more
-                          <ArrowRight className="h-5 w-5 ml-2" />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <Grid item xs={6} sm={3} md={3} lg={3} key={index}>
+                  <Card
+                    sx={{
+                      height: '100%',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: 4
+                      }
+                    }}
+                  >
+                    <CardContent sx={{ textAlign: 'center' }}>
+                      <Avatar
+                        sx={{
+                          width: 48,
+                          height: 48,
+                          mx: 'auto',
+                          mb: 2,
+                          bgcolor: 'primary.main'
+                        }}
+                      >
+                        <Icon sx={{ fontSize: 24 }} />
+                      </Avatar>
+                      <Typography variant="h6" gutterBottom>
+                        {feature.title}
+                      </Typography>
+                      <Typography color="text.secondary" sx={{ mb: 2, fontSize: '0.875rem' }}>
+                        {feature.description}
+                      </Typography>
+                      <Button
+                        component={Link}
+                        to={feature.link}
+                        endIcon={<ArrowForward />}
+                        color="primary"
+                        size="small"
+                      >
+                        Learn more
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Grid>
               );
             })}
-          </div>
+          </Grid>
 
-          <div className="text-center">
-            <Link 
-              to="/docs" 
-              className="modern-cta-button"
+          <Box textAlign="center">
+            <Button
+              component={Link}
+              to="/docs"
+              variant="contained"
+              size="large"
+              endIcon={<ArrowForward />}
+              sx={{ borderRadius: 3 }}
             >
               View All Features
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Link>
-          </div>
-        </div>
-      </section>
+            </Button>
+          </Box>
+        </Container>
+      </Box>
 
-      {/* How-to Guides Section */}
-      <section className="py-24 bg-white">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Step-by-Step Guides
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Learn how to make the most of ENBOQ with our comprehensive tutorials and guides
-            </p>
-          </div>
+      {/* How-to Guides */}
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Box textAlign="center" mb={6}>
+          <Typography variant="h2" gutterBottom>
+            Step-by-Step Guides
+          </Typography>
+          <Typography variant="h6" color="text.secondary">
+            Learn how to make the most of ENBOQ with our comprehensive tutorials and guides
+          </Typography>
+        </Box>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            {howToGuides.map((guide, index) => (
-              <div key={index} className="group">
-                <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                  <div className="flex items-start justify-between mb-4">
-                    <span className="px-3 py-1 text-sm font-medium rounded-full" style={{ backgroundColor: 'rgba(255, 142, 0, 0.1)', color: '#FF8E00' }}>
-                      {guide.category}
-                    </span>
-                    <span className="text-sm text-gray-500">{guide.readTime}</span>
-                  </div>
+        <Grid container spacing={3} mb={6}>
+          {howToGuides.map((guide, index) => (
+            <Grid item xs={6} sm={3} md={3} lg={3} key={index}>
+              <Card
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: 4
+                  }
+                }}
+              >
+                <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Chip label={guide.category} color="warning" size="small" />
+                    <Typography variant="caption" color="text.secondary">
+                      {guide.readTime}
+                    </Typography>
+                  </Box>
                   
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">
+                  <Typography variant="h6" gutterBottom>
                     {guide.title}
-                  </h3>
+                  </Typography>
                   
-                  <p className="text-gray-600 mb-6 leading-relaxed">
+                  <Typography color="text.secondary" sx={{ mb: 2, flexGrow: 1, fontSize: '0.875rem' }}>
                     {guide.description}
-                  </p>
+                  </Typography>
                   
-                  <Link
+                  <Button
+                    component={Link}
                     to={guide.link}
-                    className="inline-flex items-center text-purple-600 hover:text-pink-600 font-semibold group-hover:translate-x-2 transition-all duration-300"
+                    endIcon={<ArrowForward />}
+                    color="primary"
+                    size="small"
+                    sx={{ alignSelf: 'flex-start' }}
                   >
                     Read guide
-                    <ArrowRight className="h-5 w-5 ml-2" />
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border border-purple-100">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Popular Topics</h3>
-              <div className="space-y-4">
+        <Grid container spacing={6} alignItems="center">
+          <Grid item xs={12} lg={6}>
+            <Paper
+              sx={{
+                p: 4,
+                background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                borderRadius: 3
+              }}
+            >
+              <Typography variant="h4" gutterBottom>
+                Popular Topics
+              </Typography>
+              <Stack spacing={2}>
                 {popularTopics.concat(['Data Import & Export', 'Custom Field Configuration', 'Reporting & Analytics']).map((topic, index) => (
-                  <Link
+                  <Paper
                     key={index}
+                    component={Link}
                     to="/docs"
-                    className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-sm rounded-xl hover:bg-white/80 transition-all group"
+                    sx={{
+                      p: 2,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        backgroundColor: 'primary.light',
+                        color: 'white'
+                      }
+                    }}
                   >
-                    <span className="font-medium text-gray-700">{topic}</span>
-                    <ArrowRight className="h-5 w-5 text-purple-600 group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                    <Typography fontWeight="medium">{topic}</Typography>
+                    <ArrowForward />
+                  </Paper>
                 ))}
-              </div>
-            </div>
+              </Stack>
+            </Paper>
+          </Grid>
 
-            <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Comprehensive Documentation</h3>
-                  <p className="text-gray-600">Detailed guides covering every aspect of ENBOQ functionality</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl flex items-center justify-center">
-                  <Settings className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Configuration Examples</h3>
-                  <p className="text-gray-600">Real-world examples and best practices for setup and configuration</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-orange-500 to-pink-500 rounded-xl flex items-center justify-center">
-                  <Code className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Code Samples</h3>
-                  <p className="text-gray-600">Ready-to-use code snippets and integration examples</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+          <Grid item xs={12} lg={6}>
+            <Stack spacing={4}>
+              {[
+                { icon: Article, title: 'Comprehensive Documentation', desc: 'Detailed guides covering every aspect of ENBOQ functionality' },
+                { icon: Settings, title: 'Configuration Examples', desc: 'Real-world examples and best practices for setup and configuration' },
+                { icon: Code, title: 'Code Samples', desc: 'Ready-to-use code snippets and integration examples' }
+              ].map((item, index) => (
+                <Box key={index} display="flex" alignItems="flex-start" gap={2}>
+                  <Avatar sx={{ bgcolor: 'primary.main' }}>
+                    <item.icon />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="h6" gutterBottom>
+                      {item.title}
+                    </Typography>
+                    <Typography color="text.secondary">
+                      {item.desc}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Stack>
+          </Grid>
+        </Grid>
+      </Container>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative container text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
+      <Box
+        sx={{
+          background: 'linear-gradient(45deg, #1976d2, #dc004e)',
+          color: 'white',
+          py: 8,
+          textAlign: 'center'
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography variant="h2" gutterBottom>
             Need personalized help?
-          </h2>
-          <p className="text-xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
+          </Typography>
+          <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
             Can't find the answer in our documentation? Get direct support from our ENBOQ experts 
             who can help with your specific use case.
-          </p>
+          </Typography>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Link 
-              to="/tickets/new" 
-              className="modern-primary-button"
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center">
+            <Button
+              component={Link}
+              to="/tickets/new"
+              variant="contained"
+              size="large"
+              endIcon={<ArrowForward />}
+              sx={{
+                bgcolor: 'white',
+                color: 'primary.main',
+                '&:hover': { bgcolor: 'grey.100' }
+              }}
             >
               Submit Support Ticket
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Link>
-            <a 
-              href="mailto:support@enboq.com" 
-              className="modern-secondary-button"
+            </Button>
+            <Button
+              href="mailto:support@enboq.com"
+              variant="outlined"
+              size="large"
+              sx={{
+                borderColor: 'white',
+                color: 'white',
+                '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' }
+              }}
             >
               Email Support Team
-            </a>
-          </div>
-        </div>
-      </section>
-    </div>
+            </Button>
+          </Stack>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 

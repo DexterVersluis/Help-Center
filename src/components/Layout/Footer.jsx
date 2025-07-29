@@ -1,52 +1,112 @@
 import { Link } from 'react-router-dom';
+import { Box, Container, Grid, Typography, Link as MuiLink, Divider } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 const Footer = () => {
+  const theme = useTheme();
+  
   return (
-    <footer className="bg-text-primary text-white mt-32">
-      <div className="container py-20">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
-          <div>
-            <div className="text-white font-bold text-3xl mb-6">ENBOQ</div>
-            <p className="text-gray-300 leading-relaxed text-lg">
+    <Box
+      component="footer"
+      sx={{
+        bgcolor: 'primary.dark',
+        color: 'white',
+        mt: 8,
+        py: 6
+      }}
+    >
+      <Container maxWidth="lg">
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={3}>
+            <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', mb: 2 }}>
+              ENBOQ
+            </Typography>
+            <Typography variant="body1" sx={{ color: 'grey.300', lineHeight: 1.6 }}>
               Get the support you need, when you need it.
-            </p>
-          </div>
+            </Typography>
+          </Grid>
           
-          <div>
-            <h3 className="font-semibold text-white mb-8 text-xl">Support</h3>
-            <ul className="space-y-4">
-              <li><Link to="/docs" className="text-gray-300 hover:text-white transition-colors text-lg">Documentation</Link></li>
-              <li><Link to="/faq" className="text-gray-300 hover:text-white transition-colors text-lg">FAQ</Link></li>
-              <li><Link to="/tickets/new" className="text-gray-300 hover:text-white transition-colors text-lg">Submit Ticket</Link></li>
-            </ul>
-          </div>
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h6" sx={{ fontWeight: 'semibold', mb: 2 }}>
+              Support
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <MuiLink
+                component={Link}
+                to="/docs"
+                sx={{ color: 'grey.300', textDecoration: 'none', '&:hover': { color: 'white' } }}
+              >
+                Documentation
+              </MuiLink>
+              <MuiLink
+                component={Link}
+                to="/faq"
+                sx={{ color: 'grey.300', textDecoration: 'none', '&:hover': { color: 'white' } }}
+              >
+                FAQ
+              </MuiLink>
+              <MuiLink
+                component={Link}
+                to="/tickets/new"
+                sx={{ color: 'grey.300', textDecoration: 'none', '&:hover': { color: 'white' } }}
+              >
+                Submit Ticket
+              </MuiLink>
+            </Box>
+          </Grid>
           
-          <div>
-            <h3 className="font-semibold text-white mb-8 text-xl">Community</h3>
-            <ul className="space-y-4">
-              <li><Link to="/features" className="text-gray-300 hover:text-white transition-colors text-lg">Feature Requests</Link></li>
-              <li><Link to="/tickets" className="text-gray-300 hover:text-white transition-colors text-lg">My Tickets</Link></li>
-            </ul>
-          </div>
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h6" sx={{ fontWeight: 'semibold', mb: 2 }}>
+              Community
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <MuiLink
+                component={Link}
+                to="/features"
+                sx={{ color: 'grey.300', textDecoration: 'none', '&:hover': { color: 'white' } }}
+              >
+                Feature Requests
+              </MuiLink>
+              <MuiLink
+                component={Link}
+                to="/tickets"
+                sx={{ color: 'grey.300', textDecoration: 'none', '&:hover': { color: 'white' } }}
+              >
+                My Tickets
+              </MuiLink>
+            </Box>
+          </Grid>
           
-          <div>
-            <h3 className="font-semibold text-white mb-8 text-xl">Contact</h3>
-            <p className="text-gray-300 leading-relaxed text-lg">
-              Need immediate help?<br />
-              <a href="mailto:support@enboq.com" className="text-orange hover:text-pink transition-colors font-medium">
-                support@enboq.com
-              </a>
-            </p>
-          </div>
-        </div>
+          <Grid item xs={12} md={3}>
+            <Typography variant="h6" sx={{ fontWeight: 'semibold', mb: 2 }}>
+              Contact
+            </Typography>
+            <Typography variant="body1" sx={{ color: 'grey.300', lineHeight: 1.6 }}>
+              Need immediate help?
+            </Typography>
+            <MuiLink
+              href="mailto:support@enboq.com"
+              sx={{
+                color: theme.palette.secondary.main,
+                textDecoration: 'none',
+                fontWeight: 'medium',
+                '&:hover': { color: theme.palette.secondary.light }
+              }}
+            >
+              support@enboq.com
+            </MuiLink>
+          </Grid>
+        </Grid>
         
-        <div className="border-t border-gray-700 mt-16 pt-10 text-center">
-          <p className="text-gray-400 text-lg">
+        <Divider sx={{ my: 4, borderColor: 'grey.700' }} />
+        
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant="body1" sx={{ color: 'grey.400' }}>
             © 2024 ENBOQ. All rights reserved.
-          </p>
-        </div>
-      </div>
-    </footer>
+          </Typography>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

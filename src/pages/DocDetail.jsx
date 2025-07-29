@@ -1,6 +1,43 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Play, Clock, Calendar, CheckCircle, Circle, ThumbsUp, ThumbsDown } from 'lucide-react';
+import {
+  Box,
+  Container,
+  Typography,
+  Paper,
+  Stepper,
+  Step,
+  StepLabel,
+  StepContent,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Stack,
+  Rating,
+  Divider,
+  Alert,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  Breadcrumbs
+} from '@mui/material';
+import {
+  ArrowBack,
+  PlayArrow,
+  AccessTime,
+  CalendarToday,
+  CheckCircle,
+  ThumbUp,
+  ThumbDown,
+  Lightbulb,
+  Help,
+  BugReport,
+  Email,
+  Visibility
+} from '@mui/icons-material';
 
 const DocDetail = () => {
   const { id } = useParams();
@@ -78,11 +115,11 @@ const DocDetail = () => {
 
   const getDifficultyColor = (difficulty) => {
     const colors = {
-      'Beginner': 'text-green bg-green bg-opacity-10',
-      'Intermediate': 'text-orange bg-orange bg-opacity-10',
-      'Advanced': 'text-pink bg-pink bg-opacity-10'
+      'Beginner': 'success',
+      'Intermediate': 'warning',
+      'Advanced': 'error'
     };
-    return colors[difficulty] || 'text-gray-text bg-gray-100';
+    return colors[difficulty] || 'default';
   };
 
   const formatDate = (dateString) => {
@@ -99,190 +136,279 @@ const DocDetail = () => {
 
   if (!doc) {
     return (
-      <div className="container py-8">
-        <div className="card text-center py-12">
-          <h2>Documentation Not Found</h2>
-          <p className="text-gray-text mb-4">
+      <Container maxWidth="md" sx={{ py: 8 }}>
+        <Paper sx={{ p: 8, textAlign: 'center' }}>
+          <Typography variant="h4" gutterBottom>
+            Documentation Not Found
+          </Typography>
+          <Typography color="text.secondary" paragraph>
             The documentation you're looking for doesn't exist.
-          </p>
-          <Link to="/docs" className="btn btn-primary">
+          </Typography>
+          <Button
+            component={Link}
+            to="/docs"
+            variant="contained"
+            startIcon={<ArrowBack />}
+          >
             Back to Documentation
-          </Link>
-        </div>
-      </div>
+          </Button>
+        </Paper>
+      </Container>
     );
   }
 
-
-
   return (
-    <div className="container py-8">
-      <div className="mb-6">
-        <Link 
-          to="/docs" 
-          className="flex items-center space-x-2 text-purple hover:text-pink mb-4"
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      {/* Breadcrumbs */}
+      <Breadcrumbs sx={{ mb: 4 }}>
+        <Button
+          component={Link}
+          to="/docs"
+          startIcon={<ArrowBack />}
+          color="primary"
         >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back to Documentation</span>
-        </Link>
-      </div>
+          Documentation
+        </Button>
+        <Typography color="text.primary">{doc.title}</Typography>
+      </Breadcrumbs>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <div className="lg:col-span-3">
-          <div className="card mb-6">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold text-purple mb-2">
+      <Box display="flex" gap={4}>
+        <Box flex={1}>
+          {/* Header */}
+          <Paper sx={{ p: 4, mb: 4 }}>
+            <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={3}>
+              <Box flex={1}>
+                <Typography variant="h3" component="h1" gutterBottom color="primary">
                   {doc.title}
-                </h1>
-                <p className="text-gray-text text-lg mb-4">
+                </Typography>
+                <Typography variant="h6" color="text.secondary" paragraph>
                   {doc.description}
-                </p>
-                <div className="flex items-center space-x-1 text-sm text-gray-text">
-                  <Clock className="h-4 w-4" />
-                  <span>{doc.readTime}</span>
-                </div>
-              </div>
-              <div className="flex items-center space-x-1 text-sm text-gray-text">
-                <Calendar className="h-4 w-4" />
-                <span>Last updated {formatDate(doc.lastUpdated)}</span>
-              </div>
-            </div>
-
-            {doc.hasVideo && (
-              <div className="mb-8">
-                <div className="flex items-center space-x-2 mb-4">
-                  <Play className="h-5 w-5 text-pink" />
-                  <h3>Video Tutorial</h3>
-                </div>
-                <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                  <iframe
-                    src={doc.videoUrl}
-                    title={doc.title}
-                    className="w-full h-full"
-                    frameBorder="0"
-                    allowFullScreen
+                </Typography>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Chip
+                    icon={<AccessTime />}
+                    label={doc.readTime}
+                    variant="outlined"
                   />
-                </div>
-              </div>
-            )}
+                  <Chip
+                    label={doc.difficulty}
+                    color={getDifficultyColor(doc.difficulty)}
+                  />
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Rating value={doc.rating} precision={0.1} size="small" readOnly />
+                    <Typography variant="body2">({doc.rating})</Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" gap={0.5}>
+                    <Visibility fontSize="small" />
+                    <Typography variant="body2">{doc.views} views</Typography>
+                  </Box>
+                </Stack>
+              </Box>
+              <Box display="flex" alignItems="center" gap={1}>
+                <CalendarToday fontSize="small" />
+                <Typography variant="body2" color="text.secondary">
+                  Updated {formatDate(doc.lastUpdated)}
+                </Typography>
+              </Box>
+            </Box>
+          </Paper>
 
-            <div className="space-y-6">
-              <h3>Step-by-Step Guide</h3>
+          {/* Video Tutorial */}
+          {doc.hasVideo && (
+            <Paper sx={{ p: 4, mb: 4 }}>
+              <Box display="flex" alignItems="center" gap={1} mb={2}>
+                <PlayArrow color="secondary" />
+                <Typography variant="h5">Video Tutorial</Typography>
+              </Box>
+              <Box
+                sx={{
+                  position: 'relative',
+                  paddingBottom: '56.25%',
+                  height: 0,
+                  overflow: 'hidden',
+                  borderRadius: 2,
+                  bgcolor: 'grey.100'
+                }}
+              >
+                <iframe
+                  src={doc.videoUrl}
+                  title={doc.title}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    border: 'none'
+                  }}
+                  allowFullScreen
+                />
+              </Box>
+            </Paper>
+          )}
+
+          {/* Step-by-Step Guide */}
+          <Paper sx={{ p: 4, mb: 4 }}>
+            <Typography variant="h5" gutterBottom>
+              Step-by-Step Guide
+            </Typography>
+            <Stepper orientation="vertical">
               {doc.steps.map((step, index) => (
-                <div key={step.id} className="border border-light-purple rounded-lg overflow-hidden">
-                  <div className="bg-light-purple p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-purple">
-                          Step {index + 1}: {step.title}
-                        </h4>
-                      </div>
-                      <div className="text-sm text-purple font-semibold">
-                        {index + 1} of {doc.steps.length}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4">
-                    <p className="text-gray-text mb-4 leading-relaxed">
+                <Step key={step.id} active={true} completed={false}>
+                  <StepLabel>
+                    <Typography variant="h6">
+                      {step.title}
+                    </Typography>
+                  </StepLabel>
+                  <StepContent>
+                    <Typography paragraph sx={{ mb: 3 }}>
                       {step.content}
-                    </p>
+                    </Typography>
                     
                     {step.tips && step.tips.length > 0 && (
-                      <div className="bg-gradient-to-r from-light-purple to-light-pink p-4 rounded-lg">
-                        <h5 className="font-semibold text-purple mb-2">💡 Pro Tips:</h5>
-                        <ul className="space-y-1">
+                      <Alert
+                        icon={<Lightbulb />}
+                        severity="info"
+                        sx={{ mb: 2 }}
+                      >
+                        <Typography variant="subtitle2" gutterBottom>
+                          Pro Tips:
+                        </Typography>
+                        <List dense>
                           {step.tips.map((tip, tipIndex) => (
-                            <li key={tipIndex} className="text-sm text-gray-text">
-                              • {tip}
-                            </li>
+                            <ListItem key={tipIndex} sx={{ py: 0 }}>
+                              <ListItemIcon sx={{ minWidth: 20 }}>
+                                <CheckCircle fontSize="small" color="success" />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={tip}
+                                primaryTypographyProps={{ variant: 'body2' }}
+                              />
+                            </ListItem>
                           ))}
-                        </ul>
-                      </div>
+                        </List>
+                      </Alert>
                     )}
-                  </div>
-                </div>
+                  </StepContent>
+                </Step>
               ))}
-            </div>
+            </Stepper>
+          </Paper>
 
-            <div className="card mt-8 gradient-bg">
-              <h3>Was this helpful?</h3>
-              <p className="text-gray-text mb-4">
-                Let us know if this documentation helped you accomplish your goal.
-              </p>
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => handleFeedback(true)}
-                  className={`btn flex items-center space-x-2 ${
-                    isHelpful === true ? 'btn-primary' : 'btn-secondary'
-                  }`}
-                >
-                  <ThumbsUp className="h-4 w-4" />
-                  <span>Yes, helpful</span>
-                </button>
-                <button
-                  onClick={() => handleFeedback(false)}
-                  className={`btn flex items-center space-x-2 ${
-                    isHelpful === false ? 'btn-primary' : 'btn-secondary'
-                  }`}
-                >
-                  <ThumbsDown className="h-4 w-4" />
-                  <span>Needs improvement</span>
-                </button>
-              </div>
-              {isHelpful !== null && (
-                <div className="mt-4 p-3 bg-white bg-opacity-50 rounded-lg">
-                  <p className="text-sm text-purple font-semibold">
-                    {isHelpful 
-                      ? "Thanks for your feedback! 🎉" 
-                      : "Thanks for your feedback. We'll work on improving this guide."
-                    }
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="card">
-            <h3>Related Documentation</h3>
-            <div className="space-y-3">
-              {doc.relatedDocs.map((relatedDoc) => (
-                <Link
-                  key={relatedDoc.id}
-                  to={`/docs/${relatedDoc.id}`}
-                  className="block p-3 rounded-lg hover:bg-light-purple transition-colors"
-                >
-                  <h4 className="font-semibold text-purple text-sm">
-                    {relatedDoc.title}
-                  </h4>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="card">
-            <h3>Need More Help?</h3>
-            <div className="space-y-2">
-              <Link to="/faq" className="block text-orange hover:text-pink text-sm">
-                → Check FAQ
-              </Link>
-              <Link to="/tickets/new" className="block text-orange hover:text-pink text-sm">
-                → Submit Support Ticket
-              </Link>
-              <a 
-                href="mailto:support@enboq.com" 
-                className="block text-orange hover:text-pink text-sm"
+          {/* Feedback */}
+          <Paper sx={{ p: 4 }}>
+            <Typography variant="h6" gutterBottom>
+              Was this helpful?
+            </Typography>
+            <Typography color="text.secondary" paragraph>
+              Let us know if this documentation helped you accomplish your goal.
+            </Typography>
+            <Stack direction="row" spacing={2} mb={2}>
+              <Button
+                variant={isHelpful === true ? 'contained' : 'outlined'}
+                startIcon={<ThumbUp />}
+                onClick={() => handleFeedback(true)}
+                color="success"
               >
-                → Email Support
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                Yes, helpful
+              </Button>
+              <Button
+                variant={isHelpful === false ? 'contained' : 'outlined'}
+                startIcon={<ThumbDown />}
+                onClick={() => handleFeedback(false)}
+                color="error"
+              >
+                Needs improvement
+              </Button>
+            </Stack>
+            {isHelpful !== null && (
+              <Alert severity={isHelpful ? 'success' : 'info'}>
+                {isHelpful 
+                  ? "Thanks for your feedback! 🎉" 
+                  : "Thanks for your feedback. We'll work on improving this guide."
+                }
+              </Alert>
+            )}
+          </Paper>
+        </Box>
+
+        {/* Sidebar */}
+        <Box sx={{ width: 300, flexShrink: 0 }}>
+          <Stack spacing={3}>
+            {/* Related Documentation */}
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Related Documentation
+                </Typography>
+                <Stack spacing={1}>
+                  {doc.relatedDocs.map((relatedDoc) => (
+                    <Paper
+                      key={relatedDoc.id}
+                      component={Link}
+                      to={`/docs/${relatedDoc.id}`}
+                      sx={{
+                        p: 2,
+                        textDecoration: 'none',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          backgroundColor: 'primary.light',
+                          color: 'white'
+                        }
+                      }}
+                    >
+                      <Typography variant="body2" fontWeight="medium">
+                        {relatedDoc.title}
+                      </Typography>
+                    </Paper>
+                  ))}
+                </Stack>
+              </CardContent>
+            </Card>
+
+            {/* Need More Help */}
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Need More Help?
+                </Typography>
+                <Stack spacing={1}>
+                  {[
+                    { label: 'Check FAQ', to: '/faq', icon: Help },
+                    { label: 'Submit Support Ticket', to: '/tickets/new', icon: BugReport },
+                    { label: 'Email Support', to: 'mailto:support@enboq.com', icon: Email }
+                  ].map((link) => (
+                    <Paper
+                      key={link.label}
+                      component={link.to.startsWith('mailto:') ? 'a' : Link}
+                      to={link.to.startsWith('mailto:') ? undefined : link.to}
+                      href={link.to.startsWith('mailto:') ? link.to : undefined}
+                      sx={{
+                        p: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        textDecoration: 'none',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          backgroundColor: 'primary.light',
+                          color: 'white'
+                        }
+                      }}
+                    >
+                      <link.icon fontSize="small" />
+                      <Typography variant="body2">
+                        {link.label}
+                      </Typography>
+                    </Paper>
+                  ))}
+                </Stack>
+              </CardContent>
+            </Card>
+          </Stack>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 

@@ -1,6 +1,32 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Send, Lightbulb, ArrowRight } from 'lucide-react';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Button,
+  Paper,
+  Grid,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Fade,
+  Zoom
+} from '@mui/material';
+import {
+  Send as SendIcon,
+  EmojiObjects as LightbulbIcon,
+  ArrowForward as ArrowRightIcon,
+  CheckCircle as CheckCircleIcon
+} from '@mui/icons-material';
 
 const FeatureRequestForm = () => {
   const navigate = useNavigate();
@@ -69,225 +95,301 @@ const FeatureRequestForm = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section with Modern Gradient */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-          <div className="absolute top-40 right-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-8 left-40 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-        </div>
-        
-        <div className="relative container py-24 md:py-32">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="flex justify-center mb-8">
-              <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl flex items-center justify-center">
-                <Lightbulb className="h-10 w-10 text-white" />
-              </div>
-            </div>
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mb-8 leading-tight">
-              Request a New Feature
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Help us improve ENBOQ by sharing your ideas and suggestions
-            </p>
-          </div>
-        </div>
-      </section>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+      {/* Hero Section */}
+      <Box
+        sx={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          py: { xs: 6, md: 8 },
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <Container maxWidth="md">
+          <Fade in timeout={800}>
+            <Box textAlign="center">
+              <Box
+                sx={{
+                  width: 80,
+                  height: 80,
+                  background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                  borderRadius: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mx: 'auto',
+                  mb: 3
+                }}
+              >
+                <LightbulbIcon sx={{ fontSize: 40, color: 'white' }} />
+              </Box>
+              <Typography
+                variant="h3"
+                component="h1"
+                sx={{
+                  fontWeight: 800,
+                  mb: 2,
+                  fontSize: { xs: '2rem', md: '3rem' }
+                }}
+              >
+                Request a New Feature
+              </Typography>
+              <Typography variant="h6" sx={{ opacity: 0.9, maxWidth: '500px', mx: 'auto' }}>
+                Help us improve ENBOQ by sharing your ideas and suggestions
+              </Typography>
+            </Box>
+          </Fade>
+        </Container>
+      </Box>
 
       {/* Form Section */}
-      <section className="py-24 bg-white">
-        <div className="container">
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-xl">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-lg font-semibold text-gray-900" htmlFor="email">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
+      <Container maxWidth="md" sx={{ py: 6 }}>
+        <Zoom in timeout={600}>
+          <Paper
+            elevation={8}
+            sx={{
+              p: 4,
+              borderRadius: 4,
+              background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+              mb: 4
+            }}
+          >
+            <form onSubmit={handleSubmit}>
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Email Address"
                     name="email"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-lg"
+                    type="email"
                     value={formData.email}
                     onChange={handleInputChange}
                     required
                     placeholder="your.email@example.com"
+                    variant="outlined"
+                    helperText="We'll use this to follow up on your request and notify you of updates"
+                    sx={{}}
                   />
-                  <p className="text-sm text-gray-500">
-                    We'll use this to follow up on your request and notify you of updates
-                  </p>
-                </div>
+                </Grid>
 
-                <div className="space-y-2">
-                  <label className="text-lg font-semibold text-gray-900" htmlFor="title">
-                    Feature Title *
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Feature Title"
                     name="title"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-lg"
                     value={formData.title}
                     onChange={handleInputChange}
                     required
                     placeholder="Brief, descriptive title for your feature request"
+                    variant="outlined"
+                    sx={{}}
                   />
-                </div>
+                </Grid>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-lg font-semibold text-gray-900" htmlFor="category">
-                      Category *
-                    </label>
-                    <select
-                      id="category"
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth required>
+                    <InputLabel>Category</InputLabel>
+                    <Select
                       name="category"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-lg"
                       value={formData.category}
+                      label="Category"
                       onChange={handleInputChange}
-                      required
+                      sx={{}}
                     >
-                      <option value="">Select a category</option>
                       {categories.map(category => (
-                        <option key={category} value={category}>
+                        <MenuItem key={category} value={category}>
                           {category}
-                        </option>
+                        </MenuItem>
                       ))}
-                    </select>
-                  </div>
+                    </Select>
+                  </FormControl>
+                </Grid>
 
-                  <div className="space-y-2">
-                    <label className="text-lg font-semibold text-gray-900" htmlFor="priority">
-                      Priority Level *
-                    </label>
-                    <select
-                      id="priority"
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth required>
+                    <InputLabel>Priority Level</InputLabel>
+                    <Select
                       name="priority"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-lg"
                       value={formData.priority}
+                      label="Priority Level"
                       onChange={handleInputChange}
-                      required
+                      sx={{}}
                     >
                       {priorities.map(priority => (
-                        <option key={priority.value} value={priority.value}>
+                        <MenuItem key={priority.value} value={priority.value}>
                           {priority.label}
-                        </option>
+                        </MenuItem>
                       ))}
-                    </select>
-                  </div>
-                </div>
+                    </Select>
+                  </FormControl>
+                </Grid>
 
-                <div className="space-y-2">
-                  <label className="text-lg font-semibold text-gray-900" htmlFor="description">
-                    Detailed Description *
-                  </label>
-                  <textarea
-                    id="description"
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Detailed Description"
                     name="description"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-lg resize-none"
                     value={formData.description}
                     onChange={handleInputChange}
                     required
+                    multiline
+                    rows={6}
                     placeholder="Describe the feature you'd like to see. Be as specific as possible about what it should do and how it should work..."
-                    rows="6"
+                    variant="outlined"
+                    sx={{}}
                   />
-                </div>
+                </Grid>
 
-                <div className="space-y-2">
-                  <label className="text-lg font-semibold text-gray-900" htmlFor="useCase">
-                    Use Case & Benefits *
-                  </label>
-                  <textarea
-                    id="useCase"
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Use Case & Benefits"
                     name="useCase"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-lg resize-none"
                     value={formData.useCase}
                     onChange={handleInputChange}
                     required
+                    multiline
+                    rows={4}
                     placeholder="Explain how this feature would be used and what problems it would solve. Who would benefit from it and why is it important?"
-                    rows="4"
+                    variant="outlined"
+                    sx={{}}
                   />
-                </div>
+                </Grid>
 
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-100">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                    <Lightbulb className="h-5 w-5 text-purple-600 mr-2" />
-                    Tips for a Great Feature Request
-                  </h4>
-                  <ul className="text-gray-600 space-y-2">
-                    <li className="flex items-start">
-                      <span className="text-purple-600 mr-2">•</span>
-                      Be specific about what you want the feature to do
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-purple-600 mr-2">•</span>
-                      Explain the problem you're trying to solve
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-purple-600 mr-2">•</span>
-                      Consider how it might work with existing features
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-purple-600 mr-2">•</span>
-                      Think about who else might benefit from this feature
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="flex justify-end space-x-4 pt-6">
-                  <button
-                    type="button"
-                    onClick={() => navigate('/features')}
-                    className="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                <Grid item xs={12}>
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      p: 3,
+                      
+                      bgcolor: 'primary.50',
+                      borderColor: 'primary.200'
+                    }}
                   >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="modern-cta-button"
-                  >
-                    <Send className="h-5 w-5 mr-2" />
-                    Submit Request
-                    <ArrowRight className="h-5 w-5 ml-2" />
-                  </button>
-                </div>
-              </form>
-            </div>
+                    <Box display="flex" alignItems="center" mb={2}>
+                      <LightbulbIcon sx={{ color: 'primary.main', mr: 1 }} />
+                      <Typography variant="h6" fontWeight="bold">
+                        Tips for a Great Feature Request
+                      </Typography>
+                    </Box>
+                    <List dense>
+                      <ListItem>
+                        <ListItemIcon>
+                          <CheckCircleIcon color="primary" fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Be specific about what you want the feature to do" />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemIcon>
+                          <CheckCircleIcon color="primary" fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Explain the problem you're trying to solve" />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemIcon>
+                          <CheckCircleIcon color="primary" fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Consider how it might work with existing features" />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemIcon>
+                          <CheckCircleIcon color="primary" fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Think about who else might benefit from this feature" />
+                      </ListItem>
+                    </List>
+                  </Paper>
+                </Grid>
 
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border border-purple-100 mt-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">What happens next?</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <span className="text-white font-bold text-xl">1</span>
-                  </div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">Review</h4>
-                  <p className="text-gray-600">Our team reviews your request</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <span className="text-white font-bold text-xl">2</span>
-                  </div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">Planning</h4>
-                  <p className="text-gray-600">We evaluate and plan implementation</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <span className="text-white font-bold text-xl">3</span>
-                  </div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">Updates</h4>
-                  <p className="text-gray-600">You'll receive status updates via email</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+                <Grid item xs={12}>
+                  <Box display="flex" justifyContent="flex-end" gap={2} pt={2}>
+                    <Button
+                      variant="outlined"
+                      onClick={() => navigate('/features')}
+                      size="large"
+                      sx={{}}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      startIcon={<SendIcon />}
+                      endIcon={<ArrowRightIcon />}
+                      size="large"
+                      sx={{
+                        
+                        background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: 4
+                        }
+                      }}
+                    >
+                      Submit Request
+                    </Button>
+                  </Box>
+                </Grid>
+              </Grid>
+            </form>
+          </Paper>
+        </Zoom>
+
+        {/* Process Steps */}
+        <Fade in timeout={1000}>
+          <Paper
+            elevation={4}
+            sx={{
+              p: 4,
+              borderRadius: 4,
+              background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'
+            }}
+          >
+            <Typography variant="h5" component="h3" fontWeight="bold" textAlign="center" mb={4}>
+              What happens next?
+            </Typography>
+            <Grid container spacing={4}>
+              {[
+                { step: '1', title: 'Review', description: 'Our team reviews your request' },
+                { step: '2', title: 'Planning', description: 'We evaluate and plan implementation' },
+                { step: '3', title: 'Updates', description: 'You\'ll receive status updates via email' }
+              ].map((item, index) => (
+                <Grid item xs={12} md={4} key={index}>
+                  <Card sx={{ textAlign: 'center', height: '100%', borderRadius: 3 }}>
+                    <CardContent sx={{ p: 3 }}>
+                      <Box
+                        sx={{
+                          width: 64,
+                          height: 64,
+                          background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                          borderRadius: 3,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          mx: 'auto',
+                          mb: 2
+                        }}
+                      >
+                        <Typography variant="h4" fontWeight="bold" color="white">
+                          {item.step}
+                        </Typography>
+                      </Box>
+                      <Typography variant="h6" fontWeight="bold" gutterBottom>
+                        {item.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {item.description}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Paper>
+        </Fade>
+      </Container>
+    </Box>
   );
 };
 

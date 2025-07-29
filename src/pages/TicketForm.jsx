@@ -1,6 +1,30 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Send, Upload, X } from 'lucide-react';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Button,
+  Paper,
+  Grid,
+  Chip,
+  Alert,
+  Card,
+  CardContent,
+  Fade,
+  Zoom
+} from '@mui/material';
+import {
+  Send as SendIcon,
+  CloudUpload as UploadIcon,
+  Close as CloseIcon,
+  SupportAgent as SupportIcon
+} from '@mui/icons-material';
 
 const TicketForm = () => {
   const navigate = useNavigate();
@@ -73,179 +97,276 @@ const TicketForm = () => {
   };
 
   return (
-    <div className="container py-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <h1>Submit a Support Ticket</h1>
-          <p className="text-gray-text">
-            Tell us about your issue and we'll get back to you as soon as possible.
-          </p>
-        </div>
-
-        <div className="card">
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label className="form-label" htmlFor="email">
-                Email Address *
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="form-input"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                placeholder="your.email@example.com"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" htmlFor="title">
-                Subject *
-              </label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                className="form-input"
-                value={formData.title}
-                onChange={handleInputChange}
-                required
-                placeholder="Brief description of your issue"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="form-group">
-                <label className="form-label" htmlFor="category">
-                  Category *
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  className="form-select"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="">Select a category</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="priority">
-                  Priority *
-                </label>
-                <select
-                  id="priority"
-                  name="priority"
-                  className="form-select"
-                  value={formData.priority}
-                  onChange={handleInputChange}
-                  required
-                >
-                  {priorities.map(priority => (
-                    <option key={priority.value} value={priority.value}>
-                      {priority.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" htmlFor="description">
-                Description *
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                className="form-textarea"
-                value={formData.description}
-                onChange={handleInputChange}
-                required
-                placeholder="Please provide as much detail as possible about your issue..."
-                rows="6"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">
-                Attachments
-              </label>
-              <div className="border-2 border-dashed border-light-purple rounded-lg p-6 text-center">
-                <Upload className="mx-auto h-12 w-12 text-purple mb-4" />
-                <p className="text-gray-text mb-2">
-                  Drag and drop files here, or click to select
-                </p>
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileUpload}
-                  className="hidden"
-                  id="file-upload"
-                  accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt"
-                />
-                <label
-                  htmlFor="file-upload"
-                  className="btn btn-secondary cursor-pointer"
-                >
-                  Choose Files
-                </label>
-              </div>
-
-              {formData.attachments.length > 0 && (
-                <div className="mt-4">
-                  <h4 className="font-semibold text-purple mb-2">Attached Files:</h4>
-                  <div className="space-y-2">
-                    {formData.attachments.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between bg-light-purple p-3 rounded-lg"
-                      >
-                        <span className="text-purple font-medium">
-                          {file.name}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => removeAttachment(index)}
-                          className="text-pink hover:text-purple"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-end space-x-4">
-              <button
-                type="button"
-                onClick={() => navigate('/tickets')}
-                className="btn btn-secondary"
+    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+      {/* Hero Section */}
+      <Box
+        sx={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          py: { xs: 6, md: 8 },
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <Container maxWidth="md">
+          <Fade in timeout={800}>
+            <Box textAlign="center">
+              <Box sx={{ mb: 3 }}>
+                <SupportIcon sx={{ fontSize: 60, mb: 2 }} />
+              </Box>
+              <Typography
+                variant="h3"
+                component="h1"
+                sx={{
+                  fontWeight: 800,
+                  mb: 2,
+                  fontSize: { xs: '2rem', md: '3rem' }
+                }}
               >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="btn btn-primary flex items-center space-x-2"
-              >
-                <Send className="h-4 w-4" />
-                <span>Submit Ticket</span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+                Submit a Support Ticket
+              </Typography>
+              <Typography variant="h6" sx={{ opacity: 0.9 }}>
+                Tell us about your issue and we'll get back to you as soon as possible
+              </Typography>
+            </Box>
+          </Fade>
+        </Container>
+      </Box>
+
+      {/* Form Section */}
+      <Container maxWidth="md" sx={{ py: 6 }}>
+        <Zoom in timeout={600}>
+          <Paper
+            elevation={8}
+            sx={{
+              p: 4,
+              borderRadius: 4,
+              background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)'
+            }}
+          >
+            <form onSubmit={handleSubmit}>
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Email Address"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="your.email@example.com"
+                    variant="outlined"
+                    sx={{}}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Subject"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Brief description of your issue"
+                    variant="outlined"
+                    sx={{}}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth required>
+                    <InputLabel>Category</InputLabel>
+                    <Select
+                      name="category"
+                      value={formData.category}
+                      label="Category"
+                      onChange={handleInputChange}
+                      sx={{ 
+                        
+                        minHeight: '56px',
+                        '& .MuiSelect-select': {
+                          minHeight: '24px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          paddingTop: '16.5px',
+                          paddingBottom: '16.5px'
+                        }
+                      }}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 300,
+                            '& .MuiMenuItem-root': {
+                              minHeight: '48px',
+                              whiteSpace: 'normal',
+                              wordWrap: 'break-word',
+                              padding: '12px 16px'
+                            }
+                          }
+                        }
+                      }}
+                    >
+                      {categories.map(category => (
+                        <MenuItem key={category} value={category}>
+                          {category}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth required>
+                    <InputLabel>Priority</InputLabel>
+                    <Select
+                      name="priority"
+                      value={formData.priority}
+                      label="Priority"
+                      onChange={handleInputChange}
+                      sx={{ 
+                        
+                        minHeight: '56px',
+                        '& .MuiSelect-select': {
+                          minHeight: '24px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          paddingTop: '16.5px',
+                          paddingBottom: '16.5px'
+                        }
+                      }}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 300,
+                            '& .MuiMenuItem-root': {
+                              minHeight: '48px',
+                              padding: '12px 16px'
+                            }
+                          }
+                        }
+                      }}
+                    >
+                      {priorities.map(priority => (
+                        <MenuItem key={priority.value} value={priority.value}>
+                          {priority.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    required
+                    multiline
+                    rows={6}
+                    placeholder="Please provide as much detail as possible about your issue..."
+                    variant="outlined"
+                    sx={{}}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Typography variant="h6" gutterBottom>
+                    Attachments
+                  </Typography>
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      p: 4,
+                      textAlign: 'center',
+                      borderStyle: 'dashed',
+                      borderWidth: 2,
+                      borderColor: 'primary.main',
+                      
+                      bgcolor: 'primary.50',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        bgcolor: 'primary.100'
+                      }
+                    }}
+                    onClick={() => document.getElementById('file-upload').click()}
+                  >
+                    <UploadIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
+                    <Typography variant="body1" gutterBottom>
+                      Drag and drop files here, or click to select
+                    </Typography>
+                    <input
+                      type="file"
+                      multiple
+                      onChange={handleFileUpload}
+                      style={{ display: 'none' }}
+                      id="file-upload"
+                      accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt"
+                    />
+                    <Button variant="outlined" sx={{ mt: 1 }}>
+                      Choose Files
+                    </Button>
+                  </Paper>
+
+                  {formData.attachments.length > 0 && (
+                    <Box sx={{ mt: 3 }}>
+                      <Typography variant="subtitle1" gutterBottom fontWeight="bold">
+                        Attached Files:
+                      </Typography>
+                      <Grid container spacing={1}>
+                        {formData.attachments.map((file, index) => (
+                          <Grid item key={index}>
+                            <Chip
+                              label={file.name}
+                              onDelete={() => removeAttachment(index)}
+                              deleteIcon={<CloseIcon />}
+                              variant="outlined"
+                              color="primary"
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </Box>
+                  )}
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Box display="flex" justifyContent="flex-end" gap={2} pt={2}>
+                    <Button
+                      variant="outlined"
+                      onClick={() => navigate('/tickets')}
+                      size="large"
+                      sx={{}}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      startIcon={<SendIcon />}
+                      size="large"
+                      sx={{
+                        
+                        background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: 4
+                        }
+                      }}
+                    >
+                      Submit Ticket
+                    </Button>
+                  </Box>
+                </Grid>
+              </Grid>
+            </form>
+          </Paper>
+        </Zoom>
+      </Container>
+    </Box>
   );
 };
 

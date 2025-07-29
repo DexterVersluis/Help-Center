@@ -1,6 +1,36 @@
 import { useState, useEffect } from 'react';
 import { useParams, useLocation, Link } from 'react-router-dom';
-import { ArrowLeft, Clock, User, Tag, MessageCircle, Send } from 'lucide-react';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  Card,
+  CardContent,
+  Chip,
+  Grid,
+  Alert,
+  Divider,
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Fade,
+  Zoom
+} from '@mui/material';
+import {
+  ArrowBack as ArrowLeftIcon,
+  AccessTime as ClockIcon,
+  Person as UserIcon,
+  LocalOffer as TagIcon,
+  ChatBubbleOutline as MessageCircleIcon,
+  Send as SendIcon,
+  SupportAgent as SupportIcon,
+  AttachFile as AttachFileIcon
+} from '@mui/icons-material';
 
 const TicketDetail = () => {
   const { id } = useParams();
@@ -18,24 +48,24 @@ const TicketDetail = () => {
     setComments(savedComments);
   }, [id]);
 
-  const getStatusBadgeClass = (status) => {
-    const classes = {
-      'open': 'status-open',
-      'in-progress': 'status-in-progress',
-      'resolved': 'status-completed',
-      'closed': 'status-closed'
+  const getStatusChipProps = (status) => {
+    const statusMap = {
+      'open': { color: 'primary', variant: 'filled' },
+      'in-progress': { color: 'warning', variant: 'filled' },
+      'resolved': { color: 'success', variant: 'filled' },
+      'closed': { color: 'default', variant: 'outlined' }
     };
-    return `status-badge ${classes[status] || 'status-open'}`;
+    return statusMap[status] || { color: 'primary', variant: 'filled' };
   };
 
-  const getPriorityColor = (priority) => {
-    const colors = {
-      'low': 'text-green',
-      'medium': 'text-orange',
-      'high': 'text-pink',
-      'urgent': 'text-purple'
+  const getPriorityChipProps = (priority) => {
+    const priorityMap = {
+      'low': { color: 'success', variant: 'outlined' },
+      'medium': { color: 'warning', variant: 'filled' },
+      'high': { color: 'error', variant: 'filled' },
+      'urgent': { color: 'error', variant: 'filled', sx: { fontWeight: 'bold' } }
     };
-    return colors[priority] || 'text-gray-text';
+    return priorityMap[priority] || { color: 'default', variant: 'outlined' };
   };
 
   const formatDate = (dateString) => {
@@ -74,206 +104,285 @@ const TicketDetail = () => {
 
   if (!ticket) {
     return (
-      <div className="container py-8">
-        <div className="card text-center py-12">
-          <h2>Ticket Not Found</h2>
-          <p className="text-gray-text mb-4">
+      <Container maxWidth="md" sx={{ py: 8 }}>
+        <Paper elevation={4} sx={{ p: 8, textAlign: 'center', borderRadius: 4 }}>
+          <Typography variant="h4" gutterBottom>
+            Ticket Not Found
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
             The ticket you're looking for doesn't exist or has been removed.
-          </p>
-          <Link to="/tickets" className="btn btn-primary">
+          </Typography>
+          <Button
+            component={Link}
+            to="/tickets"
+            variant="contained"
+            size="large"
+            sx={{ borderRadius: 2 }}
+          >
             Back to Tickets
-          </Link>
-        </div>
-      </div>
+          </Button>
+        </Paper>
+      </Container>
     );
   }
 
   return (
-    <div className="container py-8">
-      <div className="mb-6">
-        <Link 
-          to="/tickets" 
-          className="flex items-center space-x-2 text-purple hover:text-pink mb-4"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back to Tickets</span>
-        </Link>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Box sx={{ mb: 4 }}>
+          <Button
+            component={Link}
+            to="/tickets"
+            startIcon={<ArrowLeftIcon />}
+            sx={{ mb: 2, color: 'primary.main' }}
+          >
+            Back to Tickets
+          </Button>
 
-        {location.state?.message && (
-          <div className="bg-green text-white p-4 rounded-lg mb-4">
-            {location.state.message}
-          </div>
-        )}
-      </div>
+          {location.state?.message && (
+            <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
+              {location.state.message}
+            </Alert>
+          )}
+        </Box>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <div className="card">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex-1">
-                <div className="flex items-center space-x-3 mb-2">
-                  <h1 className="text-2xl font-bold text-purple">
-                    {ticket.title}
-                  </h1>
-                  <span className={getStatusBadgeClass(ticket.status)}>
-                    {ticket.status}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-4 text-sm text-gray-text">
-                  <div className="flex items-center space-x-1">
-                    <Tag className="h-3 w-3" />
-                    <span>{ticket.id}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Clock className="h-3 w-3" />
-                    <span>Created {formatDate(ticket.createdAt)}</span>
-                  </div>
-                </div>
-              </div>
-              <div className={`font-bold ${getPriorityColor(ticket.priority)}`}>
-                {ticket.priority.toUpperCase()} PRIORITY
-              </div>
-            </div>
+        <Grid container spacing={4}>
+          <Grid item xs={12} lg={8}>
+            <Fade in timeout={600}>
+              <Paper elevation={4} sx={{ p: 4, borderRadius: 3, mb: 3 }}>
+                <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={4}>
+                  <Box flex={1}>
+                    <Box display="flex" alignItems="center" gap={2} mb={2}>
+                      <Typography variant="h4" component="h1" fontWeight="bold" color="primary.main">
+                        {ticket.title}
+                      </Typography>
+                      <Chip
+                        label={ticket.status}
+                        {...getStatusChipProps(ticket.status)}
+                      />
+                    </Box>
+                    <Box display="flex" alignItems="center" gap={3} color="text.secondary">
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <TagIcon fontSize="small" />
+                        <Typography variant="body2">{ticket.id}</Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <ClockIcon fontSize="small" />
+                        <Typography variant="body2">Created {formatDate(ticket.createdAt)}</Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                  <Chip
+                    label={`${ticket.priority.toUpperCase()} PRIORITY`}
+                    {...getPriorityChipProps(ticket.priority)}
+                  />
+                </Box>
 
-            <div className="prose max-w-none mb-8">
-              <h3>Description</h3>
-              <p className="whitespace-pre-wrap text-gray-text">
-                {ticket.description}
-              </p>
-            </div>
+                <Box mb={4}>
+                  <Typography variant="h6" gutterBottom fontWeight="bold">
+                    Description
+                  </Typography>
+                  <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+                    {ticket.description}
+                  </Typography>
+                </Box>
 
-            {ticket.attachments && ticket.attachments.length > 0 && (
-              <div className="mb-8">
-                <h3>Attachments</h3>
-                <div className="space-y-2">
-                  {ticket.attachments.map((file, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center space-x-2 bg-light-purple p-3 rounded-lg"
+                {ticket.attachments && ticket.attachments.length > 0 && (
+                  <Box mb={4}>
+                    <Typography variant="h6" gutterBottom fontWeight="bold">
+                      Attachments
+                    </Typography>
+                    <Grid container spacing={1}>
+                      {ticket.attachments.map((file, index) => (
+                        <Grid item key={index}>
+                          <Chip
+                            icon={<AttachFileIcon />}
+                            label={file.name}
+                            variant="outlined"
+                            color="primary"
+                          />
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Box>
+                )}
+
+                <Divider sx={{ my: 4 }} />
+
+                <Box>
+                  <Box display="flex" alignItems="center" gap={1} mb={3}>
+                    <MessageCircleIcon color="primary" />
+                    <Typography variant="h6" fontWeight="bold">
+                      Comments ({comments.length})
+                    </Typography>
+                  </Box>
+
+                  <List sx={{ mb: 3 }}>
+                    {comments.map((comment) => (
+                      <ListItem
+                        key={comment.id}
+                        sx={{
+                          bgcolor: comment.isCustomer ? 'primary.50' : 'secondary.50',
+                          borderRadius: 2,
+                          mb: 2,
+                          alignItems: 'flex-start'
+                        }}
+                      >
+                        <ListItemAvatar>
+                          <Avatar sx={{ bgcolor: comment.isCustomer ? 'primary.main' : 'secondary.main' }}>
+                            {comment.isCustomer ? <UserIcon /> : <SupportIcon />}
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={
+                            <Box display="flex" justifyContent="space-between" alignItems="center">
+                              <Typography variant="subtitle2" fontWeight="bold">
+                                {comment.isCustomer ? 'You' : 'Support Team'}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {formatDate(comment.createdAt)}
+                              </Typography>
+                            </Box>
+                          }
+                          secondary={
+                            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', mt: 1 }}>
+                              {comment.text}
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+
+                  <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+                    <form onSubmit={handleCommentSubmit}>
+                      <TextField
+                        fullWidth
+                        multiline
+                        rows={4}
+                        placeholder="Add a comment..."
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        variant="outlined"
+                        sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                      />
+                      <Box display="flex" justifyContent="flex-end">
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          startIcon={<SendIcon />}
+                          disabled={!newComment.trim()}
+                          sx={{
+                            borderRadius: 2,
+                            background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                              boxShadow: 4
+                            }
+                          }}
+                        >
+                          Add Comment
+                        </Button>
+                      </Box>
+                    </form>
+                  </Paper>
+                </Box>
+              </Paper>
+            </Fade>
+          </Grid>
+
+          <Grid item xs={12} lg={4}>
+            <Box sx={{ position: 'sticky', top: 24 }}>
+              <Zoom in timeout={800}>
+                <Paper elevation={4} sx={{ p: 3, borderRadius: 3, mb: 3 }}>
+                  <Typography variant="h6" gutterBottom fontWeight="bold">
+                    Ticket Details
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Status
+                      </Typography>
+                      <Chip
+                        label={ticket.status}
+                        {...getStatusChipProps(ticket.status)}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Priority
+                      </Typography>
+                      <Chip
+                        label={ticket.priority.toUpperCase()}
+                        {...getPriorityChipProps(ticket.priority)}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Category
+                      </Typography>
+                      <Chip
+                        label={ticket.category}
+                        variant="outlined"
+                        color="warning"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Created
+                      </Typography>
+                      <Typography variant="body2">{formatDate(ticket.createdAt)}</Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Last Updated
+                      </Typography>
+                      <Typography variant="body2">{formatDate(ticket.updatedAt)}</Typography>
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Zoom>
+
+              <Zoom in timeout={1000}>
+                <Paper elevation={4} sx={{ p: 3, borderRadius: 3 }}>
+                  <Typography variant="h6" gutterBottom fontWeight="bold">
+                    Need Help?
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Check out our resources while you wait for a response.
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Button
+                      component={Link}
+                      to="/docs"
+                      variant="text"
+                      sx={{ justifyContent: 'flex-start', color: 'primary.main' }}
                     >
-                      <span className="text-purple font-medium">
-                        {file.name}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="border-t border-light-purple pt-6">
-              <div className="flex items-center space-x-2 mb-4">
-                <MessageCircle className="h-5 w-5 text-purple" />
-                <h3>Comments ({comments.length})</h3>
-              </div>
-
-              <div className="space-y-4 mb-6">
-                {comments.map((comment) => (
-                  <div
-                    key={comment.id}
-                    className={`p-4 rounded-lg ${
-                      comment.isCustomer 
-                        ? 'bg-light-purple ml-8' 
-                        : 'bg-light-pink mr-8'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-semibold text-purple">
-                        {comment.isCustomer ? 'You' : 'Support Team'}
-                      </span>
-                      <span className="text-sm text-gray-text">
-                        {formatDate(comment.createdAt)}
-                      </span>
-                    </div>
-                    <p className="text-gray-text whitespace-pre-wrap">
-                      {comment.text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <form onSubmit={handleCommentSubmit} className="space-y-4">
-                <textarea
-                  className="form-textarea"
-                  placeholder="Add a comment..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  rows="4"
-                />
-                <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    className="btn btn-primary flex items-center space-x-2"
-                    disabled={!newComment.trim()}
-                  >
-                    <Send className="h-4 w-4" />
-                    <span>Add Comment</span>
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="card">
-            <h3>Ticket Details</h3>
-            <div className="space-y-3">
-              <div>
-                <span className="text-sm font-semibold text-purple">Status:</span>
-                <div className="mt-1">
-                  <span className={getStatusBadgeClass(ticket.status)}>
-                    {ticket.status}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <span className="text-sm font-semibold text-purple">Priority:</span>
-                <div className={`mt-1 font-bold ${getPriorityColor(ticket.priority)}`}>
-                  {ticket.priority.toUpperCase()}
-                </div>
-              </div>
-              <div>
-                <span className="text-sm font-semibold text-purple">Category:</span>
-                <div className="mt-1">
-                  <span className="px-3 py-1 text-sm font-medium rounded-full" style={{ backgroundColor: 'rgba(255, 142, 0, 0.1)', color: '#FF8E00' }}>
-                    {ticket.category}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <span className="text-sm font-semibold text-purple">Created:</span>
-                <div className="mt-1 text-gray-text">{formatDate(ticket.createdAt)}</div>
-              </div>
-              <div>
-                <span className="text-sm font-semibold text-purple">Last Updated:</span>
-                <div className="mt-1 text-gray-text">{formatDate(ticket.updatedAt)}</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <h3>Need Help?</h3>
-            <p className="text-gray-text text-sm mb-4">
-              Check out our resources while you wait for a response.
-            </p>
-            <div className="space-y-2">
-              <Link to="/docs" className="block text-orange hover:text-pink">
-                → Browse Documentation
-              </Link>
-              <Link to="/faq" className="block text-orange hover:text-pink">
-                → View FAQ
-              </Link>
-              <a 
-                href="mailto:support@enboq.com" 
-                className="block text-orange hover:text-pink"
-              >
-                → Email Support
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                      → Browse Documentation
+                    </Button>
+                    <Button
+                      component={Link}
+                      to="/faq"
+                      variant="text"
+                      sx={{ justifyContent: 'flex-start', color: 'primary.main' }}
+                    >
+                      → View FAQ
+                    </Button>
+                    <Button
+                      href="mailto:support@enboq.com"
+                      variant="text"
+                      sx={{ justifyContent: 'flex-start', color: 'primary.main' }}
+                    >
+                      → Email Support
+                    </Button>
+                  </Box>
+                </Paper>
+              </Zoom>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 

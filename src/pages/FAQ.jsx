@@ -1,6 +1,53 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ChevronDown, ChevronUp, HelpCircle, ArrowRight, MessageCircle, Users, Gamepad2, Building, Zap, BookOpen, Calendar, MessageSquare, Target, Sparkles, Shield, CreditCard, Settings, Rocket, Globe, Star, Award, TrendingUp } from 'lucide-react';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Card,
+  CardContent,
+  Grid,
+  Chip,
+  InputAdornment,
+  Button,
+  Paper,
+  Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Alert
+} from '@mui/material';
+import {
+  Search,
+  ExpandMore,
+  Help,
+  ArrowForward,
+  Email,
+  BugReport,
+  Lightbulb,
+  Rocket,
+  SportsEsports,
+  People,
+  Business,
+  Bolt,
+  MenuBook,
+  Event,
+  Chat,
+  TrackChanges,
+  AutoAwesome,
+  Security,
+  CreditCard,
+  Settings,
+  Language,
+  Star,
+  EmojiEvents,
+  TrendingUp
+} from '@mui/icons-material';
 
 const FAQ = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -510,23 +557,23 @@ const FAQ = () => {
   const getCategoryIcon = (category) => {
     const iconMap = {
       'Getting Started & Onboarding': Rocket,
-      'Employee Dashboard & Gamification': Gamepad2,
-      'Buddy Matchmaking & 3D Island': Users,
-      'Admin Dashboard & Management': Building,
-      'Journey Builder & Workflows': Target,
-      'Daily Missions & Engagement': Zap,
-      'Story Builder & AI Features': Sparkles,
-      'Knowledge Base & Chat': BookOpen,
-      'Events & Company Culture': Calendar,
-      'Jargon & Terminology': MessageSquare,
+      'Employee Dashboard & Gamification': SportsEsports,
+      'Buddy Matchmaking & 3D Island': People,
+      'Admin Dashboard & Management': Business,
+      'Journey Builder & Workflows': TrackChanges,
+      'Daily Missions & Engagement': Bolt,
+      'Story Builder & AI Features': AutoAwesome,
+      'Knowledge Base & Chat': MenuBook,
+      'Events & Company Culture': Event,
+      'Jargon & Terminology': Chat,
       'Company DNA & Automation': TrendingUp,
       'Pricing & Plans': CreditCard,
       'Technical Support': Settings,
-      'Security & Compliance': Shield,
-      'Integration & API': Globe,
+      'Security & Compliance': Security,
+      'Integration & API': Language,
       'Mobile & Accessibility': Star
     };
-    return iconMap[category] || HelpCircle;
+    return iconMap[category] || Help;
   };
 
   const categoryStats = categories.map(category => ({
@@ -536,435 +583,400 @@ const FAQ = () => {
   }));
 
   return (
-    <div className="min-h-screen">
-      {/* SEO Meta Tags */}
-      <div style={{ display: 'none' }}>
-        <h1>ENBOQ Employee Onboarding Software FAQ - Preboarding Platform Questions</h1>
-        <p>Get answers to frequently asked questions about ENBOQ's employee onboarding software, preboarding platform, gamification features, buddy matching, and more.</p>
-      </div>
-
-      {/* Hero Section with Modern Gradient */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-          <div className="absolute top-40 right-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-8 left-40 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-        </div>
-        
-        <div className="relative container py-24 md:py-32">
-          <div className="text-center max-w-6xl mx-auto">
-            <div className="mb-8">
-              <span className="inline-flex items-center px-4 py-2 rounded-full bg-purple-100 text-purple-700 text-sm font-medium mb-4">
-                <Award className="w-4 h-4 mr-2" />
-                Employee Onboarding & Preboarding Software
-              </span>
-            </div>
+    <Box>
+      {/* Hero Section */}
+      <Box
+        sx={{
+          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+          py: { xs: 8, md: 12 },
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <Container maxWidth="lg">
+          <Box textAlign="center" maxWidth="800px" mx="auto">
+            <Chip
+              icon={<EmojiEvents />}
+              label="Employee Onboarding & Preboarding Software"
+              color="primary"
+              sx={{ mb: 3 }}
+            />
             
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mb-8 leading-tight">
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: '2.5rem', md: '4rem' },
+                fontWeight: 'bold',
+                background: 'linear-gradient(45deg, #1976d2, #dc004e)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 3
+              }}
+            >
               Frequently Asked Questions
-            </h1>
+            </Typography>
             
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed">
+            <Typography
+              variant="h5"
+              color="text.secondary"
+              sx={{ mb: 4, lineHeight: 1.6 }}
+            >
               Everything you need to know about ENBOQ's employee onboarding platform, gamification features, buddy matching, and preboarding solutions
-            </p>
+            </Typography>
 
-            <div className="flex flex-wrap justify-center gap-4 mb-12 text-sm text-gray-600">
-              <span className="flex items-center">
-                <Rocket className="w-4 h-4 mr-1 text-purple-500" />
-                Onboarding Software
-              </span>
-              <span className="flex items-center">
-                <Users className="w-4 h-4 mr-1 text-pink-500" />
-                Preboarding Platform
-              </span>
-              <span className="flex items-center">
-                <Gamepad2 className="w-4 h-4 mr-1 text-orange-500" />
-                Employee Gamification
-              </span>
-              <span className="flex items-center">
-                <Sparkles className="w-4 h-4 mr-1 text-green-500" />
-                AI-Powered Features
-              </span>
-            </div>
+            {/* Feature Tags */}
+            <Stack direction="row" spacing={2} justifyContent="center" flexWrap="wrap" sx={{ mb: 6 }}>
+              <Chip icon={<Rocket />} label="Onboarding Software" variant="outlined" />
+              <Chip icon={<People />} label="Preboarding Platform" variant="outlined" />
+              <Chip icon={<SportsEsports />} label="Employee Gamification" variant="outlined" />
+              <Chip icon={<AutoAwesome />} label="AI-Powered Features" variant="outlined" />
+            </Stack>
             
-            {/* Enhanced Search Bar */}
-            <div className="max-w-4xl mx-auto mb-12">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
-                <div className="relative bg-white rounded-2xl p-3 shadow-2xl border border-gray-200">
-                  <div className="flex flex-col md:flex-row items-center gap-3">
-                    <div className="flex items-center flex-1 w-full">
-                      <Search className="w-6 h-6 text-gray-400 ml-4" />
-                      <input
-                        type="text"
-                        placeholder="Search 70+ FAQs... Try 'buddy matching', 'gamification', or 'pricing'"
-                        className="modern-search-input"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </div>
-                    <select
-                      className="modern-search-select w-full md:w-auto"
-                      style={{minWidth: '120px', maxWidth: '180px'}}
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                    >
-                      <option value="all">All Categories ({faqData.length})</option>
-                      {categories.map(category => {
-                        const count = faqData.filter(faq => faq.category === category).length;
-                        return (
-                          <option key={category} value={category}>
-                            {category} ({count})
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Search and Filter */}
+            <Paper
+              elevation={3}
+              sx={{
+                p: 2,
+                mb: 6,
+                maxWidth: 800,
+                mx: 'auto'
+              }}
+            >
+              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  placeholder="Search 70+ FAQs... Try 'buddy matching', 'gamification', or 'pricing'"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Search />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <FormControl sx={{ minWidth: 200 }}>
+                  <InputLabel>Category</InputLabel>
+                  <Select
+                    value={selectedCategory}
+                    label="Category"
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    <MenuItem value="all">All Categories ({faqData.length})</MenuItem>
+                    {categories.map(category => {
+                      const count = faqData.filter(faq => faq.category === category).length;
+                      return (
+                        <MenuItem key={category} value={category}>
+                          {category} ({count})
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              </Stack>
+            </Paper>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600">{faqData.length}+</div>
-                <div className="text-sm text-gray-600">FAQ Answers</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-pink-600">{categories.length}</div>
-                <div className="text-sm text-gray-600">Categories</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600">24/7</div>
-                <div className="text-sm text-gray-600">Support</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-600">99.9%</div>
-                <div className="text-sm text-gray-600">Uptime</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            <Grid container spacing={3} maxWidth="600px" mx="auto">
+              <Grid item xs={6} md={3}>
+                <Typography variant="h4" color="primary" fontWeight="bold">
+                  {faqData.length}+
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  FAQ Answers
+                </Typography>
+              </Grid>
+              <Grid item xs={6} md={3}>
+                <Typography variant="h4" color="secondary" fontWeight="bold">
+                  {categories.length}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Categories
+                </Typography>
+              </Grid>
+              <Grid item xs={6} md={3}>
+                <Typography variant="h4" color="warning.main" fontWeight="bold">
+                  24/7
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Support
+                </Typography>
+              </Grid>
+              <Grid item xs={6} md={3}>
+                <Typography variant="h4" color="success.main" fontWeight="bold">
+                  99.9%
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Uptime
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        </Container>
+      </Box>
 
-      {/* Category Overview Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Browse by Category</h2>
-            <p className="text-lg text-gray-600">Find answers organized by feature and topic</p>
-          </div>
+      {/* Category Overview */}
+      <Box sx={{ bgcolor: 'background.default', py: 8 }}>
+        <Container maxWidth="lg">
+          <Box textAlign="center" mb={6}>
+            <Typography variant="h3" gutterBottom>
+              Browse by Category
+            </Typography>
+            <Typography variant="h6" color="text.secondary">
+              Find answers organized by feature and topic
+            </Typography>
+          </Box>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {categoryStats.map((category) => {
+          <Grid container spacing={3}>
+            {categoryStats.slice(0, 8).map((category) => {
               const IconComponent = category.icon;
               return (
-                  <button
-                    key={category.name}
+                <Grid item xs={12} sm={6} md={3} key={category.name}>
+                  <Card
+                    sx={{
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: 6
+                      },
+                      bgcolor: selectedCategory === category.name ? 'primary.light' : 'background.paper'
+                    }}
                     onClick={() => setSelectedCategory(category.name)}
-                    className={`p-8 rounded-2xl transition-all duration-300 text-left hover:shadow-xl hover:-translate-y-1 !border-0 !outline-0 ${
-                      selectedCategory === category.name
-                        ? 'bg-gradient-to-br from-purple-100 to-pink-100 shadow-xl'
-                        : 'bg-gradient-to-br from-white to-purple-50/30 shadow-lg hover:from-purple-50 hover:to-pink-50'
-                    }`}
-                    style={{border: 'none', outline: 'none'}}
-                  >                  <div className="flex items-center mb-3">
-                    <div className={`p-2 rounded-lg ${
-                      selectedCategory === category.name ? 'bg-purple-100' : 'bg-gray-100'
-                    }`}>
-                      <IconComponent className={`w-5 h-5 ${
-                        selectedCategory === category.name ? 'text-purple-600' : 'text-gray-600'
-                      }`} />
-                    </div>
-                    <span className="ml-3 text-sm font-medium text-gray-900">
-                      {category.count} FAQs
-                    </span>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-sm leading-tight">
-                    {category.name}
-                  </h3>
-                </button>
+                  >
+                    <CardContent>
+                      <Box display="flex" alignItems="center" mb={2}>
+                        <IconComponent 
+                          color={selectedCategory === category.name ? 'inherit' : 'primary'} 
+                          sx={{ mr: 1 }}
+                        />
+                        <Typography variant="body2" fontWeight="medium">
+                          {category.count} FAQs
+                        </Typography>
+                      </Box>
+                      <Typography variant="body1" fontWeight="medium">
+                        {category.name}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
               );
             })}
-          </div>
-        </div>
-      </section>
+          </Grid>
+        </Container>
+      </Box>
 
-      {/* FAQ Content Section */}
-      <section className="py-24 bg-white">
-        <div className="container">
-          <div className="max-w-5xl mx-auto">
-            {/* Results Header */}
-            <div className="flex flex-col md:flex-row justify-between items-center mb-12">
-              <div className="text-center md:text-left mb-4 md:mb-0">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  {selectedCategory === 'all' ? 'All Questions' : selectedCategory}
-                </h2>
-                <span className="text-lg text-gray-600">
-                  {filteredFAQs.length} question{filteredFAQs.length !== 1 ? 's' : ''} found
-                  {searchTerm && ` for "${searchTerm}"`}
-                </span>
-              </div>
-              
-              {filteredFAQs.length > 0 && (
-                <div className="flex gap-3">
-                  <button
-                    onClick={expandAll}
-                    className="py-2.5 text-sm font-bold text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-full hover:shadow-lg transition-all duration-300 !border-0 !outline-0 hover:scale-105"
-                    style={{border: 'none', outline: 'none', paddingLeft: '10px', paddingRight: '10px'}}
-                  >
-                    Expand All
-                  </button>
-                  <button
-                    onClick={collapseAll}
-                    className="py-2.5 text-sm font-bold text-white bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 rounded-full hover:shadow-lg transition-all duration-300 !border-0 !outline-0 hover:scale-105"
-                    style={{border: 'none', outline: 'none', paddingLeft: '10px', paddingRight: '10px'}}
-                  >
-                    Collapse All
-                  </button>
-                </div>
-              )}
-            </div>
+      {/* FAQ Content */}
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+          <Box>
+            <Typography variant="h4" gutterBottom>
+              {selectedCategory === 'all' ? 'All Questions' : selectedCategory}
+            </Typography>
+            <Typography color="text.secondary">
+              {filteredFAQs.length} question{filteredFAQs.length !== 1 ? 's' : ''} found
+              {searchTerm && ` for "${searchTerm}"`}
+            </Typography>
+          </Box>
+          
+          {filteredFAQs.length > 0 && (
+            <Stack direction="row" spacing={2}>
+              <Button variant="contained" onClick={expandAll}>
+                Expand All
+              </Button>
+              <Button variant="outlined" onClick={collapseAll}>
+                Collapse All
+              </Button>
+            </Stack>
+          )}
+        </Box>
 
-            {filteredFAQs.length === 0 ? (
-              <div className="bg-white rounded-3xl p-12 border border-gray-100 shadow-xl text-center">
-                <HelpCircle className="mx-auto h-20 w-20 text-purple-300 mb-6" />
-                <h3 className="text-3xl font-bold text-gray-900 mb-4">No FAQs found</h3>
-                <p className="text-xl text-gray-600 mb-8">
-                  Try adjusting your search terms or browse a different category.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button
-                    onClick={() => {
-                      setSearchTerm('');
-                      setSelectedCategory('all');
-                    }}
-                    className="py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full hover:shadow-xl transition-all duration-300 font-bold !border-0 !outline-0 hover:scale-105"
-                    style={{border: 'none', outline: 'none', paddingLeft: '10px', paddingRight: '10px'}}
-                  >
-                    Clear Filters
-                  </button>
-                  <Link
-                    to="/tickets/new"
-                    className="py-4 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-full hover:shadow-xl transition-all duration-300 font-bold border-0 hover:scale-105"
-                    style={{paddingLeft: '10px', paddingRight: '10px'}}
-                  >
-                    Ask a Question
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-12">
-                {filteredFAQs.map((faq, index) => {
-                  const IconComponent = getCategoryIcon(faq.category);
-                  return (
-                    <div key={faq.id} className="group">
-                      <div className="relative bg-gradient-to-br from-purple-50/50 via-white to-pink-50/50 rounded-3xl p-12 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] transform border-0 overflow-hidden">
-                        {/* Colorful gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-100/40 via-pink-100/30 to-orange-100/40 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        {/* Decorative corner accent */}
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-200/60 to-pink-200/60 rounded-bl-3xl opacity-30"></div>
-                        
-                        <button
-                          onClick={() => toggleExpanded(faq.id)}
-                          className="relative w-full text-left flex items-start justify-between !border-0 !outline-0"
-                          style={{border: 'none', outline: 'none'}}
-                        >
-                            <div className="flex items-start flex-1 pr-12">
-                              <div className="flex-shrink-0 mr-8 mt-2">
-                                <div className="w-18 h-18 bg-gradient-to-br from-purple-200 via-pink-200 to-orange-200 group-hover:from-purple-300 group-hover:via-pink-300 group-hover:to-orange-300 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg group-hover:shadow-xl border-0">
-                                  <IconComponent className="h-9 w-9 text-purple-700 group-hover:text-purple-800" />
-                                </div>
-                              </div>                            <div className="flex-1">
-                              <div className="flex items-center mb-6">
-                                <span className="text-sm font-bold text-white bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 py-2 rounded-full shadow-lg border-0" style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                                  {faq.category}
-                                </span>
-                              </div>
-                              <h3 className="text-xl font-bold text-gray-800 group-hover:text-purple-700 transition-colors leading-relaxed pr-4">
-                                {faq.question}
-                              </h3>
-                            </div>
-                          </div>
-                          <div className="flex-shrink-0 ml-4">
-                            <div className="w-14 h-14 bg-gradient-to-br from-purple-200 to-pink-200 group-hover:from-purple-300 group-hover:to-pink-300 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg group-hover:shadow-xl border-0">
-                              {expandedItems.has(faq.id) ? (
-                                <ChevronUp className="h-7 w-7 text-purple-700 group-hover:text-purple-800" />
-                              ) : (
-                                <ChevronDown className="h-7 w-7 text-purple-700 group-hover:text-purple-800" />
-                              )}
-                            </div>
-                          </div>
-                        </button>
+        {filteredFAQs.length === 0 ? (
+          <Paper sx={{ p: 8, textAlign: 'center' }}>
+            <Help sx={{ fontSize: 80, color: 'primary.light', mb: 3 }} />
+            <Typography variant="h4" gutterBottom>
+              No FAQs found
+            </Typography>
+            <Typography color="text.secondary" paragraph>
+              Try adjusting your search terms or browse a different category.
+            </Typography>
+            <Stack direction="row" spacing={2} justifyContent="center">
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setSearchTerm('');
+                  setSelectedCategory('all');
+                }}
+              >
+                Clear Filters
+              </Button>
+              <Button
+                component={Link}
+                to="/tickets/new"
+                variant="outlined"
+              >
+                Ask a Question
+              </Button>
+            </Stack>
+          </Paper>
+        ) : (
+          <Stack spacing={3}>
+            {filteredFAQs.slice(0, 20).map((faq) => {
+              const IconComponent = getCategoryIcon(faq.category);
+              return (
+                <Accordion
+                  key={faq.id}
+                  expanded={expandedItems.has(faq.id)}
+                  onChange={() => toggleExpanded(faq.id)}
+                  sx={{
+                    '&:before': { display: 'none' },
+                    boxShadow: 2,
+                    borderRadius: 2,
+                    '&.Mui-expanded': { margin: 0 }
+                  }}
+                >
+                  <AccordionSummary expandIcon={<ExpandMore />}>
+                    <Box display="flex" alignItems="center" gap={2} width="100%">
+                      <IconComponent color="primary" />
+                      <Box flex={1}>
+                        <Chip
+                          label={faq.category}
+                          size="small"
+                          color="primary"
+                          sx={{ mb: 1 }}
+                        />
+                        <Typography variant="h6" component="div">
+                          {faq.question}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography paragraph>
+                      {faq.answer}
+                    </Typography>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
+                      <Box>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                          Was this helpful?
+                        </Typography>
+                        <Stack direction="row" spacing={1}>
+                          <Button size="small" startIcon="👍" color="success">
+                            Yes
+                          </Button>
+                          <Button size="small" startIcon="👎" color="error">
+                            No
+                          </Button>
+                        </Stack>
+                      </Box>
+                      <Button
+                        component={Link}
+                        to="/tickets/new"
+                        variant="outlined"
+                        endIcon={<ArrowForward />}
+                      >
+                        Need more help?
+                      </Button>
+                    </Box>
+                  </AccordionDetails>
+                </Accordion>
+              );
+            })}
+          </Stack>
+        )}
 
-                        {expandedItems.has(faq.id) && (
-                          <div className="relative mt-10 pt-10 bg-gradient-to-r from-purple-50/60 via-pink-50/40 to-orange-50/60 rounded-2xl p-8 mx-2 border-0">
-                            <div className="ml-20 mr-8">
-                              <div className="prose prose-gray max-w-none mb-8">
-                                <p className="text-gray-700 leading-relaxed text-lg font-medium px-4 py-2">
-                                  {faq.answer}
-                                </p>
-                              </div>
-                              
-                              {/* Modern helpful actions */}
-                              <div className="flex items-center justify-between pt-8 bg-gradient-to-r from-white/80 via-purple-50/50 to-pink-50/50 rounded-2xl p-8 mx-2 border-0">
-                                <div className="flex items-center gap-6">
-                                  <span className="text-sm font-semibold text-gray-700 px-2">Was this helpful?</span>
-                                  <div className="flex gap-4">
-                                    <button className="flex items-center gap-3 py-3 text-sm text-white font-bold bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl !border-0 !outline-0 hover:scale-105" style={{border: 'none', outline: 'none', paddingLeft: '10px', paddingRight: '10px'}}>
-                                      <span>👍</span> Yes
-                                    </button>
-                                    <button className="flex items-center gap-3 py-3 text-sm text-white font-bold bg-gradient-to-r from-red-400 to-red-500 hover:from-red-500 hover:to-red-600 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl !border-0 !outline-0 hover:scale-105" style={{border: 'none', outline: 'none', paddingLeft: '10px', paddingRight: '10px'}}>
-                                      <span>👎</span> No
-                                    </button>
-                                  </div>
-                                </div>
-                                <Link
-                                  to="/tickets/new"
-                                  className="text-sm text-white font-bold flex items-center gap-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 py-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl border-0 hover:scale-105 ml-4"
-                                  style={{paddingLeft: '10px', paddingRight: '10px'}}
-                                >
-                                  Need more help?
-                                  <ArrowRight className="w-4 h-4" />
-                                </Link>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Popular Topics */}
-            {filteredFAQs.length > 0 && (
-              <div className="mt-16 p-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-3xl">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">Popular Topics</h3>
-                <div className="flex flex-wrap justify-center gap-4">
-                  {['Employee Onboarding', 'Preboarding Software', 'Buddy Matching', 'Gamification', 'AI Features', 'Pricing', 'Integration', 'Mobile App'].map((topic) => (
-                    <button
-                      key={topic}
-                      onClick={() => setSearchTerm(topic.toLowerCase())}
-                      className="py-4 bg-gradient-to-r from-white to-purple-50 text-gray-800 hover:text-white rounded-full text-sm font-bold hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 transition-all duration-300 !border-0 !outline-0 shadow-md hover:shadow-lg hover:scale-105"
-                      style={{border: 'none', outline: 'none', paddingLeft: '10px', paddingRight: '10px'}}
-                    >
-                      {topic}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Content Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">
-              Why Choose ENBOQ for Employee Onboarding?
-            </h2>
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="w-8 h-8 text-purple-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">60% Faster Onboarding</h3>
-                <p className="text-gray-600">Reduce time-to-productivity with our gamified onboarding platform</p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-8 h-8 text-pink-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">40% Better Retention</h3>
-                <p className="text-gray-600">AI-powered buddy matching and engagement features improve retention</p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Sparkles className="w-8 h-8 text-orange-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">AI-Powered Experience</h3>
-                <p className="text-gray-600">Personalized journeys with intelligent content and story generation</p>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Transform Your Employee Onboarding Today
-              </h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Join thousands of companies using ENBOQ's employee onboarding software to create engaging preboarding experiences, 
-                implement effective buddy matching programs, and leverage gamification to boost new hire engagement and retention.
-              </p>
-              <div className="flex flex-wrap justify-center gap-2 text-sm text-gray-500">
-                <span className="bg-gray-100 px-3 py-1 rounded-full">Employee Onboarding Software</span>
-                <span className="bg-gray-100 px-3 py-1 rounded-full">Preboarding Platform</span>
-                <span className="bg-gray-100 px-3 py-1 rounded-full">Buddy Matching System</span>
-                <span className="bg-gray-100 px-3 py-1 rounded-full">Gamification Features</span>
-                <span className="bg-gray-100 px-3 py-1 rounded-full">AI Story Builder</span>
-                <span className="bg-gray-100 px-3 py-1 rounded-full">3D Virtual Environment</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        {/* Popular Topics */}
+        {filteredFAQs.length > 0 && (
+          <Paper sx={{ p: 4, mt: 6, textAlign: 'center' }}>
+            <Typography variant="h5" gutterBottom>
+              Popular Topics
+            </Typography>
+            <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
+              {['Employee Onboarding', 'Preboarding Software', 'Buddy Matching', 'Gamification', 'AI Features', 'Pricing', 'Integration', 'Mobile App'].map((topic) => (
+                <Chip
+                  key={topic}
+                  label={topic}
+                  clickable
+                  onClick={() => setSearchTerm(topic.toLowerCase())}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'primary.main',
+                      color: 'white'
+                    }
+                  }}
+                />
+              ))}
+            </Stack>
+          </Paper>
+        )}
+      </Container>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
-          <div className="absolute bottom-10 right-10 w-48 h-48 bg-white/5 rounded-full blur-2xl"></div>
-        </div>
-        <div className="relative container text-center">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
-              Still have questions about our onboarding software?
-            </h2>
-            <p className="text-xl text-white/90 mb-12 leading-relaxed">
-              Can't find what you're looking for? Our expert support team is here to help you understand how ENBOQ's 
-              employee onboarding and preboarding platform can transform your new hire experience.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-8">
-              <Link 
-                to="/tickets/new" 
-                className="modern-primary-button text-lg px-8 py-4"
-              >
-                <MessageCircle className="w-5 h-5 mr-2" />
-                Submit Support Ticket
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Link>
-              <a 
-                href="mailto:support@enboq.com" 
-                className="modern-secondary-button text-lg px-8 py-4"
-              >
-                Email Support Team
-              </a>
-            </div>
+      <Box
+        sx={{
+          background: 'linear-gradient(45deg, #1976d2, #dc004e)',
+          color: 'white',
+          py: 8,
+          textAlign: 'center'
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography variant="h3" gutterBottom>
+            Still have questions about our onboarding software?
+          </Typography>
+          <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
+            Can't find what you're looking for? Our expert support team is here to help you understand how ENBOQ's 
+            employee onboarding and preboarding platform can transform your new hire experience.
+          </Typography>
+          
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center" mb={4}>
+            <Button
+              component={Link}
+              to="/tickets/new"
+              variant="contained"
+              size="large"
+              startIcon={<BugReport />}
+              endIcon={<ArrowForward />}
+              sx={{
+                bgcolor: 'white',
+                color: 'primary.main',
+                '&:hover': { bgcolor: 'grey.100' }
+              }}
+            >
+              Submit Support Ticket
+            </Button>
+            <Button
+              href="mailto:support@enboq.com"
+              variant="outlined"
+              size="large"
+              startIcon={<Email />}
+              sx={{
+                borderColor: 'white',
+                color: 'white',
+                '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' }
+              }}
+            >
+              Email Support Team
+            </Button>
+          </Stack>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-white/80 text-sm">
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                Average response time: 2 hours
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                24/7 support available
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                Free 14-day trial
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+          <Stack direction="row" spacing={4} justifyContent="center" sx={{ opacity: 0.8 }}>
+            <Typography variant="body2">
+              • Average response time: 2 hours
+            </Typography>
+            <Typography variant="body2">
+              • 24/7 support available
+            </Typography>
+            <Typography variant="body2">
+              • Free 14-day trial
+            </Typography>
+          </Stack>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 

@@ -1,6 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Plus, ThumbsUp, MessageCircle, Calendar, Filter, Lightbulb, ArrowRight } from 'lucide-react';
+import FeatureCard from '../components/FeatureCard';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Card,
+  CardContent,
+  Chip,
+  Button,
+  InputAdornment,
+  Grid,
+  Paper,
+  IconButton,
+  Fade,
+  Zoom,
+  Stack
+} from '@mui/material';
+import {
+  Search as SearchIcon,
+  Add as AddIcon,
+  ThumbUp as ThumbsUpIcon,
+  ChatBubbleOutline as MessageCircleIcon,
+  CalendarToday as CalendarIcon,
+  EmojiObjects as LightbulbIcon,
+  ArrowForward as ArrowRightIcon
+} from '@mui/icons-material';
 
 const FeatureRequests = () => {
   const [features, setFeatures] = useState([]);
@@ -111,18 +141,18 @@ const FeatureRequests = () => {
     setFilteredFeatures(filtered);
   }, [features, searchTerm, statusFilter, sortBy]);
 
-  const getStatusBadgeClass = (status) => {
-    const classes = {
-      'under-review': 'status-open',
-      'planned': 'status-in-progress',
-      'in-progress': 'status-in-progress',
-      'completed': 'status-completed',
-      'rejected': 'status-closed'
+  const getStatusChipProps = useCallback((status) => {
+    const statusMap = {
+      'under-review': { color: 'primary', variant: 'filled' },
+      'planned': { color: 'info', variant: 'filled' },
+      'in-progress': { color: 'warning', variant: 'filled' },
+      'completed': { color: 'success', variant: 'filled' },
+      'rejected': { color: 'error', variant: 'outlined' }
     };
-    return `status-badge ${classes[status] || 'status-open'}`;
-  };
+    return statusMap[status] || { color: 'primary', variant: 'filled' };
+  }, []);
 
-  const getStatusLabel = (status) => {
+  const getStatusLabel = useCallback((status) => {
     const labels = {
       'under-review': 'Under Review',
       'planned': 'Planned',
@@ -131,224 +161,291 @@ const FeatureRequests = () => {
       'rejected': 'Rejected'
     };
     return labels[status] || status;
-  };
+  }, []);
 
-  const formatDate = (dateString) => {
+  const formatDate = useCallback((dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     });
-  };
+  }, []);
 
-  const handleVote = (featureId) => {
+  const handleVote = useCallback((featureId, voteType) => {
+    const currentVote = localStorage.getItem(`voted_${featureId}`);
+    
+    // If user already voted the same way, do nothing
+    if (currentVote === voteType) return;
+    
     const updatedFeatures = features.map(feature => {
       if (feature.id === featureId) {
-        const hasVoted = localStorage.getItem(`voted_${featureId}`) === 'true';
-        if (!hasVoted) {
-          localStorage.setItem(`voted_${featureId}`, 'true');
-          return { ...feature, votes: feature.votes + 1 };
+        let newVotes = feature.votes;
+        
+        // Remove previous vote if exists
+        if (currentVote === 'up') {
+          newVotes -= 1;
+        } else if (currentVote === 'down') {
+          newVotes += 1;
         }
+        
+        // Apply new vote
+        if (voteType === 'up') {
+          newVotes += 1;
+        } else if (voteType === 'down') {
+          newVotes -= 1;
+        }
+        
+        localStorage.setItem(`voted_${featureId}`, voteType);
+        return { ...feature, votes: newVotes };
       }
       return feature;
     });
+    
     setFeatures(updatedFeatures);
     localStorage.setItem('featureRequests', JSON.stringify(updatedFeatures));
-  };
+  }, [features]);
 
-  const hasVoted = (featureId) => {
-    return localStorage.getItem(`voted_${featureId}`) === 'true';
-  };
+  const hasVoted = useCallback((featureId) => {
+    return localStorage.getItem(`voted_${featureId}`) || null;
+  }, []);
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section with Modern Gradient */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-          <div className="absolute top-40 right-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-8 left-40 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-        </div>
-        
-        <div className="relative container py-24 md:py-32">
-          <div className="text-center max-w-5xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mb-8 leading-tight">
-              Feature Requests
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
-              Share your ideas and vote on features you'd like to see
-            </p>
-            
-            {/* Modern Search Bar */}
-            <div className="max-w-3xl mx-auto mb-12">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
-                <div className="relative bg-white rounded-2xl p-2 shadow-2xl border border-gray-200">
-                  <div className="flex items-center">
-                    <Search className="w-6 h-6 text-gray-400 ml-4" />
-                    <input
-                      type="text"
-                      placeholder="Search feature requests... Try 'dark mode' or 'mobile app'"
-                      className="modern-search-input"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <select
-                      className="modern-search-select"
+    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+      {/* Hero Section */}
+      <Box
+        sx={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          py: { xs: 8, md: 12 },
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <Container maxWidth="lg">
+          <Fade in timeout={800}>
+            <Box textAlign="center">
+              <Typography
+                variant="h2"
+                component="h1"
+                sx={{
+                  fontWeight: 800,
+                  mb: 3,
+                  fontSize: { xs: '2.5rem', md: '4rem' },
+                  background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+                }}
+              >
+                Feature Requests
+              </Typography>
+              
+              <Typography
+                variant="h5"
+                sx={{ mb: 6, opacity: 0.9, maxWidth: '600px', mx: 'auto' }}
+              >
+                Share your ideas and vote on features you'd like to see
+              </Typography>
+              
+              {/* Search and Filter Section */}
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 2,
+                  mb: 6,
+                  maxWidth: 800,
+                  mx: 'auto'
+                }}
+              >
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Search feature requests... Try 'dark mode' or 'mobile app'"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <FormControl sx={{ minWidth: 150 }}>
+                    <InputLabel>Status</InputLabel>
+                    <Select
                       value={statusFilter}
+                      label="Status"
                       onChange={(e) => setStatusFilter(e.target.value)}
                     >
-                      <option value="all">All Status</option>
-                      <option value="under-review">Under Review</option>
-                      <option value="planned">Planned</option>
-                      <option value="in-progress">In Progress</option>
-                      <option value="completed">Completed</option>
-                      <option value="rejected">Rejected</option>
-                    </select>
-                    <select
-                      className="modern-search-select"
+                      <MenuItem value="all">All Status</MenuItem>
+                      <MenuItem value="under-review">Under Review</MenuItem>
+                      <MenuItem value="planned">Planned</MenuItem>
+                      <MenuItem value="in-progress">In Progress</MenuItem>
+                      <MenuItem value="completed">Completed</MenuItem>
+                      <MenuItem value="rejected">Rejected</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl sx={{ minWidth: 150 }}>
+                    <InputLabel>Sort By</InputLabel>
+                    <Select
                       value={sortBy}
+                      label="Sort By"
                       onChange={(e) => setSortBy(e.target.value)}
                     >
-                      <option value="newest">Newest First</option>
-                      <option value="oldest">Oldest First</option>
-                      <option value="votes">Most Voted</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
+                      <MenuItem value="newest">Newest First</MenuItem>
+                      <MenuItem value="oldest">Oldest First</MenuItem>
+                      <MenuItem value="votes">Most Voted</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Stack>
+              </Paper>
 
-            {/* Create New Feature Request Button */}
-            <div className="flex justify-center">
-              <Link 
-                to="/features/new" 
-                className="modern-cta-button"
-              >
-                <Lightbulb className="w-5 h-5 mr-2" />
-                Request New Feature
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+              {/* Create New Feature Request Button */}
+              <Zoom in timeout={1000}>
+                <Button
+                  component={Link}
+                  to="/features/new"
+                  variant="contained"
+                  size="large"
+                  startIcon={<LightbulbIcon />}
+                  endIcon={<ArrowRightIcon />}
+                  sx={{
+                    py: 2,
+                    px: 4,
+                    borderRadius: 3,
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                    boxShadow: '0 8px 32px rgba(254, 107, 139, 0.3)',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 12px 40px rgba(254, 107, 139, 0.4)',
+                    },
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  Request New Feature
+                </Button>
+              </Zoom>
+            </Box>
+          </Fade>
+        </Container>
+      </Box>
 
       {/* Feature Requests Content Section */}
-      <section className="py-24 bg-white">
-        <div className="container">
-
-          {filteredFeatures.length === 0 ? (
-            <div className="bg-white rounded-3xl p-16 border border-gray-100 shadow-xl text-center max-w-2xl mx-auto">
-              <Lightbulb className="mx-auto h-20 w-20 text-purple-300 mb-6" />
-              <h3 className="text-3xl font-bold text-gray-900 mb-4">No feature requests found</h3>
-              <p className="text-xl text-gray-600 mb-8">
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        {filteredFeatures.length === 0 ? (
+          <Fade in timeout={600}>
+            <Paper
+              elevation={4}
+              sx={{
+                p: 8,
+                textAlign: 'center',
+                maxWidth: 600,
+                mx: 'auto',
+                borderRadius: 4,
+                background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'
+              }}
+            >
+              <LightbulbIcon sx={{ fontSize: 80, color: 'primary.main', mb: 3 }} />
+              <Typography variant="h4" gutterBottom fontWeight="bold">
+                No feature requests found
+              </Typography>
+              <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
                 {features.length === 0 
                   ? "Be the first to suggest a new feature!"
                   : "Try adjusting your search or filter criteria."
                 }
-              </p>
+              </Typography>
               {features.length === 0 && (
-                <Link to="/features/new" className="modern-cta-button">
-                  <Lightbulb className="w-5 h-5 mr-2" />
+                <Button
+                  component={Link}
+                  to="/features/new"
+                  variant="contained"
+                  size="large"
+                  startIcon={<LightbulbIcon />}
+                  endIcon={<ArrowRightIcon />}
+                  sx={{
+                    py: 1.5,
+                    px: 3,
+                    borderRadius: 3,
+                    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: 4
+                    }
+                  }}
+                >
                   Submit First Request
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Link>
+                </Button>
               )}
-            </div>
-          ) : (
-            <div className="space-y-6 max-w-4xl mx-auto">
-              {filteredFeatures.map((feature) => (
-                <div key={feature.id} className="bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                  <div className="flex items-start space-x-6">
-                    <div className="flex flex-col items-center space-y-2">
-                      <button
-                        onClick={() => handleVote(feature.id)}
-                        disabled={hasVoted(feature.id)}
-                        className={`flex flex-col items-center p-4 rounded-2xl transition-all duration-300 ${
-                          hasVoted(feature.id)
-                            ? 'bg-purple-100 text-purple-600 cursor-not-allowed'
-                            : 'bg-white border-2 border-purple-200 hover:bg-purple-50 hover:border-purple-400 text-purple-600 hover:scale-105'
-                        }`}
-                      >
-                        <ThumbsUp className={`h-6 w-6 ${hasVoted(feature.id) ? 'fill-current' : ''}`} />
-                        <span className="text-lg font-bold mt-1">{feature.votes}</span>
-                      </button>
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-3">
-                            <h3 className="text-2xl font-bold text-gray-900">
-                              {feature.title}
-                            </h3>
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeClass(feature.status)}`}>
-                              {getStatusLabel(feature.status)}
-                            </span>
-                            <span className="px-3 py-1 text-sm font-medium rounded-full" style={{ backgroundColor: 'rgba(255, 142, 0, 0.1)', color: '#FF8E00' }}>
-                              {feature.category}
-                            </span>
-                          </div>
-                          <p className="text-lg text-gray-600 mb-4 line-clamp-2 leading-relaxed">
-                            {feature.description}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
-                        <div className="flex items-center space-x-6">
-                          <div className="flex items-center space-x-2">
-                            <span className="font-medium">#{feature.id}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <MessageCircle className="h-4 w-4" />
-                            <span>{feature.comments} comments</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span>by {feature.author}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>{formatDate(feature.createdAt)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+            </Paper>
+          </Fade>
+        ) : (
+          <Grid container spacing={3}>
+            {filteredFeatures.map((feature, index) => (
+              <Grid item xs={12} key={feature.id} sx={{ display: 'flex', width: '100%' }}>
+                <FeatureCard
+                  feature={feature}
+                  index={index}
+                  getStatusChipProps={getStatusChipProps}
+                  getStatusLabel={getStatusLabel}
+                  formatDate={formatDate}
+                  handleVote={handleVote}
+                  hasVoted={hasVoted}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Container>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative container text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
+      <Box
+        sx={{
+          py: 12,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          textAlign: 'center'
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography variant="h3" component="h2" fontWeight="bold" sx={{ mb: 3 }}>
             Have an idea for a new feature?
-          </h2>
-          <p className="text-xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
+          </Typography>
+          <Typography variant="h6" sx={{ mb: 6, opacity: 0.9 }}>
             We love hearing from our users! Share your ideas and help shape the future of ENBOQ.
-          </p>
+          </Typography>
           
-          <div className="flex justify-center">
-            <Link 
-              to="/features/new" 
-              className="modern-primary-button"
-            >
-              <Lightbulb className="w-5 h-5 mr-2" />
-              Submit Feature Request
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Link>
-          </div>
-        </div>
-      </section>
-    </div>
+          <Button
+            component={Link}
+            to="/features/new"
+            variant="contained"
+            size="large"
+            startIcon={<LightbulbIcon />}
+            endIcon={<ArrowRightIcon />}
+            sx={{
+              py: 2,
+              px: 4,
+              borderRadius: 3,
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+              boxShadow: '0 8px 32px rgba(254, 107, 139, 0.3)',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 12px 40px rgba(254, 107, 139, 0.4)',
+              },
+              transition: 'all 0.3s ease'
+            }}
+          >
+            Submit Feature Request
+          </Button>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 

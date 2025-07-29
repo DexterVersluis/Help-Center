@@ -1,6 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, Plus, Clock, User, Tag, ArrowRight, MessageCircle } from 'lucide-react';
+import TicketCard from '../components/TicketCard';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Card,
+  CardContent,
+  Chip,
+  Button,
+  InputAdornment,
+  Grid,
+  Paper,
+  Skeleton,
+  Fade,
+  Zoom,
+  Stack
+} from '@mui/material';
+import {
+  Search as SearchIcon,
+  Add as AddIcon,
+  AccessTime as ClockIcon,
+  LocalOffer as TagIcon,
+  ArrowForward as ArrowRightIcon,
+  ChatBubbleOutline as MessageCircleIcon,
+  ConfirmationNumber as TicketIcon
+} from '@mui/icons-material';
 
 const TicketList = () => {
   const [tickets, setTickets] = useState([]);
@@ -37,27 +67,27 @@ const TicketList = () => {
     setFilteredTickets(filtered);
   }, [tickets, searchTerm, statusFilter, priorityFilter]);
 
-  const getStatusBadgeClass = (status) => {
-    const classes = {
-      'open': 'status-open',
-      'in-progress': 'status-in-progress',
-      'resolved': 'status-completed',
-      'closed': 'status-closed'
+  const getStatusChipProps = useCallback((status) => {
+    const statusMap = {
+      'open': { color: 'primary', variant: 'filled' },
+      'in-progress': { color: 'warning', variant: 'filled' },
+      'resolved': { color: 'success', variant: 'filled' },
+      'closed': { color: 'default', variant: 'outlined' }
     };
-    return `status-badge ${classes[status] || 'status-open'}`;
-  };
+    return statusMap[status] || { color: 'primary', variant: 'filled' };
+  }, []);
 
-  const getPriorityColor = (priority) => {
-    const colors = {
-      'low': 'text-green',
-      'medium': 'text-orange',
-      'high': 'text-pink',
-      'urgent': 'text-purple'
+  const getPriorityChipProps = useCallback((priority) => {
+    const priorityMap = {
+      'low': { color: 'success', variant: 'outlined' },
+      'medium': { color: 'warning', variant: 'filled' },
+      'high': { color: 'error', variant: 'filled' },
+      'urgent': { color: 'error', variant: 'filled', sx: { fontWeight: 'bold' } }
     };
-    return colors[priority] || 'text-gray-text';
-  };
+    return priorityMap[priority] || { color: 'default', variant: 'outlined' };
+  }, []);
 
-  const formatDate = (dateString) => {
+  const formatDate = useCallback((dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -65,170 +95,209 @@ const TicketList = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
-  };
+  }, []);
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section with Modern Gradient */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-          <div className="absolute top-40 right-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-8 left-40 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-        </div>
-        
-        <div className="relative container py-24 md:py-32">
-          <div className="text-center max-w-5xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent mb-8 leading-tight">
-              My Support Tickets
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
-              Track and manage your support requests
-            </p>
-            
-            {/* Modern Search Bar */}
-            <div className="max-w-3xl mx-auto mb-12">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
-                <div className="relative bg-white rounded-2xl p-2 shadow-2xl border border-gray-200">
-                  <div className="flex items-center">
-                    <Search className="w-6 h-6 text-gray-400 ml-4" />
-                    <input
-                      type="text"
-                      placeholder="Search tickets... Try ticket ID or description"
-                      className="modern-search-input"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <select
-                      className="modern-search-select"
+    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+      {/* Hero Section */}
+      <Box
+        sx={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          py: { xs: 8, md: 12 },
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <Container maxWidth="lg">
+          <Fade in timeout={800}>
+            <Box textAlign="center">
+              <Typography
+                variant="h2"
+                component="h1"
+                sx={{
+                  fontWeight: 800,
+                  mb: 3,
+                  fontSize: { xs: '2.5rem', md: '4rem' },
+                  background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+                }}
+              >
+                My Support Tickets
+              </Typography>
+              
+              <Typography
+                variant="h5"
+                sx={{ mb: 6, opacity: 0.9, maxWidth: '600px', mx: 'auto' }}
+              >
+                Track and manage your support requests with ease
+              </Typography>
+              
+              {/* Search and Filter Section */}
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 2,
+                  mb: 6,
+                  maxWidth: 800,
+                  mx: 'auto'
+                }}
+              >
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Search tickets... Try ticket ID or description"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <FormControl sx={{ minWidth: 150 }}>
+                    <InputLabel>Status</InputLabel>
+                    <Select
                       value={statusFilter}
+                      label="Status"
                       onChange={(e) => setStatusFilter(e.target.value)}
                     >
-                      <option value="all">All Status</option>
-                      <option value="open">Open</option>
-                      <option value="in-progress">In Progress</option>
-                      <option value="resolved">Resolved</option>
-                      <option value="closed">Closed</option>
-                    </select>
-                    <select
-                      className="modern-search-select"
+                      <MenuItem value="all">All Status</MenuItem>
+                      <MenuItem value="open">Open</MenuItem>
+                      <MenuItem value="in-progress">In Progress</MenuItem>
+                      <MenuItem value="resolved">Resolved</MenuItem>
+                      <MenuItem value="closed">Closed</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl sx={{ minWidth: 150 }}>
+                    <InputLabel>Priority</InputLabel>
+                    <Select
                       value={priorityFilter}
+                      label="Priority"
                       onChange={(e) => setPriorityFilter(e.target.value)}
                     >
-                      <option value="all">All Priority</option>
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                      <option value="urgent">Urgent</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
+                      <MenuItem value="all">All Priority</MenuItem>
+                      <MenuItem value="low">Low</MenuItem>
+                      <MenuItem value="medium">Medium</MenuItem>
+                      <MenuItem value="high">High</MenuItem>
+                      <MenuItem value="urgent">Urgent</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Stack>
+              </Paper>
 
-            {/* Create New Ticket Button */}
-            <div className="flex justify-center">
-              <Link 
-                to="/tickets/new" 
-                className="modern-cta-button"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                Create New Ticket
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+              {/* Create New Ticket Button */}
+              <Zoom in timeout={1000}>
+                <Button
+                  component={Link}
+                  to="/tickets/new"
+                  variant="contained"
+                  size="large"
+                  startIcon={<AddIcon />}
+                  endIcon={<ArrowRightIcon />}
+                  sx={{
+                    py: 2,
+                    px: 4,
+                    borderRadius: 3,
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                    boxShadow: '0 8px 32px rgba(254, 107, 139, 0.3)',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 12px 40px rgba(254, 107, 139, 0.4)',
+                    },
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  Create New Ticket
+                </Button>
+              </Zoom>
+            </Box>
+          </Fade>
+        </Container>
+      </Box>
 
       {/* Tickets Content Section */}
-      <section className="py-24 bg-white">
-        <div className="container">
-
-          {filteredTickets.length === 0 ? (
-            <div className="bg-white rounded-3xl p-16 border border-gray-100 shadow-xl text-center max-w-2xl mx-auto">
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        {filteredTickets.length === 0 ? (
+          <Fade in timeout={600}>
+            <Paper
+              elevation={4}
+              sx={{
+                p: 8,
+                textAlign: 'center',
+                maxWidth: 600,
+                mx: 'auto',
+                borderRadius: 4,
+                background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'
+              }}
+            >
               {tickets.length === 0 ? (
                 <>
-                  <MessageCircle className="mx-auto h-20 w-20 text-purple-300 mb-6" />
-                  <h3 className="text-3xl font-bold text-gray-900 mb-4">No tickets yet</h3>
-                  <p className="text-xl text-gray-600 mb-8">
+                  <TicketIcon sx={{ fontSize: 80, color: 'primary.main', mb: 3 }} />
+                  <Typography variant="h4" gutterBottom fontWeight="bold">
+                    No tickets yet
+                  </Typography>
+                  <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
                     Create your first support ticket to get started.
-                  </p>
-                  <Link to="/tickets/new" className="modern-cta-button">
-                    <Plus className="w-5 h-5 mr-2" />
+                  </Typography>
+                  <Button
+                    component={Link}
+                    to="/tickets/new"
+                    variant="contained"
+                    size="large"
+                    startIcon={<AddIcon />}
+                    endIcon={<ArrowRightIcon />}
+                    sx={{
+                      py: 1.5,
+                      px: 3,
+                      borderRadius: 3,
+                      background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: 4
+                      }
+                    }}
+                  >
                     Create First Ticket
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Link>
+                  </Button>
                 </>
               ) : (
                 <>
-                  <Search className="mx-auto h-20 w-20 text-purple-300 mb-6" />
-                  <h3 className="text-3xl font-bold text-gray-900 mb-4">No tickets found</h3>
-                  <p className="text-xl text-gray-600">
+                  <SearchIcon sx={{ fontSize: 80, color: 'primary.main', mb: 3 }} />
+                  <Typography variant="h4" gutterBottom fontWeight="bold">
+                    No tickets found
+                  </Typography>
+                  <Typography variant="h6" color="text.secondary">
                     Try adjusting your search or filter criteria.
-                  </p>
+                  </Typography>
                 </>
               )}
-            </div>
-          ) : (
-            <div className="space-y-6 max-w-4xl mx-auto">
-              {filteredTickets.map((ticket) => (
-                <Link
-                  key={ticket.id}
-                  to={`/tickets/${ticket.id}`}
-                  className="group"
-                >
-                  <div className="bg-white rounded-3xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-4 mb-4">
-                          <h3 className="text-2xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
-                            {ticket.title}
-                          </h3>
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeClass(ticket.status)}`}>
-                            {ticket.status}
-                          </span>
-                        </div>
-                        <p className="text-lg text-gray-600 mb-4 line-clamp-2 leading-relaxed">
-                          {ticket.description}
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <div className={`px-3 py-1 rounded-full text-sm font-bold ${getPriorityColor(ticket.priority)} bg-opacity-10`}>
-                          {ticket.priority.toUpperCase()}
-                        </div>
-                        <ArrowRight className="h-6 w-6 text-gray-400 group-hover:translate-x-2 group-hover:text-purple-600 transition-all" />
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
-                      <div className="flex items-center space-x-6">
-                        <div className="flex items-center space-x-2">
-                          <Tag className="h-4 w-4" />
-                          <span className="font-medium">{ticket.id}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="px-3 py-1 text-sm font-medium rounded-full" style={{ backgroundColor: 'rgba(255, 142, 0, 0.1)', color: '#FF8E00' }}>
-                            {ticket.category}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Clock className="h-4 w-4" />
-                        <span>{formatDate(ticket.createdAt)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-    </div>
+            </Paper>
+          </Fade>
+        ) : (
+          <Grid container spacing={3}>
+            {filteredTickets.map((ticket, index) => (
+              <Grid item xs={12} key={ticket.id}>
+                <TicketCard
+                  ticket={ticket}
+                  index={index}
+                  getStatusChipProps={getStatusChipProps}
+                  getPriorityChipProps={getPriorityChipProps}
+                  formatDate={formatDate}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Container>
+    </Box>
   );
 };
 
