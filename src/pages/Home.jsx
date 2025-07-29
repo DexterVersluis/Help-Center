@@ -6,17 +6,18 @@ import {
   Typography,
   TextField,
   Button,
-  Grid,
   Card,
   CardContent,
   CardActions,
   Chip,
   InputAdornment,
-  IconButton,
   Paper,
   Stack,
   Avatar,
-  Divider
+  Divider,
+  Fade,
+  Slide,
+  Grid
 } from '@mui/material';
 import {
   Search,
@@ -30,109 +31,95 @@ import {
   Storage,
   Security,
   AccountTree,
-  Article
+  Article,
+  SupportAgent,
+  School,
+  Speed,
+  CheckCircle,
+  TrendingUp,
+  Groups,
+  AutoAwesome
 } from '@mui/icons-material';
 
 const Home = () => {
-  console.log('Home component loaded - TESTING CHANGES');
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-  const quickActions = [
+  
+  const supportServices = [
     {
-      title: 'Submit a Ticket',
-      description: 'Get personalized help from our support team',
-      icon: BugReport,
+      title: 'Expert Support',
+      description: 'Get personalized help from ENBOQ specialists who understand your onboarding challenges',
+      icon: SupportAgent,
       link: '/tickets/new',
-      actionText: 'Get started',
       color: 'primary'
     },
     {
-      title: 'Browse Documentation',
-      description: 'Step-by-step guides and tutorials',
-      icon: Description,
+      title: 'Onboarding Guides',
+      description: 'Comprehensive step-by-step documentation to get your team up and running quickly',
+      icon: School,
       link: '/docs',
-      actionText: 'Get started',
       color: 'secondary'
     },
     {
-      title: 'Request a Feature',
-      description: 'Share your ideas for new features',
+      title: 'Quick Solutions',
+      description: 'Find instant answers to common questions and troubleshooting scenarios',
+      icon: Speed,
+      link: '/faq',
+      color: 'success'
+    },
+    {
+      title: 'Feature Requests',
+      description: 'Shape the future of ENBOQ by sharing your ideas and enhancement suggestions',
       icon: Lightbulb,
       link: '/features',
-      actionText: 'Get started',
       color: 'warning'
-    },
-    {
-      title: 'View FAQ',
-      description: 'Quick answers to common questions',
-      icon: Help,
-      link: '/faq',
-      actionText: 'Get started',
-      color: 'success'
     }
   ];
 
-  const popularTopics = [
-    'Getting Started with ENBOQ',
-    'Account Setup and Management',
-    'Project Collaboration'
-  ];
-
-  const enboqFeatures = [
+  const onboardingFeatures = [
     {
-      icon: Storage,
-      title: 'Data Management',
-      description: 'Organize and manage your data efficiently with ENBOQ\'s powerful database tools',
-      link: '/docs/data-management'
+      icon: CheckCircle,
+      title: 'Streamlined Setup',
+      description: 'Get your ENBOQ environment configured and ready for your team in minutes, not hours'
     },
     {
-      icon: AccountTree,
-      title: 'Workflow Automation',
-      description: 'Streamline your processes with automated workflows and custom triggers',
-      link: '/docs/workflows'
+      icon: Groups,
+      title: 'Team Collaboration',
+      description: 'Seamlessly onboard multiple team members with role-based access and permissions'
     },
     {
-      icon: Code,
-      title: 'API Integration',
-      description: 'Connect ENBOQ with your existing tools using our comprehensive API',
-      link: '/docs/api'
+      icon: Settings,
+      title: 'System Integration',
+      description: 'Connect ENBOQ with your existing tools and workflows for a unified experience'
     },
     {
-      icon: Security,
-      title: 'Security & Permissions',
-      description: 'Control access and secure your data with advanced permission settings',
-      link: '/docs/security'
+      icon: TrendingUp,
+      title: 'Success Tracking',
+      description: 'Monitor your onboarding progress and measure team adoption with built-in analytics'
     }
   ];
 
-  const howToGuides = [
+  const quickStartGuides = [
     {
-      title: 'Setting Up Your First Project',
-      description: 'Learn how to create and configure your first ENBOQ project',
+      title: 'ENBOQ Quick Start',
+      description: 'Get up and running with ENBOQ in under 10 minutes',
       category: 'Getting Started',
-      readTime: '5 min read',
-      link: '/docs/first-project'
+      readTime: '8 min',
+      difficulty: 'Beginner'
     },
     {
-      title: 'Managing Team Permissions',
-      description: 'Configure user roles and permissions for your team members',
-      category: 'Administration',
-      readTime: '8 min read',
-      link: '/docs/team-permissions'
+      title: 'Team Onboarding Checklist',
+      description: 'Essential steps to successfully onboard your entire team',
+      category: 'Team Setup',
+      readTime: '15 min',
+      difficulty: 'Intermediate'
     },
     {
-      title: 'Creating Custom Workflows',
-      description: 'Build automated workflows to streamline your business processes',
-      category: 'Automation',
-      readTime: '12 min read',
-      link: '/docs/custom-workflows'
-    },
-    {
-      title: 'Integrating with External APIs',
-      description: 'Connect ENBOQ with third-party services and applications',
-      category: 'Integration',
-      readTime: '10 min read',
-      link: '/docs/api-integration'
+      title: 'Advanced Configuration',
+      description: 'Customize ENBOQ to match your specific business requirements',
+      category: 'Configuration',
+      readTime: '20 min',
+      difficulty: 'Advanced'
     }
   ];
 
@@ -258,26 +245,135 @@ const Home = () => {
         </Container>
       </Box>
 
-      {/* Quick Actions */}
+      {/* Support Services */}
       <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Box textAlign="center" mb={6}>
-          <Typography variant="h2" gutterBottom>
-            What would you like to do?
-          </Typography>
-          <Typography variant="h6" color="text.secondary">
-            Choose your path to getting the help you need
-          </Typography>
-        </Box>
+        <Fade in timeout={800}>
+          <Box textAlign="center" mb={8}>
+            <Typography 
+              variant="h2" 
+              gutterBottom
+              sx={{ 
+                fontWeight: 700,
+                background: 'linear-gradient(45deg, #1976d2, #42a5f5)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}
+            >
+              ENBOQ Support & Onboarding
+            </Typography>
+            <Typography variant="h5" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
+              Everything you need to successfully implement and master ENBOQ for your organization
+            </Typography>
+          </Box>
+        </Fade>
 
-        <Grid container spacing={3}>
-          {quickActions.map((action, index) => {
-            const Icon = action.icon;
+        <Box display="flex" gap={2}>
+          {supportServices.map((service, index) => {
+            const Icon = service.icon;
             return (
-                <Grid item xs={6} sm={3} md={3} lg={3} key={index}>                <Card
+              <Card
+                key={index}
+                elevation={2}
+                sx={{
+                  flex: 1,
+                  p: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  borderRadius: 3,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  minHeight: 280,
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: 8,
+                    borderColor: `${service.color}.main`
+                  }
+                }}
+              >
+                <Box textAlign="center" mb={2}>
+                  <Avatar
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      mx: 'auto',
+                      mb: 1,
+                      bgcolor: `${service.color}.main`,
+                      boxShadow: 3
+                    }}
+                  >
+                    <Icon sx={{ fontSize: 20 }} />
+                  </Avatar>
+                  <Typography variant="subtitle1" gutterBottom fontWeight={600}>
+                    {service.title}
+                  </Typography>
+                </Box>
+                <Box flex={1} mb={2}>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.4, fontSize: '0.8rem' }}>
+                    {service.description}
+                  </Typography>
+                </Box>
+                <Button
+                  component={Link}
+                  to={service.link}
+                  variant="contained"
+                  color={service.color}
+                  fullWidth
+                  endIcon={<ArrowForward />}
+                  sx={{ 
+                    borderRadius: 2,
+                    py: 0.8,
+                    textTransform: 'none',
+                    fontSize: '0.8rem',
+                    fontWeight: 600
+                  }}
+                >
+                  Get Started
+                </Button>
+              </Card>
+            );
+          })}
+        </Box>
+      </Container>
+
+      {/* Onboarding Features */}
+      <Box sx={{ bgcolor: 'grey.50', py: 10 }}>
+        <Container maxWidth="lg">
+          <Fade in timeout={1000}>
+            <Box textAlign="center" mb={8}>
+              <Typography 
+                variant="h2" 
+                gutterBottom
+                sx={{ 
+                  fontWeight: 700,
+                  color: 'text.primary'
+                }}
+              >
+                Why Choose ENBOQ for Onboarding?
+              </Typography>
+              <Typography variant="h5" color="text.secondary" sx={{ maxWidth: 700, mx: 'auto' }}>
+                Our platform is designed specifically to make team onboarding smooth, efficient, and successful
+              </Typography>
+            </Box>
+          </Fade>
+
+          <Box display="flex" gap={2}>
+            {onboardingFeatures.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <Paper
+                  key={index}
+                  elevation={3}
                   sx={{
-                    height: '100%',
+                    flex: 1,
+                    p: 2,
                     display: 'flex',
                     flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    borderRadius: 4,
+                    minHeight: 220,
                     transition: 'all 0.3s ease',
                     '&:hover': {
                       transform: 'translateY(-8px)',
@@ -285,288 +381,282 @@ const Home = () => {
                     }
                   }}
                 >
-                  <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-                    <Avatar
-                      sx={{
-                        width: 64,
-                        height: 64,
-                        mx: 'auto',
-                        mb: 2,
-                        bgcolor: `${action.color}.main`
-                      }}
-                    >
-                      <Icon sx={{ fontSize: 32 }} />
-                    </Avatar>
-                    <Typography variant="h5" gutterBottom>
-                      {action.title}
-                    </Typography>
-                    <Typography color="text.secondary">
-                      {action.description}
-                    </Typography>
-                  </CardContent>
-                  <CardActions sx={{ justifyContent: 'center', pb: 2 }}>
-                    <Button
-                      component={Link}
-                      to={action.link}
-                      endIcon={<ArrowForward />}
-                      color={action.color}
-                    >
-                      {action.actionText}
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            );
-          })}
-        </Grid>
-      </Container>
-
-      {/* ENBOQ Features */}
-      <Box sx={{ bgcolor: 'background.default', py: 8 }}>
-        <Container maxWidth="lg">
-          <Box textAlign="center" mb={6}>
-            <Typography variant="h2" gutterBottom>
-              Discover ENBOQ Features
-            </Typography>
-            <Typography variant="h6" color="text.secondary">
-              Explore the powerful capabilities that make ENBOQ the perfect solution for your business needs
-            </Typography>
-          </Box>
-
-          <Grid container spacing={3} mb={4}>
-            {enboqFeatures.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <Grid item xs={6} sm={3} md={3} lg={3} key={index}>
-                  <Card
+                  <Avatar
                     sx={{
-                      height: '100%',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-4px)',
-                        boxShadow: 4
-                      }
+                      width: 48,
+                      height: 48,
+                      bgcolor: 'primary.main',
+                      boxShadow: 4,
+                      mb: 1
                     }}
                   >
-                    <CardContent sx={{ textAlign: 'center' }}>
-                      <Avatar
-                        sx={{
-                          width: 48,
-                          height: 48,
-                          mx: 'auto',
-                          mb: 2,
-                          bgcolor: 'primary.main'
-                        }}
-                      >
-                        <Icon sx={{ fontSize: 24 }} />
-                      </Avatar>
-                      <Typography variant="h6" gutterBottom>
-                        {feature.title}
-                      </Typography>
-                      <Typography color="text.secondary" sx={{ mb: 2, fontSize: '0.875rem' }}>
-                        {feature.description}
-                      </Typography>
-                      <Button
-                        component={Link}
-                        to={feature.link}
-                        endIcon={<ArrowForward />}
-                        color="primary"
-                        size="small"
-                      >
-                        Learn more
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                    <Icon sx={{ fontSize: 24 }} />
+                  </Avatar>
+                  <Typography variant="subtitle1" gutterBottom fontWeight={600} color="primary.main">
+                    {feature.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.4, fontSize: '0.8rem' }}>
+                    {feature.description}
+                  </Typography>
+                </Paper>
               );
             })}
-          </Grid>
-
-          <Box textAlign="center">
-            <Button
-              component={Link}
-              to="/docs"
-              variant="contained"
-              size="large"
-              endIcon={<ArrowForward />}
-              sx={{ borderRadius: 3 }}
-            >
-              View All Features
-            </Button>
           </Box>
         </Container>
       </Box>
 
-      {/* How-to Guides */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Box textAlign="center" mb={6}>
-          <Typography variant="h2" gutterBottom>
-            Step-by-Step Guides
-          </Typography>
-          <Typography variant="h6" color="text.secondary">
-            Learn how to make the most of ENBOQ with our comprehensive tutorials and guides
-          </Typography>
-        </Box>
-
-        <Grid container spacing={3} mb={6}>
-          {howToGuides.map((guide, index) => (
-            <Grid item xs={6} sm={3} md={3} lg={3} key={index}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 4
-                  }
-                }}
-              >
-                <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                    <Chip label={guide.category} color="warning" size="small" />
-                    <Typography variant="caption" color="text.secondary">
-                      {guide.readTime}
-                    </Typography>
-                  </Box>
-                  
-                  <Typography variant="h6" gutterBottom>
-                    {guide.title}
-                  </Typography>
-                  
-                  <Typography color="text.secondary" sx={{ mb: 2, flexGrow: 1, fontSize: '0.875rem' }}>
-                    {guide.description}
-                  </Typography>
-                  
-                  <Button
-                    component={Link}
-                    to={guide.link}
-                    endIcon={<ArrowForward />}
-                    color="primary"
-                    size="small"
-                    sx={{ alignSelf: 'flex-start' }}
-                  >
-                    Read guide
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-
-        <Grid container spacing={6} alignItems="center">
-          <Grid item xs={12} lg={6}>
-            <Paper
-              sx={{
-                p: 4,
-                background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-                borderRadius: 3
+      {/* Quick Start Guides */}
+      <Container maxWidth="lg" sx={{ py: 10 }}>
+        <Fade in timeout={1200}>
+          <Box textAlign="center" mb={8}>
+            <Typography 
+              variant="h2" 
+              gutterBottom
+              sx={{ 
+                fontWeight: 700,
+                color: 'text.primary'
               }}
             >
-              <Typography variant="h4" gutterBottom>
-                Popular Topics
-              </Typography>
-              <Stack spacing={2}>
-                {popularTopics.concat(['Data Import & Export', 'Custom Field Configuration', 'Reporting & Analytics']).map((topic, index) => (
-                  <Paper
-                    key={index}
-                    component={Link}
-                    to="/docs"
-                    sx={{
-                      p: 2,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      textDecoration: 'none',
-                      color: 'inherit',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        backgroundColor: 'primary.light',
-                        color: 'white'
-                      }
-                    }}
-                  >
-                    <Typography fontWeight="medium">{topic}</Typography>
-                    <ArrowForward />
-                  </Paper>
-                ))}
-              </Stack>
-            </Paper>
-          </Grid>
+              Quick Start Guides
+            </Typography>
+            <Typography variant="h5" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
+              Get your team onboarded with our step-by-step guides tailored to your experience level
+            </Typography>
+          </Box>
+        </Fade>
 
-          <Grid item xs={12} lg={6}>
-            <Stack spacing={4}>
-              {[
-                { icon: Article, title: 'Comprehensive Documentation', desc: 'Detailed guides covering every aspect of ENBOQ functionality' },
-                { icon: Settings, title: 'Configuration Examples', desc: 'Real-world examples and best practices for setup and configuration' },
-                { icon: Code, title: 'Code Samples', desc: 'Ready-to-use code snippets and integration examples' }
-              ].map((item, index) => (
-                <Box key={index} display="flex" alignItems="flex-start" gap={2}>
-                  <Avatar sx={{ bgcolor: 'primary.main' }}>
-                    <item.icon />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="h6" gutterBottom>
-                      {item.title}
-                    </Typography>
-                    <Typography color="text.secondary">
-                      {item.desc}
-                    </Typography>
+        <Box display="flex" gap={2} mb={8}>
+          {quickStartGuides.map((guide, index) => (
+            <Card
+              key={index}
+              elevation={3}
+              sx={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                borderRadius: 3,
+                border: '1px solid',
+                borderColor: 'divider',
+                minHeight: 320,
+                '&:hover': {
+                  transform: 'translateY(-6px)',
+                  boxShadow: 8,
+                  borderColor: 'primary.main'
+                }
+              }}
+            >
+              <CardContent sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={1}>
+                  <Box display="flex" flexDirection="column" gap={0.5}>
+                    <Chip 
+                      label={guide.category} 
+                      color="primary" 
+                      variant="outlined"
+                      size="small"
+                      sx={{ fontWeight: 600, fontSize: '0.7rem', alignSelf: 'flex-start' }}
+                    />
+                    <Chip 
+                      label={guide.difficulty} 
+                      color={guide.difficulty === 'Beginner' ? 'success' : guide.difficulty === 'Intermediate' ? 'warning' : 'error'}
+                      size="small"
+                      sx={{ fontSize: '0.7rem', alignSelf: 'flex-start' }}
+                    />
                   </Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: '0.7rem' }}>
+                    {guide.readTime}
+                  </Typography>
                 </Box>
-              ))}
-            </Stack>
-          </Grid>
-        </Grid>
-      </Container>
+                
+                <Typography variant="subtitle1" gutterBottom fontWeight={600} color="primary.main">
+                  {guide.title}
+                </Typography>
+                
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.4, flex: 1, fontSize: '0.8rem' }}>
+                  {guide.description}
+                </Typography>
+                
+                <Button
+                  component={Link}
+                  to="/docs"
+                  variant="contained"
+                  fullWidth
+                  endIcon={<ArrowForward />}
+                  sx={{ 
+                    borderRadius: 2,
+                    py: 0.8,
+                    textTransform: 'none',
+                    fontSize: '0.8rem',
+                    fontWeight: 600
+                  }}
+                >
+                  Start Guide
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
 
-      {/* CTA Section */}
-      <Box
-        sx={{
-          background: 'linear-gradient(45deg, #1976d2, #dc004e)',
-          color: 'white',
-          py: 8,
-          textAlign: 'center'
-        }}
-      >
-        <Container maxWidth="md">
-          <Typography variant="h2" gutterBottom>
-            Need personalized help?
-          </Typography>
-          <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
-            Can't find the answer in our documentation? Get direct support from our ENBOQ experts 
-            who can help with your specific use case.
-          </Typography>
-          
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center">
+        <Fade in timeout={1500}>
+          <Paper
+            elevation={4}
+            sx={{
+              p: 6,
+              background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
+              borderRadius: 4,
+              textAlign: 'center'
+            }}
+          >
+            <Avatar
+              sx={{
+                width: 80,
+                height: 80,
+                mx: 'auto',
+                mb: 3,
+                bgcolor: 'primary.main',
+                boxShadow: 3
+              }}
+            >
+              <AutoAwesome sx={{ fontSize: 40 }} />
+            </Avatar>
+            <Typography variant="h3" gutterBottom fontWeight={700} color="primary.main">
+              Need Personalized Onboarding?
+            </Typography>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
+              Our onboarding specialists can provide customized training sessions and implementation support for your specific use case
+            </Typography>
             <Button
               component={Link}
               to="/tickets/new"
               variant="contained"
               size="large"
               endIcon={<ArrowForward />}
-              sx={{
-                bgcolor: 'white',
-                color: 'primary.main',
-                '&:hover': { bgcolor: 'grey.100' }
+              sx={{ 
+                borderRadius: 3,
+                px: 5,
+                py: 2,
+                textTransform: 'none',
+                fontSize: '1.2rem',
+                fontWeight: 600
               }}
             >
-              Submit Support Ticket
+              Request Custom Onboarding
             </Button>
-            <Button
-              href="mailto:support@enboq.com"
-              variant="outlined"
-              size="large"
-              sx={{
-                borderColor: 'white',
-                color: 'white',
-                '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' }
-              }}
-            >
-              Email Support Team
-            </Button>
-          </Stack>
+          </Paper>
+        </Fade>
+      </Container>
+
+      {/* CTA Section */}
+      <Box
+        sx={{
+          background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 50%, #0d47a1 100%)',
+          color: 'white',
+          py: 12,
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+            opacity: 0.3
+          }}
+        />
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+          <Fade in timeout={1600}>
+            <Box textAlign="center">
+              <Typography 
+                variant="h1" 
+                gutterBottom
+                sx={{ 
+                  fontWeight: 800,
+                  fontSize: { xs: '2.5rem', md: '4rem' },
+                  mb: 3
+                }}
+              >
+                Ready to Get Started?
+              </Typography>
+              <Typography 
+                variant="h4" 
+                sx={{ 
+                  mb: 6, 
+                  opacity: 0.95,
+                  fontWeight: 300,
+                  maxWidth: 800,
+                  mx: 'auto',
+                  lineHeight: 1.4
+                }}
+              >
+                Join thousands of teams who have successfully onboarded with ENBOQ. 
+                Our support team is here to ensure your success every step of the way.
+              </Typography>
+              
+              <Stack 
+                direction={{ xs: 'column', sm: 'row' }} 
+                spacing={4} 
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Button
+                  component={Link}
+                  to="/tickets/new"
+                  variant="contained"
+                  size="large"
+                  endIcon={<ArrowForward />}
+                  sx={{
+                    bgcolor: 'white',
+                    color: 'primary.main',
+                    px: 5,
+                    py: 2,
+                    fontSize: '1.2rem',
+                    fontWeight: 600,
+                    borderRadius: 3,
+                    textTransform: 'none',
+                    boxShadow: 4,
+                    '&:hover': { 
+                      bgcolor: 'grey.100',
+                      transform: 'translateY(-2px)',
+                      boxShadow: 6
+                    },
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  Get Expert Support
+                </Button>
+                <Button
+                  component={Link}
+                  to="/docs"
+                  variant="outlined"
+                  size="large"
+                  endIcon={<ArrowForward />}
+                  sx={{
+                    borderColor: 'white',
+                    color: 'white',
+                    px: 5,
+                    py: 2,
+                    fontSize: '1.2rem',
+                    fontWeight: 600,
+                    borderRadius: 3,
+                    textTransform: 'none',
+                    borderWidth: 2,
+                    '&:hover': { 
+                      borderColor: 'white', 
+                      bgcolor: 'rgba(255,255,255,0.1)',
+                      transform: 'translateY(-2px)'
+                    },
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  Browse Documentation
+                </Button>
+              </Stack>
+            </Box>
+          </Fade>
         </Container>
       </Box>
     </Box>
