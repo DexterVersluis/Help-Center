@@ -101,25 +101,18 @@ const Home = () => {
 
   const quickStartGuides = [
     {
-      title: 'ENBOQ Quick Start',
-      description: 'Get up and running with ENBOQ in under 10 minutes',
+      title: 'Getting Started with ENBOQ',
+      description: 'Complete guide to setting up your first project and understanding the basics',
       category: 'Getting Started',
-      readTime: '8 min',
+      readTime: '5 min',
       difficulty: 'Beginner'
     },
     {
-      title: 'Team Onboarding Checklist',
-      description: 'Essential steps to successfully onboard your entire team',
-      category: 'Team Setup',
-      readTime: '15 min',
-      difficulty: 'Intermediate'
-    },
-    {
-      title: 'Advanced Configuration',
-      description: 'Customize ENBOQ to match your specific business requirements',
-      category: 'Configuration',
-      readTime: '20 min',
-      difficulty: 'Advanced'
+      title: 'Full ENBOQ Platform Demo',
+      description: 'Comprehensive walkthrough of the ENBOQ platform features and capabilities',
+      category: 'Getting Started',
+      readTime: '10 min',
+      difficulty: 'Beginner'
     }
   ];
 

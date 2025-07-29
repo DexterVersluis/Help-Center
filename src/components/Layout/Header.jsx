@@ -55,10 +55,8 @@ const Header = () => {
 
   const supportDocsOptions = [
     { label: 'All Documentation', value: '/docs', icon: <Description />, description: 'Browse all documentation' },
-    { label: 'Account Setup and Management', value: '/docs/account-setup', icon: <AccountCircle />, description: 'Manage your account' },
-    { label: 'Project Collaboration', value: '/docs/collaboration', icon: <Description />, description: 'Work with your team' },
-    { label: 'Advanced Features', value: '/docs/advanced', icon: <Description />, description: 'Power user features' },
-    { label: 'Setup Integrations', value: '/docs/integrations', icon: <Description />, description: 'Configure third-party integrations' }
+    { label: 'Getting Started with ENBOQ', value: '/docs/doc-001', icon: <Description />, description: 'Complete guide to setting up your first project' },
+    { label: 'Full ENBOQ Platform Demo', value: '/docs/onboarding-platform-demo-enboq', icon: <Description />, description: 'Comprehensive walkthrough of the ENBOQ platform features' }
   ];
 
   const ticketsOptions = [

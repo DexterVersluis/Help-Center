@@ -400,9 +400,8 @@ const OnboardingDoc = () => {
                 </Typography>
                 <Stack spacing={1}>
                   {[
-                    { id: 'doc-001', title: 'Getting Started with ENBOQ' },
-                    { id: 'doc-003', title: 'Advanced User Management' },
-                    { id: 'doc-004', title: 'Real-time Collaboration Features' }
+                    { id: 'getting-started-with-enboq', title: 'Getting Started with ENBOQ' },
+                    { id: 'new-hire-onboarding-flow', title: 'What the New Hire Onboarding Flow Looks Like' }
                   ].map((doc) => (
                     <Paper
                       key={doc.id}

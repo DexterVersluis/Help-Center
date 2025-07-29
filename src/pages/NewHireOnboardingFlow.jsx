@@ -39,84 +39,94 @@ import {
   Visibility
 } from '@mui/icons-material';
 
-const DocDetail = () => {
+const NewHireOnboardingFlow = () => {
   const { id } = useParams();
   const [doc, setDoc] = useState(null);
   const [isHelpful, setIsHelpful] = useState(null);
 
   useEffect(() => {
-    // If the ID is for the platform demo, redirect to the OnboardingDoc component
-    if (id === 'onboarding-platform-demo-enboq') {
-      window.location.href = '/docs/onboarding-platform-demo-enboq';
-      return;
-    }
-    
-    // If the ID is for the new hire onboarding flow, redirect to the NewHireOnboardingFlow component
-    if (id === 'new-hire-onboarding-flow') {
-      window.location.href = '/docs/new-hire-onboarding-flow';
-      return;
-    }
-    
-    const sampleDoc = {
-      id: 'getting-started-with-enboq',
-      title: 'Getting Started with ENBOQ',
-      description: 'Complete guide to setting up your first project and understanding the basics',
-      category: 'Getting Started',
+    const docData = {
+      id: 'new-hire-onboarding-flow',
+      title: 'What the New Hire Onboarding Flow Looks Like',
+      description: 'Explore the full onboarding experience through the eyes of a new hire. This step-by-step guide walks you through the new hire flow—from receiving the onboarding invite email to accessing a personalized onboarding dashboard. Learn how employees complete tasks, engage with interactive content, and access knowledge tools within a fully branded and mobile-ready onboarding platform.',
+      category: 'New Hire Experience',
       type: 'guide',
-      readTime: '5 min',
+      readTime: '7 min',
       difficulty: 'Beginner',
       hasVideo: true,
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      videoUrl: 'https://www.loom.com/embed/b53be8e8b2434b8a9b6b64001c6af4c2?sid=732a61fa-e83c-4662-ba52-51b1fb3a0034',
       steps: [
         {
           id: 1,
-          title: 'Create Your Account',
-          content: 'Start by signing up for a new ENBOQ account. Visit our homepage and click the "Sign Up" button in the top right corner. Fill in your email address, create a secure password, and verify your email.',
-          tips: ['Use a strong password with at least 8 characters', 'Check your spam folder for the verification email']
+          title: 'Receive the Onboarding Invite Email',
+          content: 'New hires receive an automated email with all essential onboarding details, including platform URL, login credentials, and scheduled onboarding events. This marks the start of the digital onboarding experience.',
+          tips: ['Check your spam folder if you don\'t receive the invite within 24 hours', 'Save the login credentials in a secure location for easy access']
         },
         {
           id: 2,
-          title: 'Complete Your Profile',
-          content: 'Once logged in, complete your profile by adding your name, company information, and profile picture. This helps your team members identify you in collaborative projects.',
-          tips: ['Upload a professional profile picture', 'Add your job title for better team collaboration']
+          title: 'Log Into the New Hire Portal',
+          content: 'Upon logging in, the platform auto-detects the user\'s preferred language based on browser settings. The system adjusts accordingly, ensuring a seamless multilingual onboarding experience.',
+          tips: ['Use a modern browser for the best experience', 'Clear your browser cache if you encounter any loading issues']
         },
         {
           id: 3,
-          title: 'Explore the Dashboard',
-          content: 'Take a moment to familiarize yourself with the main dashboard. You\'ll see navigation menus, recent projects, and quick action buttons. The sidebar contains all major features.',
-          tips: ['Bookmark important pages for quick access', 'Customize your dashboard layout in settings']
+          title: 'Complete the Welcome Setup',
+          content: 'New hires upload a profile photo and provide basic information like birth year and mobile number. This information personalizes communications with buddies, managers, and other team members.',
+          tips: ['Upload a professional profile photo for better team recognition', 'Ensure your contact information is accurate for important notifications']
         },
         {
           id: 4,
-          title: 'Create Your First Project',
-          content: 'Click the "New Project" button to create your first project. Choose a template that matches your needs, give it a descriptive name, and set up basic project settings.',
-          tips: ['Choose templates carefully as they affect available features', 'Project names should be descriptive and unique']
+          title: 'Access the Personalized Onboarding Dashboard',
+          content: 'After setup, new hires land on their main onboarding dashboard. This is a centralized view of all upcoming tasks, activities, events, and communications across the preboarding and onboarding timeline.',
+          tips: ['Bookmark the dashboard URL for quick access', 'Check the dashboard daily for new tasks and updates']
         },
         {
           id: 5,
-          title: 'Invite Team Members',
-          content: 'Add team members to your project by going to Project Settings > Team. Enter their email addresses and assign appropriate roles (Admin, Editor, or Viewer).',
-          tips: ['Start with fewer permissions and upgrade as needed', 'Send a welcome message with project context']
+          title: 'Complete Daily Missions and Earn XP',
+          content: 'The onboarding platform gamifies the experience by showing "Today\'s Mission" and awarding XP (experience points) for completed tasks. For example: uploading signed documents or completing a survey.',
+          tips: ['Complete tasks promptly to stay on track with your onboarding timeline', 'XP points help track your progress and engagement']
         },
         {
           id: 6,
-          title: 'Start Building',
-          content: 'Now you\'re ready to start using ENBOQ! Explore the various tools and features available in your project. Don\'t hesitate to check out our other documentation for specific features.',
-          tips: ['Take advantage of keyboard shortcuts for efficiency', 'Save your work frequently using Ctrl+S']
+          title: 'Engage with Stories and Quizzes',
+          content: 'New hires interact with onboarding stories (e.g., "Helping the President") and quizzes designed to introduce company values, culture, and key contacts. These activities unlock access to next steps like meetings or document submissions.',
+          tips: ['Take your time to read through company stories carefully', 'Don\'t worry about quiz scores - they\'re designed to help you learn']
+        },
+        {
+          id: 7,
+          title: 'Submit Interactive Surveys and Forms',
+          content: 'Employees answer personalized questions such as favorite dishes or ideal workdays. Responses are sent to relevant departments like the canteen or HR to personalize the employee\'s first days.',
+          tips: ['Be honest in your responses to get the most personalized experience', 'These surveys help the company better support your needs']
+        },
+        {
+          id: 8,
+          title: 'Use AI-Powered Search and Chat',
+          content: 'The dashboard includes a knowledge search feature, allowing new hires to ask onboarding-related questions. AI responds with company-specific answers based on internal documents and training materials.',
+          tips: ['Try asking specific questions about company policies or procedures', 'The AI learns from company documents, so answers are tailored to your organization']
+        },
+        {
+          id: 9,
+          title: 'Access the Mobile Onboarding Experience',
+          content: 'The onboarding flow is fully responsive and mobile-friendly. New hires can log in via smartphone, access tasks, scan QR codes, and even install a branded app for easier access.',
+          tips: ['Download the company app if available for push notifications', 'Mobile access allows you to complete tasks on-the-go']
+        },
+        {
+          id: 10,
+          title: 'Stay Supported Throughout the Journey',
+          content: 'Support is always accessible through the integrated help center or via email. The platform ensures every new hire has what they need to start strong and feel welcome from day one.',
+          tips: ['Don\'t hesitate to reach out for help if you get stuck', 'Support teams are there to ensure your success']
         }
       ],
-      rating: 4.8,
-      views: 1250,
-      lastUpdated: '2024-01-20T10:00:00Z',
+      rating: 4.7,
+      views: 890,
+      lastUpdated: '2024-07-29T14:30:00Z',
       relatedDocs: [
-        { id: 'onboarding-platform-demo-enboq', title: 'Full ENBOQ Platform Demo' },
-        { id: 'new-hire-onboarding-flow', title: 'What the New Hire Onboarding Flow Looks Like' }
+        { id: 'getting-started-with-enboq', title: 'Getting Started with ENBOQ' },
+        { id: 'onboarding-platform-demo-enboq', title: 'Full ENBOQ Platform Demo' }
       ]
     };
-    setDoc(sampleDoc);
+    setDoc(docData);
   }, [id]);
-
-
 
   const getDifficultyColor = (difficulty) => {
     const colors = {
@@ -417,4 +427,4 @@ const DocDetail = () => {
   );
 };
 
-export default DocDetail;
+export default NewHireOnboardingFlow;

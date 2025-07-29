@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { DocumentationService } from '../services/documentationService';
+import LoadingSpinner from '../components/LoadingSpinner';
 import {
   Box,
   Container,
@@ -45,150 +47,108 @@ const SupportDocs = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [docs, setDocs] = useState([]);
   const [filteredDocs, setFilteredDocs] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const categories = [
-    'Getting Started',
-    'Account Management',
-    'Project Setup',
-    'Collaboration',
-    'Advanced Features',
-    'Integrations',
-    'Troubleshooting',
-    'Setup Integrations'
-  ];
-
+  // Load categories and documents
   useEffect(() => {
-    const sampleDocs = [
-      {
-        id: 'doc-001',
-        title: 'Getting Started with ENBOQ',
-        description: 'Complete guide to setting up your first project and understanding the basics',
-        category: 'Getting Started',
-        type: 'guide',
-        readTime: '5 min',
-        difficulty: 'Beginner',
-        hasVideo: true,
-        videoUrl: 'https://example.com/video1',
-        steps: 6,
-        rating: 4.8,
-        views: 1250,
-        lastUpdated: '2024-01-20T10:00:00Z'
-      },
-      {
-        id: 'doc-002',
-        title: 'Creating Your First Project',
-        description: 'Step-by-step walkthrough of project creation with best practices',
-        category: 'Project Setup',
-        type: 'tutorial',
-        readTime: '8 min',
-        difficulty: 'Beginner',
-        hasVideo: true,
-        videoUrl: 'https://example.com/video2',
-        steps: 10,
-        rating: 4.9,
-        views: 980,
-        lastUpdated: '2024-01-18T14:30:00Z'
-      },
-      {
-        id: 'doc-003',
-        title: 'Advanced User Management',
-        description: 'Managing team members, roles, and permissions in complex organizations',
-        category: 'Account Management',
-        type: 'guide',
-        readTime: '12 min',
-        difficulty: 'Advanced',
-        hasVideo: false,
-        steps: 15,
-        rating: 4.6,
-        views: 567,
-        lastUpdated: '2024-01-15T09:15:00Z'
-      },
-      {
-        id: 'doc-004',
-        title: 'Real-time Collaboration Features',
-        description: 'Learn how to use live editing, comments, and team communication tools',
-        category: 'Collaboration',
-        type: 'tutorial',
-        readTime: '10 min',
-        difficulty: 'Intermediate',
-        hasVideo: true,
-        videoUrl: 'https://example.com/video4',
-        steps: 8,
-        rating: 4.7,
-        views: 743,
-        lastUpdated: '2024-01-22T11:45:00Z'
-      },
-      {
-        id: 'doc-005',
-        title: 'Third-Party Integration Setup',
-        description: 'Complete guide to setting up and configuring third-party integrations',
-        category: 'Setup Integrations',
-        type: 'reference',
-        readTime: '15 min',
-        difficulty: 'Advanced',
-        hasVideo: false,
-        steps: 12,
-        rating: 4.5,
-        views: 432,
-        lastUpdated: '2024-01-10T16:20:00Z'
-      },
-      {
-        id: 'doc-006',
-        title: 'Troubleshooting Common Issues',
-        description: 'Solutions to frequently encountered problems and error messages',
-        category: 'Troubleshooting',
-        type: 'reference',
-        readTime: '6 min',
-        difficulty: 'Beginner',
-        hasVideo: false,
-        steps: 0,
-        rating: 4.4,
-        views: 1100,
-        lastUpdated: '2024-01-25T13:10:00Z'
-      },
-      {
-        id: 'onboarding-platform-demo-enboq',
-        title: 'Full ENBOQ Platform Demo',
-        description: 'Comprehensive walkthrough of the ENBOQ platform features and capabilities, showcasing how to create engaging onboarding experiences',
-        category: 'Getting Started',
-        type: 'guide',
-        readTime: '10 min',
-        difficulty: 'Beginner',
-        hasVideo: true,
-        videoUrl: 'https://loom.com/share/3faa8ae6cc5b46a59a51b69bfdaf4107',
-        steps: 10,
-        rating: 4.9,
-        views: 1250,
-        lastUpdated: '2024-07-20T09:30:00Z'
-      }
-    ];
-    setDocs(sampleDocs);
-    setFilteredDocs(sampleDocs);
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        
+        // Load categories
+        const { data: categoriesData, error: categoriesError } = await DocumentationService.getCategories();
+        if (categoriesError) throw categoriesError;
+        setCategories(categoriesData || []);
 
-    // Check for search parameter in URL
-    const urlParams = new URLSearchParams(location.search);
-    const searchParam = urlParams.get('search');
-    if (searchParam) {
-      setSearchTerm(searchParam);
-    }
+        // Load documents
+        const { data: docsData, error: docsError } = await DocumentationService.getAllDocuments();
+        if (docsError) throw docsError;
+        
+        // Transform data to match existing component structure
+        const transformedDocs = (docsData || []).map(doc => ({
+          id: doc.slug,
+          title: doc.title,
+          description: doc.description,
+          category: doc.category?.name || 'Uncategorized',
+          type: doc.type,
+          readTime: doc.read_time,
+          difficulty: doc.difficulty,
+          hasVideo: doc.has_video,
+          videoUrl: doc.video_url,
+          steps: 0, // We'll get this from steps count if needed
+          rating: parseFloat(doc.rating),
+          views: doc.views,
+          lastUpdated: doc.updated_at
+        }));
+
+        setDocs(transformedDocs);
+        setFilteredDocs(transformedDocs);
+
+        // Check for search parameter in URL
+        const urlParams = new URLSearchParams(location.search);
+        const searchParam = urlParams.get('search');
+        if (searchParam) {
+          setSearchTerm(searchParam);
+        }
+      } catch (err) {
+        console.error('Error loading documentation:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, [location.search]);
 
+  // Handle search and filtering
   useEffect(() => {
-    let filtered = docs;
+    const filterDocs = async () => {
+      let filtered = docs;
 
-    if (searchTerm) {
-      filtered = filtered.filter(doc =>
-        doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doc.category.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+      // If there's a search term, use Supabase search
+      if (searchTerm.trim()) {
+        try {
+          const { data: searchResults, error } = await DocumentationService.searchDocuments(searchTerm);
+          if (!error && searchResults) {
+            filtered = searchResults.map(doc => ({
+              id: doc.slug,
+              title: doc.title,
+              description: doc.description,
+              category: doc.category?.name || 'Uncategorized',
+              type: doc.type,
+              readTime: doc.read_time,
+              difficulty: doc.difficulty,
+              hasVideo: doc.has_video,
+              videoUrl: doc.video_url,
+              steps: 0,
+              rating: parseFloat(doc.rating),
+              views: doc.views,
+              lastUpdated: doc.updated_at
+            }));
+          }
+        } catch (err) {
+          console.error('Search error:', err);
+          // Fall back to local filtering
+          filtered = docs.filter(doc =>
+            doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            doc.category.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        }
+      }
 
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(doc => doc.category === selectedCategory);
-    }
+      // Apply category filter
+      if (selectedCategory !== 'all') {
+        filtered = filtered.filter(doc => doc.category === selectedCategory);
+      }
 
-    setFilteredDocs(filtered);
+      setFilteredDocs(filtered);
+    };
+
+    filterDocs();
   }, [docs, searchTerm, selectedCategory]);
 
   const getDifficultyColor = (difficulty) => {
@@ -219,6 +179,35 @@ const SupportDocs = () => {
 
   const popularDocs = docs.filter(doc => doc.views > 700).slice(0, 3);
 
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+        <LoadingSpinner message="Loading documentation..." />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container maxWidth="md" sx={{ py: 8 }}>
+        <Paper sx={{ p: 8, textAlign: 'center' }}>
+          <Typography variant="h4" gutterBottom color="error">
+            Error Loading Documentation
+          </Typography>
+          <Typography color="text.secondary" paragraph>
+            {error}
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={() => window.location.reload()}
+          >
+            Try Again
+          </Button>
+        </Paper>
+      </Container>
+    );
+  }
+
   return (
     <Box>
       {/* Hero Section */}
@@ -230,7 +219,7 @@ const SupportDocs = () => {
           overflow: 'hidden'
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth={false}>
           <Box textAlign="center" maxWidth="800px" mx="auto">
             <Typography
               variant="h1"
@@ -289,8 +278,8 @@ const SupportDocs = () => {
                   >
                     <MenuItem value="all">All Categories</MenuItem>
                     {categories.map(category => (
-                      <MenuItem key={category} value={category}>
-                        {category}
+                      <MenuItem key={category.slug} value={category.name}>
+                        {category.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -304,10 +293,10 @@ const SupportDocs = () => {
                 Popular topics:
               </Typography>
               <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
-                {['Getting Started', 'Setup Integrations', 'Project Setup', 'Troubleshooting'].map((topic) => (
+                {categories.map((category) => (
                   <Chip
-                    key={topic}
-                    label={topic}
+                    key={category.slug}
+                    label={category.name}
                     component={Link}
                     to="/docs"
                     clickable
@@ -332,7 +321,7 @@ const SupportDocs = () => {
       {/* Documentation Content */}
       <Container maxWidth="lg" sx={{ py: 8 }}>
         <Grid container spacing={4}>
-          <Grid item xs={12} lg={8}>
+          <Grid size={12}>
             {filteredDocs.length === 0 ? (
               <Paper
                 sx={{
@@ -421,30 +410,11 @@ const SupportDocs = () => {
                                     {doc.readTime}
                                   </Typography>
                                 </Box>
-                                {doc.steps > 0 && (
-                                  <Typography variant="body2" color="text.secondary">
-                                    {doc.steps} steps
-                                  </Typography>
-                                )}
-                                <Box display="flex" alignItems="center" gap={0.5}>
-                                  <Rating value={doc.rating} precision={0.1} size="small" readOnly />
-                                  <Typography variant="body2" color="text.secondary">
-                                    {doc.rating}
-                                  </Typography>
-                                </Box>
                               </Stack>
                               
-                              <Stack direction="row" spacing={2} alignItems="center">
-                                <Box display="flex" alignItems="center" gap={0.5}>
-                                  <Visibility fontSize="small" />
-                                  <Typography variant="body2" color="text.secondary">
-                                    {doc.views}
-                                  </Typography>
-                                </Box>
-                                <Typography variant="body2" color="text.secondary">
-                                  Updated {formatDate(doc.lastUpdated)}
-                                </Typography>
-                              </Stack>
+                              <Typography variant="body2" color="text.secondary">
+                                Updated {formatDate(doc.lastUpdated)}
+                              </Typography>
                             </Box>
                           </Box>
                         </Box>
@@ -455,133 +425,116 @@ const SupportDocs = () => {
               </Stack>
             )}
           </Grid>
-          
-          <Grid item xs={12} lg={4}>
-            <Stack spacing={4}>
-              {/* Popular Guides */}
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Popular Guides
-                  </Typography>
-                  <Stack spacing={2}>
-                    {popularDocs.map((doc, index) => (
-                      <Paper
-                        key={doc.id}
-                        component={Link}
-                        to={`/docs/${doc.id}`}
-                        sx={{
-                          p: 2,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 2,
-                          textDecoration: 'none',
-                          transition: 'all 0.3s ease',
-                          '&:hover': {
-                            backgroundColor: 'primary.light',
-                            color: 'white'
-                          }
-                        }}
-                      >
-                        <Avatar
+        </Grid>
+
+      </Container>
+
+      {/* Popular Guides and Quick Links - Full Width */}
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <Grid container spacing={4}>
+          <Grid size={12}>
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                {/* Popular Guides */}
+                <Card sx={{ height: '100%' }}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Popular Guides
+                    </Typography>
+                    <Stack spacing={2}>
+                      {popularDocs.map((doc, index) => (
+                        <Paper
+                          key={doc.id}
+                          component={Link}
+                          to={`/docs/${doc.id}`}
                           sx={{
-                            width: 32,
-                            height: 32,
-                            bgcolor: 'primary.main',
-                            fontSize: '0.875rem'
+                            p: 2,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            textDecoration: 'none',
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              backgroundColor: 'primary.light',
+                              color: 'white'
+                            }
                           }}
                         >
-                          {index + 1}
-                        </Avatar>
-                        <Box flexGrow={1}>
-                          <Typography variant="body2" fontWeight="medium" noWrap>
-                            {doc.title}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {doc.views} views
-                          </Typography>
-                        </Box>
-                        <ArrowForward fontSize="small" />
-                      </Paper>
-                    ))}
-                  </Stack>
-                </CardContent>
-              </Card>
+                          <Avatar
+                            sx={{
+                              width: 32,
+                              height: 32,
+                              bgcolor: 'primary.main',
+                              fontSize: '0.875rem'
+                            }}
+                          >
+                            {index + 1}
+                          </Avatar>
+                          <Box flexGrow={1}>
+                            <Typography variant="body2" fontWeight="medium" noWrap>
+                              {doc.title}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {doc.views} views
+                            </Typography>
+                          </Box>
+                          <ArrowForward fontSize="small" />
+                        </Paper>
+                      ))}
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </Grid>
 
-              {/* Quick Links */}
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Quick Links
-                  </Typography>
-                  <Stack spacing={1}>
-                    {[
-                      { label: 'Frequently Asked Questions', to: '/faq', icon: Help },
-                      { label: 'Submit Support Ticket', to: '/tickets/new', icon: BugReport },
-                      { label: 'Request New Feature', to: '/features', icon: Lightbulb },
-                      { label: 'Contact Support Team', to: 'mailto:support@enboq.com', icon: Email }
-                    ].map((link) => (
-                      <Paper
-                        key={link.label}
-                        component={link.to.startsWith('mailto:') ? 'a' : Link}
-                        to={link.to.startsWith('mailto:') ? undefined : link.to}
-                        href={link.to.startsWith('mailto:') ? link.to : undefined}
-                        sx={{
-                          p: 2,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          textDecoration: 'none',
-                          transition: 'all 0.3s ease',
-                          '&:hover': {
-                            backgroundColor: 'primary.light',
-                            color: 'white'
-                          }
-                        }}
-                      >
-                        <Box display="flex" alignItems="center" gap={1}>
-                          <link.icon fontSize="small" />
-                          <Typography variant="body2">
-                            {link.label}
-                          </Typography>
-                        </Box>
-                        <ArrowForward fontSize="small" />
-                      </Paper>
-                    ))}
-                  </Stack>
-                </CardContent>
-              </Card>
-
-              {/* Help CTA */}
-              <Paper
-                sx={{
-                  p: 3,
-                  background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-                  textAlign: 'center'
-                }}
-              >
-                <Typography variant="h6" gutterBottom>
-                  Need Personal Help?
-                </Typography>
-                <Typography color="text.secondary" paragraph>
-                  Can't find what you're looking for? Our support team is ready to help.
-                </Typography>
-                <Button
-                  component={Link}
-                  to="/tickets/new"
-                  variant="contained"
-                  endIcon={<ArrowForward />}
-                  fullWidth
-                  sx={{ borderRadius: 3 }}
-                >
-                  Get Support
-                </Button>
-              </Paper>
-            </Stack>
+              <Grid size={{ xs: 12, md: 6 }}>
+                {/* Quick Links */}
+                <Card sx={{ height: '100%' }}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Quick Links
+                    </Typography>
+                    <Stack spacing={1}>
+                      {[
+                        { label: 'Frequently Asked Questions', to: '/faq', icon: Help },
+                        { label: 'Submit Support Ticket', to: '/tickets/new', icon: BugReport },
+                        { label: 'Request New Feature', to: '/features', icon: Lightbulb },
+                        { label: 'Contact Support Team', to: 'mailto:support@enboq.com', icon: Email }
+                      ].map((link) => (
+                        <Paper
+                          key={link.label}
+                          component={link.to.startsWith('mailto:') ? 'a' : Link}
+                          to={link.to.startsWith('mailto:') ? undefined : link.to}
+                          href={link.to.startsWith('mailto:') ? link.to : undefined}
+                          sx={{
+                            p: 2,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            textDecoration: 'none',
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              backgroundColor: 'primary.light',
+                              color: 'white'
+                            }
+                          }}
+                        >
+                          <Box display="flex" alignItems="center" gap={1}>
+                            <link.icon fontSize="small" />
+                            <Typography variant="body2">
+                              {link.label}
+                            </Typography>
+                          </Box>
+                          <ArrowForward fontSize="small" />
+                        </Paper>
+                      ))}
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
-      </Container>
-    </Box>
+      </Container>    </Box>
   );
 };
 

@@ -14,7 +14,9 @@ const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const SupportDocs = lazy(() => import('./pages/SupportDocs'));
 const DocDetail = lazy(() => import('./pages/DocDetail'));
+const DocDetailUnified = lazy(() => import('./pages/DocDetailUnified'));
 const OnboardingDoc = lazy(() => import('./pages/OnboardingDoc'));
+const NewHireOnboardingFlow = lazy(() => import('./pages/NewHireOnboardingFlow'));
 const FAQ = lazy(() => import('./pages/FAQ'));
 
 // Lazy load ticket components with preloading hints
@@ -52,9 +54,7 @@ function App() {
                     <Routes>
                       <Route path="/" element={<Home />} />
                       <Route path="/docs" element={<SupportDocs />} />
-                      <Route path="/docs/getting-started" element={<DocDetail />} />
-                      <Route path="/docs/:id" element={<DocDetail />} />
-                      <Route path="/docs/onboarding-platform-demo-enboq" element={<OnboardingDoc />} />
+                      <Route path="/docs/:id" element={<DocDetailUnified />} />
                       <Route path="/faq" element={<FAQ />} />
                       <Route path="/tickets" element={
                         <ProtectedRoute>
