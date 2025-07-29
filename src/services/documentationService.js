@@ -1,8 +1,17 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase.js';
+import { cacheService } from './cacheService.js';
 
 export class DocumentationService {
   // Get all categories
   static async getCategories() {
+    const cacheKey = cacheService.getCacheKey('categories');
+    
+    // Return cached data if available and fresh
+    const cached = cacheService.get(cacheKey);
+    if (cached) {
+      return { data: cached, error: null };
+    }
+
     try {
       const { data, error } = await supabase
         .from('doc_categories')
@@ -10,6 +19,10 @@ export class DocumentationService {
         .order('sort_order', { ascending: true });
 
       if (error) throw error;
+      
+      // Cache the result
+      cacheService.set(cacheKey, data, 10 * 60 * 1000); // 10 minutes TTL
+      
       return { data, error: null };
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -19,6 +32,16 @@ export class DocumentationService {
 
   // Get all published documents with category info
   static async getAllDocuments() {
+    const cacheKey = cacheService.getCacheKey('all_documents');
+    
+    // Return cached data if available and fresh
+    const cached = cacheService.get(cacheKey);
+    if (cached) {
+      // Prefetch individual documents in background
+      this.prefetchDocumentDetails(cached);
+      return { data: cached, error: null };
+    }
+
     try {
       const { data, error } = await supabase
         .from('documentation')
@@ -30,6 +53,13 @@ export class DocumentationService {
         .order('sort_order', { ascending: true });
 
       if (error) throw error;
+      
+      // Cache the result
+      cacheService.set(cacheKey, data, 5 * 60 * 1000); // 5 minutes TTL
+      
+      // Prefetch individual documents in background
+      this.prefetchDocumentDetails(data);
+      
       return { data, error: null };
     } catch (error) {
       console.error('Error fetching documents:', error);
@@ -60,7 +90,25 @@ export class DocumentationService {
 
   // Get a single document with steps and related docs
   static async getDocumentBySlug(slug) {
+    console.log('DocumentationService.getDocumentBySlug called with slug:', slug);
+    
+    // Temporarily disable caching for debugging
+    // const cacheKey = cacheService.getCacheKey('document', { slug });
+    // console.log('Cache key:', cacheKey);
+    
+    // Return cached data if available and fresh
+    // const cached = cacheService.get(cacheKey);
+    // if (cached) {
+    //   console.log('Returning cached data:', cached);
+    //   // Prefetch related documents in background
+    //   this.prefetchRelatedDocuments(cached.relatedDocs);
+    //   return { data: cached, error: null };
+    // }
+    
+    console.log('Fetching from database (caching disabled for debugging)...');
+
     try {
+      console.log('Fetching document from Supabase...');
       // Get the main document
       const { data: doc, error: docError } = await supabase
         .from('documentation')
@@ -72,16 +120,25 @@ export class DocumentationService {
         .eq('is_published', true)
         .single();
 
-      if (docError) throw docError;
+      console.log('Document query result:', { doc, docError });
+      if (docError) {
+        console.error('Document query error:', docError);
+        throw docError;
+      }
 
       // Get the steps
+      console.log('Fetching steps for doc ID:', doc.id);
       const { data: steps, error: stepsError } = await supabase
         .from('doc_steps')
         .select('*')
         .eq('doc_id', doc.id)
         .order('step_number', { ascending: true });
 
-      if (stepsError) throw stepsError;
+      console.log('Steps query result:', { steps, stepsError });
+      if (stepsError) {
+        console.error('Steps query error:', stepsError);
+        throw stepsError;
+      }
 
       // Get related documents
       const { data: relations, error: relationsError } = await supabase
@@ -97,15 +154,20 @@ export class DocumentationService {
 
       // Format the response
       const relatedDocs = relations.map(rel => rel.related_doc);
-
-      return {
-        data: {
-          ...doc,
-          steps,
-          relatedDocs
-        },
-        error: null
+      
+      const result = {
+        ...doc,
+        steps,
+        relatedDocs
       };
+
+      // Cache the result (disabled for debugging)
+      // cacheService.set(cacheKey, result, 10 * 60 * 1000); // 10 minutes TTL
+      
+      // Prefetch related documents in background
+      // this.prefetchRelatedDocuments(relatedDocs);
+
+      return { data: result, error: null };
     } catch (error) {
       console.error('Error fetching document:', error);
       return { data: null, error };
@@ -239,6 +301,9 @@ export class DocumentationService {
       const { data: createdSteps, error: stepsError } = await this.createDocumentSteps(doc.id, steps);
       if (stepsError) throw stepsError;
 
+      // Clear relevant caches
+      cacheService.clear();
+
       return {
         data: {
           ...doc,
@@ -250,5 +315,40 @@ export class DocumentationService {
       console.error('Error creating complete document:', error);
       return { data: null, error };
     }
+  }
+
+  // Prefetch individual document details in background
+  static prefetchDocumentDetails(documents) {
+    if (!documents || !Array.isArray(documents)) return;
+    
+    // Prefetch the first 3 documents
+    documents.slice(0, 3).forEach(doc => {
+      const fetchFunction = () => this.getDocumentBySlug(doc.slug);
+      const cacheKey = cacheService.getCacheKey('document', { slug: doc.slug });
+      cacheService.addToPrefetchQueue(fetchFunction, cacheKey);
+    });
+  }
+
+  // Prefetch related documents in background
+  static prefetchRelatedDocuments(relatedDocs) {
+    if (!relatedDocs || !Array.isArray(relatedDocs)) return;
+    
+    relatedDocs.forEach(doc => {
+      const fetchFunction = () => this.getDocumentBySlug(doc.slug);
+      const cacheKey = cacheService.getCacheKey('document', { slug: doc.slug });
+      cacheService.addToPrefetchQueue(fetchFunction, cacheKey);
+    });
+  }
+
+  // Preload images for better UX
+  static preloadImages(steps) {
+    if (!steps || !Array.isArray(steps)) return;
+    
+    steps.forEach(step => {
+      if (step.image_url) {
+        const img = new Image();
+        img.src = step.image_url;
+      }
+    });
   }
 }

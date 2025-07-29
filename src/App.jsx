@@ -15,6 +15,7 @@ const Login = lazy(() => import('./pages/Login'));
 const SupportDocs = lazy(() => import('./pages/SupportDocs'));
 const DocDetail = lazy(() => import('./pages/DocDetail'));
 const DocDetailUnified = lazy(() => import('./pages/DocDetailUnified'));
+
 const OnboardingDoc = lazy(() => import('./pages/OnboardingDoc'));
 const NewHireOnboardingFlow = lazy(() => import('./pages/NewHireOnboardingFlow'));
 const FAQ = lazy(() => import('./pages/FAQ'));

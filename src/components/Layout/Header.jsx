@@ -55,8 +55,9 @@ const Header = () => {
 
   const supportDocsOptions = [
     { label: 'All Documentation', value: '/docs', icon: <Description />, description: 'Browse all documentation' },
-    { label: 'Getting Started with ENBOQ', value: '/docs/doc-001', icon: <Description />, description: 'Complete guide to setting up your first project' },
-    { label: 'Full ENBOQ Platform Demo', value: '/docs/onboarding-platform-demo-enboq', icon: <Description />, description: 'Comprehensive walkthrough of the ENBOQ platform features' }
+    { label: 'Configure Platform Settings', value: '/docs/how-to-configure-platform-settings-in-enboq', icon: <Description />, description: 'Set up your ENBOQ onboarding environment' },
+    { label: 'Add Employees', value: '/docs/how-to-add-employees-to-your-onboarding-platform', icon: <Description />, description: 'Learn how to add employees to your platform' },
+    { label: 'Create Your First Journey', value: '/docs/how-to-create-your-first-onboarding-journey', icon: <Description />, description: 'Build complete onboarding journeys for new hires' }
   ];
 
   const ticketsOptions = [
@@ -123,8 +124,8 @@ const Header = () => {
         </Typography>
         <List>
           <ListItem disablePadding>
-            <ListItemButton component={Link} to="/docs/getting-started" onClick={() => setMobileDrawerOpen(false)}>
-              <ListItemText primary="Getting Started" />
+            <ListItemButton component={Link} to="/docs/onboarding-platform-demo-enboq" onClick={() => setMobileDrawerOpen(false)}>
+              <ListItemText primary="Full Platform Demo" />
             </ListItemButton>
           </ListItem>
           
@@ -204,10 +205,10 @@ const Header = () => {
               <Button
                 color="inherit"
                 component={Link}
-                to="/docs/getting-started"
+                to="/docs/onboarding-platform-demo-enboq"
                 sx={{ textTransform: 'none' }}
               >
-                Getting Started
+                Full Platform Demo
               </Button>
 
               <Button

@@ -1,4 +1,4 @@
-import { DocumentationService } from '../services/documentationService';
+import { DocumentationService } from '../services/documentationService.js';
 
 /**
  * Helper function to add a new document from XML data

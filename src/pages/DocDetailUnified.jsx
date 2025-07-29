@@ -40,11 +40,14 @@ import {
 } from '@mui/icons-material';
 import { DocumentationService } from '../services/documentationService';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { DocumentDetailSkeleton } from '../components/SkeletonLoaders';
+import LazyImage from '../components/LazyImage';
 
 const DocDetailUnified = () => {
   const { id } = useParams();
   const [doc, setDoc] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isHelpful, setIsHelpful] = useState(null);
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
@@ -52,31 +55,50 @@ const DocDetailUnified = () => {
   useEffect(() => {
     const loadDocument = async () => {
       try {
+        console.log('Loading document with ID:', id);
         setLoading(true);
         
-        // Increment view count
-        await DocumentationService.incrementViews(id);
-        
-        // Load document data
+        // Load document data (with caching)
         const { data, error } = await DocumentationService.getDocumentBySlug(id);
-        if (error) throw error;
+        console.log('Document data received:', data);
+        console.log('Document error:', error);
+        
+        if (error) {
+          console.error('DocumentationService error:', error);
+          throw error;
+        }
         
         if (!data) {
+          console.log('No document data found');
           setError('Document not found');
           return;
         }
 
+        console.log('Setting document data:', data);
         setDoc(data);
+        
+        // Preload images in background
+        if (data.steps) {
+          DocumentationService.preloadImages(data.steps);
+        }
+        
+        // Increment view count in background (non-blocking)
+        DocumentationService.incrementViews(id).catch(console.warn);
+        
       } catch (err) {
         console.error('Error loading document:', err);
         setError(err.message || 'Failed to load document');
       } finally {
         setLoading(false);
+        setInitialLoading(false);
       }
     };
 
     if (id) {
+      console.log('useEffect triggered with ID:', id);
       loadDocument();
+    } else {
+      console.log('No ID provided');
     }
   }, [id]);
 
@@ -111,12 +133,8 @@ const DocDetailUnified = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <LoadingSpinner message="Loading documentation..." />
-      </Container>
-    );
+  if (initialLoading) {
+    return <DocumentDetailSkeleton />;
   }
 
   if (error || !doc) {
@@ -129,6 +147,7 @@ const DocDetailUnified = () => {
           <Typography color="text.secondary" paragraph>
             {error || "The documentation you're looking for doesn't exist."}
           </Typography>
+
           <Button
             component={Link}
             to="/docs"
@@ -255,19 +274,18 @@ const DocDetailUnified = () => {
                       
                       {/* Step Image */}
                       {step.image_url && (
-                        <Box sx={{ mb: 3, textAlign: 'center' }}>
-                          <img
+                        <Box sx={{ mb: 3 }}>
+                          <LazyImage
                             src={step.image_url}
                             alt={step.image_alt || step.title}
                             style={{
-                              width: '75%',
-                              maxWidth: '100%',
+                              width: '100%',
                               height: 'auto',
                               borderRadius: 8,
                               boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                              display: 'block',
-                              margin: '0 auto'
+                              display: 'block'
                             }}
+                            skeletonHeight={300}
                           />
                         </Box>
                       )}

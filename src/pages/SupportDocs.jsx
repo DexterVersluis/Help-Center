@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { DocumentationService } from '../services/documentationService';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { DocumentListingSkeleton } from '../components/SkeletonLoaders';
+import { usePrefetch } from '../hooks/usePrefetch';
 import {
   Box,
   Container,
@@ -50,6 +52,7 @@ const SupportDocs = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { prefetchOnHover } = usePrefetch();
 
   // Load categories and documents
   useEffect(() => {
@@ -180,11 +183,7 @@ const SupportDocs = () => {
   const popularDocs = docs.filter(doc => doc.views > 700).slice(0, 3);
 
   if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
-        <LoadingSpinner message="Loading documentation..." />
-      </Box>
-    );
+    return <DocumentListingSkeleton />;
   }
 
   if (error) {
@@ -355,6 +354,7 @@ const SupportDocs = () => {
                           boxShadow: 6
                         }
                       }}
+                      {...prefetchOnHover(doc.id)}
                     >
                       <CardContent sx={{ p: 4 }}>
                         <Box display="flex" alignItems="flex-start" gap={3}>
