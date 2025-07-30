@@ -398,12 +398,11 @@ const OnboardingDoc = () => {
                 <Typography variant="h6" gutterBottom>
                   Related Documentation
                 </Typography>
-                <Stack spacing={1}>
-                  {[
-                    { id: 'getting-started-with-enboq', title: 'Getting Started with ENBOQ' },
-                    { id: 'new-hire-onboarding-flow', title: 'What the New Hire Onboarding Flow Looks Like' }
-                  ].map((doc) => (
-                    <Paper
+                 <Stack spacing={1}>
+                   {[
+                     { id: 'getting-started-with-enboq', title: 'Getting Started with ENBOQ' },
+                     { id: 'new-hire-onboarding-flow', title: 'What the New Hire Onboarding Flow Looks Like' }
+                   ].map((doc) => (                    <Paper
                       key={doc.id}
                       component={Link}
                       to={`/docs/${doc.id}`}

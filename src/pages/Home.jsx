@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { DocumentationService } from '../services/documentationService';
+import SEO from '../components/SEO';
 import {
   Box,
   Container,
@@ -162,6 +163,12 @@ const Home = () => {
 
   return (
     <Box>
+      <SEO
+        title="ENBOQ Help Center - Employee Onboarding & Preboarding Platform Support"
+        description="Master ENBOQ with comprehensive guides, tutorials, and documentation. Get expert support for employee onboarding, gamification, buddy matching, and preboarding solutions."
+        keywords="employee onboarding, preboarding software, gamification, buddy matching, ENBOQ help, onboarding platform, employee engagement, HR software"
+        url="/"
+      />
       {/* Hero Section */}
       <Box
         sx={{

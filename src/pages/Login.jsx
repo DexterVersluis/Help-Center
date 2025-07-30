@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { AuthService } from '../services/authService'
+import SEO from '../components/SEO'
 import {
   Box,
   Container,
@@ -70,7 +71,14 @@ export default function Login() {
   }
 
   return (
-    <Box
+    <>
+      <SEO
+        title="Login - ENBOQ Help Center"
+        description="Sign in to access your ENBOQ support tickets, feature requests, and personalized help resources for the employee onboarding platform."
+        keywords="ENBOQ login, help center access, support portal, customer login"
+        url="/login"
+      />
+      <Box
       sx={{
         minHeight: '100vh',
         background: 'linear-gradient(135deg, #823BEB 0%, #ED00B8 100%)',
@@ -315,5 +323,6 @@ export default function Login() {
         </Paper>
       </Container>
     </Box>
+    </>
   )
 }

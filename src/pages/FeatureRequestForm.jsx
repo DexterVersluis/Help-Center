@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { FeatureRequestService } from '../services/featureRequestService';
+import SEO from '../components/SEO';
 import {
   Box,
   Container,
@@ -116,6 +117,12 @@ const FeatureRequestForm = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+      <SEO
+        title="Submit Feature Request - ENBOQ Help Center"
+        description="Share your ideas to improve ENBOQ's employee onboarding platform. Submit feature requests for gamification, buddy matching, and preboarding enhancements."
+        keywords="ENBOQ feature request, product feedback, onboarding platform improvements, gamification ideas, employee engagement features"
+        url="/features/new"
+      />
       {/* Hero Section */}
       <Box
         sx={{

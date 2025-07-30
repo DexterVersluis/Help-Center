@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 import {
   Box,
   Container,
@@ -98,6 +99,12 @@ const TicketForm = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+      <SEO
+        title="Submit Support Ticket - ENBOQ Help Center"
+        description="Get expert help with ENBOQ's employee onboarding platform. Submit a support ticket for technical issues, feature requests, or general questions."
+        keywords="ENBOQ support, submit ticket, technical support, onboarding platform help, customer service"
+        url="/tickets/new"
+      />
       {/* Hero Section */}
       <Box
         sx={{

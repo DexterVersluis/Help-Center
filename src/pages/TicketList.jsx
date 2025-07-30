@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import TicketCard from '../components/TicketCard';
+import SEO from '../components/SEO';
 import {
   Box,
   Container,
@@ -99,6 +100,12 @@ const TicketList = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+      <SEO
+        title="Support Tickets - ENBOQ Help Center"
+        description="View and manage your ENBOQ support tickets. Get help with employee onboarding platform issues, track ticket status, and communicate with our support team."
+        keywords="ENBOQ support tickets, help desk, customer support, onboarding platform support, technical assistance"
+        url="/tickets"
+      />
       {/* Hero Section */}
       <Box
         sx={{

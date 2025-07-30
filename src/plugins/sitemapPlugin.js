@@ -1,19 +1,15 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import sitemapService from '../services/sitemapService.js';
 
-// Sitemap plugin
-function sitemapPlugin() {
+export function sitemapPlugin() {
   return {
     name: 'sitemap-plugin',
     configureServer(server) {
       server.middlewares.use('/sitemap.xml', async (req, res, next) => {
         try {
-          // Import the service dynamically to avoid build issues
-          const { default: sitemapService } = await import('./src/services/sitemapService.js');
           const xml = await sitemapService.generateSitemapXML();
           
           res.setHeader('Content-Type', 'application/xml');
-          res.setHeader('Cache-Control', 'public, max-age=3600');
+          res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
           res.end(xml);
         } catch (error) {
           console.error('Error generating sitemap:', error);
@@ -22,9 +18,9 @@ function sitemapPlugin() {
         }
       });
 
+      // Also add a debug endpoint to see sitemap stats
       server.middlewares.use('/sitemap-stats', async (req, res, next) => {
         try {
-          const { default: sitemapService } = await import('./src/services/sitemapService.js');
           const stats = await sitemapService.getSitemapStats();
           
           res.setHeader('Content-Type', 'application/json');
@@ -38,8 +34,3 @@ function sitemapPlugin() {
     }
   };
 }
-
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), sitemapPlugin()],
-})

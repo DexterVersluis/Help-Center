@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://help.enboq.com/sitemap.xml
+
+# Disallow admin and internal pages
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login
+Disallow: /tickets/
+Disallow: /features/new
+
+# Allow important pages
+Allow: /
+Allow: /docs
+Allow: /docs/*
+Allow: /faq
+Allow: /features
+
+# Crawl delay (optional)
+Crawl-delay: 1

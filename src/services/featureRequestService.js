@@ -17,7 +17,7 @@ export class FeatureRequestService {
         .from('feature_requests')
         .select(`
           *,
-          user:users(email, full_name)
+          user:users(email, name)
         `)
         .order('created_at', { ascending: false });
 
@@ -34,8 +34,8 @@ export class FeatureRequestService {
         priority: request.priority,
         createdAt: request.created_at,
         updatedAt: request.updated_at,
-        author: request.user?.email || 'Unknown',
-        authorName: request.user?.full_name || 'Unknown User',
+        author: request.user?.name || 'Unknown User',
+        authorName: request.user?.name || 'Unknown User',
         userId: request.user_id
       })) || [];
       
@@ -66,7 +66,7 @@ export class FeatureRequestService {
         }])
         .select(`
           *,
-          user:users(email, full_name)
+          user:users(email, name)
         `)
         .single();
 
@@ -86,8 +86,8 @@ export class FeatureRequestService {
         priority: data.priority,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
-        author: data.user?.email || 'Unknown',
-        authorName: data.user?.full_name || 'Unknown User',
+        author: data.user?.name || 'Unknown User',
+        authorName: data.user?.name || 'Unknown User',
         userId: data.user_id
       };
 
@@ -223,7 +223,7 @@ export class FeatureRequestService {
         .from('feature_requests')
         .select(`
           *,
-          user:users(email, full_name)
+          user:users(email, name)
         `)
         .or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,category.ilike.%${searchTerm}%`)
         .order('created_at', { ascending: false });
@@ -241,8 +241,8 @@ export class FeatureRequestService {
         priority: request.priority,
         createdAt: request.created_at,
         updatedAt: request.updated_at,
-        author: request.user?.email || 'Unknown',
-        authorName: request.user?.full_name || 'Unknown User',
+        author: request.user?.name || 'Unknown User',
+        authorName: request.user?.name || 'Unknown User',
         userId: request.user_id
       })) || [];
 

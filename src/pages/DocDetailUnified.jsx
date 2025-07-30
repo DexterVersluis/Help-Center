@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 import {
   Box,
   Container,
@@ -163,6 +164,12 @@ const DocDetailUnified = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
+      <SEO
+        title={`${doc.title} - ENBOQ Help Center`}
+        description={doc.description || `Learn about ${doc.title} in ENBOQ's employee onboarding platform. Step-by-step guide with detailed instructions.`}
+        keywords={`${doc.title}, ENBOQ documentation, ${doc.category?.name || 'onboarding'}, employee onboarding platform, ${doc.type || 'guide'}`}
+        url={`/docs/${doc.slug}`}
+      />
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 4 }}>
         <Button

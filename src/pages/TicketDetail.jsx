@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useLocation, Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 import {
   Box,
   Container,
@@ -128,6 +129,12 @@ const TicketDetail = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+      <SEO
+        title={`${ticket.subject} - Support Ticket #${ticket.id} - ENBOQ Help Center`}
+        description={`View details and updates for support ticket #${ticket.id}: ${ticket.subject}. Track your ENBOQ platform support request.`}
+        keywords={`ENBOQ support ticket, ticket ${ticket.id}, ${ticket.subject}, customer support, help desk`}
+        url={`/tickets/${ticket.id}`}
+      />
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Box sx={{ mb: 4 }}>
           <Button

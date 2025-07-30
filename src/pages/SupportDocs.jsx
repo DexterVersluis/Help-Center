@@ -4,6 +4,7 @@ import { DocumentationService } from '../services/documentationService';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { DocumentListingSkeleton } from '../components/SkeletonLoaders';
 import { usePrefetch } from '../hooks/usePrefetch';
+import SEO from '../components/SEO';
 import {
   Box,
   Container,
@@ -209,6 +210,12 @@ const SupportDocs = () => {
 
   return (
     <Box>
+      <SEO
+        title="Documentation - ENBOQ Help Center"
+        description="Comprehensive guides, tutorials, and references to help you master ENBOQ's employee onboarding platform. Find step-by-step instructions for all features."
+        keywords="ENBOQ documentation, onboarding guides, tutorials, help articles, employee onboarding platform, preboarding software"
+        url="/docs"
+      />
       {/* Hero Section */}
       <Box
         sx={{

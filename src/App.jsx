@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { Suspense, lazy } from 'react';
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -41,11 +42,12 @@ const FeatureRequestForm = lazy(() =>
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <ScrollToTop />
-        <AuthProvider>
+    <HelmetProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <ScrollToTop />
+          <AuthProvider>
           <Suspense fallback={<LoadingSpinner message="Loading application..." />}>
             <Routes>
               <Route path="/login" element={<Login />} />
@@ -87,6 +89,7 @@ function App() {
         </AuthProvider>
       </Router>
     </ThemeProvider>
+    </HelmetProvider>
   );
 }
 

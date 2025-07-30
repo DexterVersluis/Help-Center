@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { FeatureRequestService } from '../services/featureRequestService';
 import FeatureCard from '../components/FeatureCard';
+import SEO from '../components/SEO';
 import {
   Box,
   Container,
@@ -177,6 +178,12 @@ const FeatureRequests = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+      <SEO
+        title="Feature Requests - ENBOQ Help Center"
+        description="Share your ideas and vote on feature requests for ENBOQ's employee onboarding platform. Help shape the future of our gamification and preboarding solutions."
+        keywords="ENBOQ feature requests, product feedback, onboarding platform improvements, gamification features, employee engagement ideas"
+        url="/features"
+      />
       {/* Hero Section */}
       <Box
         sx={{

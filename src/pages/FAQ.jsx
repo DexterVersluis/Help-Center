@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 import {
   Box,
   Container,
@@ -584,6 +585,12 @@ const FAQ = () => {
 
   return (
     <Box>
+      <SEO
+        title="Frequently Asked Questions - ENBOQ Help Center"
+        description="Find answers to common questions about ENBOQ's employee onboarding platform, gamification features, buddy matching, preboarding solutions, and more."
+        keywords="ENBOQ FAQ, employee onboarding questions, preboarding software help, gamification platform, buddy matching, onboarding support"
+        url="/faq"
+      />
       {/* Hero Section */}
       <Box
         sx={{

@@ -57,63 +57,8 @@ const DocDetail = () => {
       return;
     }
     
-    const sampleDoc = {
-      id: 'getting-started-with-enboq',
-      title: 'Getting Started with ENBOQ',
-      description: 'Complete guide to setting up your first project and understanding the basics',
-      category: 'Getting Started',
-      type: 'guide',
-      readTime: '5 min',
-      difficulty: 'Beginner',
-      hasVideo: true,
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      steps: [
-        {
-          id: 1,
-          title: 'Create Your Account',
-          content: 'Start by signing up for a new ENBOQ account. Visit our homepage and click the "Sign Up" button in the top right corner. Fill in your email address, create a secure password, and verify your email.',
-          tips: ['Use a strong password with at least 8 characters', 'Check your spam folder for the verification email']
-        },
-        {
-          id: 2,
-          title: 'Complete Your Profile',
-          content: 'Once logged in, complete your profile by adding your name, company information, and profile picture. This helps your team members identify you in collaborative projects.',
-          tips: ['Upload a professional profile picture', 'Add your job title for better team collaboration']
-        },
-        {
-          id: 3,
-          title: 'Explore the Dashboard',
-          content: 'Take a moment to familiarize yourself with the main dashboard. You\'ll see navigation menus, recent projects, and quick action buttons. The sidebar contains all major features.',
-          tips: ['Bookmark important pages for quick access', 'Customize your dashboard layout in settings']
-        },
-        {
-          id: 4,
-          title: 'Create Your First Project',
-          content: 'Click the "New Project" button to create your first project. Choose a template that matches your needs, give it a descriptive name, and set up basic project settings.',
-          tips: ['Choose templates carefully as they affect available features', 'Project names should be descriptive and unique']
-        },
-        {
-          id: 5,
-          title: 'Invite Team Members',
-          content: 'Add team members to your project by going to Project Settings > Team. Enter their email addresses and assign appropriate roles (Admin, Editor, or Viewer).',
-          tips: ['Start with fewer permissions and upgrade as needed', 'Send a welcome message with project context']
-        },
-        {
-          id: 6,
-          title: 'Start Building',
-          content: 'Now you\'re ready to start using ENBOQ! Explore the various tools and features available in your project. Don\'t hesitate to check out our other documentation for specific features.',
-          tips: ['Take advantage of keyboard shortcuts for efficiency', 'Save your work frequently using Ctrl+S']
-        }
-      ],
-      rating: 4.8,
-      views: 1250,
-      lastUpdated: '2024-01-20T10:00:00Z',
-      relatedDocs: [
-        { id: 'onboarding-platform-demo-enboq', title: 'Full ENBOQ Platform Demo' },
-        { id: 'new-hire-onboarding-flow', title: 'What the New Hire Onboarding Flow Looks Like' }
-      ]
-    };
-    setDoc(sampleDoc);
+    // Redirect to 404 or docs page since this mock doc is being removed
+    window.location.href = '/docs';
   }, [id]);
 
 

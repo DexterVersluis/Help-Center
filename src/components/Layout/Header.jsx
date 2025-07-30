@@ -68,10 +68,7 @@ const Header = () => {
     { label: 'Closed Tickets', value: '/tickets?status=closed', icon: <Description />, description: 'Resolved tickets' }
   ];
 
-  const featureRequestsOptions = [
-    { label: 'Feature Requests', value: '/features', icon: <Lightbulb />, description: 'Browse all feature requests' },
-    { label: 'Popular Requests', value: '/features?sort=popular', icon: <Lightbulb />, description: 'Most requested features' }
-  ];
+
 
 
 
@@ -108,6 +105,14 @@ const Header = () => {
     setExpandedMenu(null);
   };
 
+  // Helper function to check if a path is active
+  const isActivePath = (path) => {
+    if (path === '/docs') {
+      return location.pathname.startsWith('/docs');
+    }
+    return location.pathname === path;
+  };
+
   const toggleMobileMenu = (menuType) => {
     setExpandedMenu(expandedMenu === menuType ? null : menuType);
   };
@@ -136,13 +141,25 @@ const Header = () => {
         </Box>
         <List>
           <ListItem disablePadding>
-            <ListItemButton component={Link} to="/docs/onboarding-platform-demo-enboq" onClick={() => setMobileDrawerOpen(false)}>
+            <ListItemButton 
+              component={Link} 
+              to="/docs/onboarding-platform-demo-enboq" 
+              onClick={() => setMobileDrawerOpen(false)}
+              sx={{
+                backgroundColor: isActivePath('/docs/onboarding-platform-demo-enboq') ? 'rgba(0,0,0,0.1)' : 'transparent'
+              }}
+            >
               <ListItemText primary="Full Platform Demo" />
             </ListItemButton>
           </ListItem>
           
           <ListItem disablePadding>
-            <ListItemButton onClick={() => toggleMobileMenu('Documentation')}>
+            <ListItemButton 
+              onClick={() => toggleMobileMenu('Documentation')}
+              sx={{
+                backgroundColor: isActivePath('/docs') ? 'rgba(0,0,0,0.1)' : 'transparent'
+              }}
+            >
               <ListItemText primary="Documentation" />
               {expandedMenu === 'Documentation' ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
@@ -161,29 +178,30 @@ const Header = () => {
           </Collapse>
 
           <ListItem disablePadding>
-            <ListItemButton component={Link} to="/faq" onClick={() => setMobileDrawerOpen(false)}>
+            <ListItemButton 
+              component={Link} 
+              to="/faq" 
+              onClick={() => setMobileDrawerOpen(false)}
+              sx={{
+                backgroundColor: isActivePath('/faq') ? 'rgba(0,0,0,0.1)' : 'transparent'
+              }}
+            >
               <ListItemText primary="FAQ" />
             </ListItemButton>
           </ListItem>
 
           <ListItem disablePadding>
-            <ListItemButton onClick={() => toggleMobileMenu('Feature Requests')}>
+            <ListItemButton 
+              component={Link} 
+              to="/features" 
+              onClick={() => setMobileDrawerOpen(false)}
+              sx={{
+                backgroundColor: isActivePath('/features') ? 'rgba(0,0,0,0.1)' : 'transparent'
+              }}
+            >
               <ListItemText primary="Feature Requests" />
-              {expandedMenu === 'Feature Requests' ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
           </ListItem>
-          <Collapse in={expandedMenu === 'Feature Requests'} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              {featureRequestsOptions.map((option) => (
-                <ListItem key={option.value} disablePadding sx={{ pl: 4 }}>
-                  <ListItemButton onClick={() => handleOptionClick(option.value)}>
-                    <ListItemIcon>{option.icon}</ListItemIcon>
-                    <ListItemText primary={option.label} secondary={option.description} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Collapse>
         </List>
       </Box>
     </Drawer>
@@ -230,7 +248,13 @@ const Header = () => {
                 color="inherit"
                 component={Link}
                 to="/docs/onboarding-platform-demo-enboq"
-                sx={{ textTransform: 'none' }}
+                sx={{ 
+                  textTransform: 'none',
+                  backgroundColor: isActivePath('/docs/onboarding-platform-demo-enboq') ? 'rgba(255,255,255,0.2)' : 'transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.1)'
+                  }
+                }}
               >
                 Full Platform Demo
               </Button>
@@ -239,7 +263,13 @@ const Header = () => {
                 color="inherit"
                 endIcon={<ExpandMore />}
                 onClick={(e) => handleMenuClick(e, 'Documentation')}
-                sx={{ textTransform: 'none' }}
+                sx={{ 
+                  textTransform: 'none',
+                  backgroundColor: isActivePath('/docs') ? 'rgba(255,255,255,0.2)' : 'transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.1)'
+                  }
+                }}
               >
                 Documentation
               </Button>
@@ -248,16 +278,28 @@ const Header = () => {
                 color="inherit"
                 component={Link}
                 to="/faq"
-                sx={{ textTransform: 'none' }}
+                sx={{ 
+                  textTransform: 'none',
+                  backgroundColor: isActivePath('/faq') ? 'rgba(255,255,255,0.2)' : 'transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.1)'
+                  }
+                }}
               >
                 FAQ
               </Button>
 
               <Button
                 color="inherit"
-                endIcon={<ExpandMore />}
-                onClick={(e) => handleMenuClick(e, 'Feature Requests')}
-                sx={{ textTransform: 'none' }}
+                component={Link}
+                to="/features"
+                sx={{ 
+                  textTransform: 'none',
+                  backgroundColor: isActivePath('/features') ? 'rgba(255,255,255,0.2)' : 'transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.1)'
+                  }
+                }}
               >
                 Feature Requests
               </Button>
@@ -317,7 +359,7 @@ const Header = () => {
         onClose={handleClose}
         PaperProps={{ sx: { minWidth: 280, borderRadius: 0 } }}
       >
-        {(expandedMenu === 'Documentation' ? supportDocsOptions : featureRequestsOptions).map((option) => (
+        {supportDocsOptions.map((option) => (
           <MenuItem key={option.value} onClick={() => handleOptionClick(option.value)}>
             <ListItemIcon>{option.icon}</ListItemIcon>
             <Box>
