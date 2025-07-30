@@ -3,25 +3,25 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#667eea',
-      light: '#8fa5f3',
-      dark: '#4c63d2',
+      main: '#823BEB',
+      light: '#FF8E00',
+      dark: '#7333d9',
       50: '#f0f4ff',
       100: '#e0e7ff',
       200: '#c7d2fe',
     },
     secondary: {
-      main: '#764ba2',
-      light: '#9575cd',
-      dark: '#512da8',
+      main: '#ED00B8',
+      light: '#FFC9EC',
+      dark: '#be185d',
     },
     success: {
-      main: '#4caf50',
+      main: '#00B84D',
       light: '#81c784',
-      dark: '#388e3c',
+      dark: '#00a043',
     },
     warning: {
-      main: '#ff9800',
+      main: '#FF8E00',
       light: '#ffb74d',
       dark: '#f57c00',
     },
@@ -53,30 +53,51 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Nunito", "Helvetica", "Arial", sans-serif',
     h1: {
-      fontSize: '2.5rem',
-      fontWeight: 600,
+      fontSize: '30px',
+      fontWeight: 900,
+      fontFamily: '"Nunito", sans-serif',
+      color: '#823BEB',
     },
     h2: {
-      fontSize: '2rem',
-      fontWeight: 600,
+      fontSize: '22px',
+      fontWeight: 900,
+      fontFamily: '"Nunito", sans-serif',
+      color: '#ED00B8',
     },
     h3: {
-      fontSize: '1.75rem',
+      fontSize: '20px',
       fontWeight: 600,
+      fontFamily: '"Nunito", sans-serif',
+      color: '#823BEB',
     },
     h4: {
-      fontSize: '1.5rem',
+      fontSize: '18px',
       fontWeight: 600,
+      fontFamily: '"Nunito", sans-serif',
     },
     h5: {
       fontSize: '1.25rem',
       fontWeight: 600,
+      fontFamily: '"Nunito", sans-serif',
     },
     h6: {
       fontSize: '1rem',
       fontWeight: 600,
+      fontFamily: '"Nunito", sans-serif',
+    },
+    body1: {
+      fontSize: '16px',
+      fontWeight: 600,
+      fontFamily: '"Nunito", sans-serif',
+      color: '#696A6A',
+    },
+    body2: {
+      fontSize: '16px',
+      fontWeight: 600,
+      fontFamily: '"Nunito", sans-serif',
+      color: '#696A6A',
     },
   },
   components: {
@@ -90,6 +111,7 @@ const theme = createTheme({
         },
       },
     },
+
     MuiCard: {
       styleOverrides: {
         root: {
@@ -119,6 +141,45 @@ const theme = createTheme({
         root: {
           borderRadius: 4,
           fontWeight: 600,
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        h1: {
+          fontFamily: '"Nunito", sans-serif',
+          fontWeight: 900,
+          fontSize: '30px',
+          color: '#823BEB',
+        },
+        h2: {
+          fontFamily: '"Nunito", sans-serif',
+          fontWeight: 900,
+          fontSize: '22px',
+          color: '#ED00B8',
+        },
+        h3: {
+          fontFamily: '"Nunito", sans-serif',
+          fontWeight: 600,
+          fontSize: '20px',
+          color: '#823BEB',
+        },
+        h4: {
+          fontFamily: '"Nunito", sans-serif',
+          fontWeight: 600,
+          fontSize: '18px',
+        },
+        body1: {
+          fontFamily: '"Nunito", sans-serif',
+          fontWeight: 600,
+          fontSize: '16px',
+          color: '#696A6A',
+        },
+        body2: {
+          fontFamily: '"Nunito", sans-serif',
+          fontWeight: 600,
+          fontSize: '16px',
+          color: '#696A6A',
         },
       },
     },

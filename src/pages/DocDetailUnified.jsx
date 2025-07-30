@@ -190,7 +190,7 @@ const DocDetailUnified = () => {
             
             {/* Title and Description - Full Width */}
             <Box mb={3}>
-              <Typography variant="h3" component="h1" gutterBottom color="primary">
+              <Typography variant="h1" component="h1" gutterBottom color="primary">
                 {doc.title}
               </Typography>
               <Typography variant="h6" color="text.secondary" paragraph>

@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import enboqWhiteLogo from '../../../assets/enboq-white.svg';
 import {
   AppBar,
   Toolbar,
@@ -119,9 +120,20 @@ const Header = () => {
       sx={{ '& .MuiDrawer-paper': { width: 280 } }}
     >
       <Box sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-          ENBOQ Support
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <img 
+            src={enboqWhiteLogo} 
+            alt="ENBOQ" 
+            style={{ 
+              height: '24px',
+              marginRight: '8px',
+              filter: 'invert(1)'
+            }} 
+          />
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            Support
+          </Typography>
+        </Box>
         <List>
           <ListItem disablePadding>
             <ListItemButton component={Link} to="/docs/onboarding-platform-demo-enboq" onClick={() => setMobileDrawerOpen(false)}>
@@ -179,26 +191,38 @@ const Header = () => {
 
   return (
     <>
-      <AppBar position="sticky" elevation={1} sx={{ borderRadius: 0 }}>
+      <AppBar 
+        position="sticky" 
+        elevation={1} 
+        sx={{ 
+          borderRadius: 0,
+          background: 'linear-gradient(135deg, #823BEB 0%, #ED00B8 100%)'
+        }}
+      >
         <Toolbar>
-          <Typography
-            variant="h6"
+          <Box
             component={Link}
             to="/"
             sx={{
               flexGrow: 1,
               textDecoration: 'none',
               color: 'inherit',
-              fontWeight: 'bold',
               display: 'flex',
               alignItems: 'center'
             }}
           >
-            ENBOQ
-            <Typography variant="body2" sx={{ ml: 1, opacity: 0.8 }}>
+            <img 
+              src={enboqWhiteLogo} 
+              alt="ENBOQ" 
+              style={{ 
+                height: '32px',
+                marginRight: '12px'
+              }} 
+            />
+            <Typography variant="body2" sx={{ color: 'white', opacity: 0.9, fontWeight: 500 }}>
               Support
             </Typography>
-          </Typography>
+          </Box>
 
           {!isMobile && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

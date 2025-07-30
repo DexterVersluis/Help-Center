@@ -193,7 +193,7 @@ const NewHireOnboardingFlow = () => {
           <Paper sx={{ p: 4, mb: 4 }}>
             <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={3}>
               <Box flex={1}>
-                <Typography variant="h3" component="h1" gutterBottom color="primary">
+                <Typography variant="h1" component="h1" gutterBottom color="primary">
                   {doc.title}
                 </Typography>
                 <Typography variant="h6" color="text.secondary" paragraph>

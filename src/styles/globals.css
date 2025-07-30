@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 :root {
   /* ENBOQ Brand Colors */
@@ -8,7 +8,7 @@
   --light-pink: #FFC9EC;
   --orange: #FF8E00;
   --green: #00B84D;
-  --gray-text: #6B7280;
+  --gray-text: #696A6A;
   --gray-light: #F3F4F6;
   --gray-medium: #E5E7EB;
   --gray-dark: #374151;
@@ -29,22 +29,46 @@
   --color-pink: 237, 0, 184;
   --color-orange: 255, 142, 0;
   --color-green: 0, 184, 77;
-  --color-gray-text: 107, 114, 128;
+  --color-gray-text: 105, 106, 106;
   
-  /* Typography */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --heading-size: 48px;
-  --subheading-size: 32px;
-  --small-subheading-size: 24px;
+  /* Typography - Font Family */
+  --font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  
+  /* Typography - Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+  
+  /* Typography - Font Sizes */
+  --h1-size: 30px;
+  --h2-size: 22px;
+  --h3-size: 20px;
+  --h4-size: 18px;
   --body-size: 16px;
   --small-size: 14px;
+  --tiny-size: 12px;
+  
+  /* Typography - Font Weights for Headings (Brand Guidelines) */
+  --h1-weight: var(--font-weight-black); /* 900 - Extra Bold */
+  --h2-weight: var(--font-weight-black); /* 900 - Extra Bold */
+  --h3-weight: var(--font-weight-semibold); /* 600 - SemiBold */
+  --body-weight: var(--font-weight-semibold); /* 600 for readability */
+  
+  /* Legacy variables for backward compatibility */
+  --heading-size: var(--h1-size);
+  --subheading-size: var(--h2-size);
+  --small-subheading-size: var(--h3-size);
 }
 
 /* Our global styles will inherit the reset from index.css */
 body {
   font-family: var(--font-family);
   font-size: var(--body-size);
-  color: var(--text-primary);
+  font-weight: var(--body-weight);
+  color: var(--gray-text);
   line-height: 1.6;
   background-color: var(--bg-primary);
   -webkit-font-smoothing: antialiased;
@@ -58,43 +82,60 @@ body {
 }
 
 h1 {
-  font-weight: 700;
-  font-size: var(--heading-size);
+  font-family: var(--font-family);
+  font-weight: var(--h1-weight);
+  font-size: var(--h1-size);
   color: var(--purple);
   margin-bottom: 2rem;
   line-height: 1.2;
   letter-spacing: -0.025em;
 }
 
+/* Ensure Material-UI Typography h1 uses correct styling */
+.MuiTypography-h1 {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 30px;
+  color: #823BEB;
+}
+
 h2 {
-  font-weight: 600;
-  font-size: var(--subheading-size);
-  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-weight: var(--h2-weight);
+  font-size: var(--h2-size);
+  color: var(--pink);
   margin-bottom: 1.5rem;
   line-height: 1.3;
   letter-spacing: -0.02em;
 }
 
 h3 {
-  font-weight: 600;
-  font-size: var(--small-subheading-size);
-  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-weight: var(--h3-weight);
+  font-size: var(--h3-size);
+  color: var(--purple);
   margin-bottom: 1rem;
   line-height: 1.4;
 }
 
 h4 {
-  font-weight: 600;
-  font-size: 18px;
+  font-family: var(--font-family);
+  font-weight: var(--h3-weight);
+  font-size: var(--h4-size);
   color: var(--text-primary);
   margin-bottom: 0.75rem;
 }
 
 p {
+  font-family: var(--font-family);
+  font-weight: var(--body-weight);
+  font-size: var(--body-size);
+  color: var(--gray-text);
   margin-bottom: 1.5rem;
-  color: var(--text-secondary);
   line-height: 1.8;
 }
+
+
 
 a {
   color: var(--orange);
@@ -103,7 +144,7 @@ a {
 }
 
 a:hover {
-  color: var(--pink);
+  color: var(--orange);
 }
 
 .container {
@@ -136,9 +177,9 @@ a:hover {
 }
 
 .btn-primary:hover {
-  background: #7333d9;
+  background: var(--orange);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(130, 59, 235, 0.25);
+  box-shadow: 0 4px 12px rgba(255, 142, 0, 0.25);
 }
 
 .btn-secondary {
@@ -316,8 +357,8 @@ a:hover {
 
 .modern-search-button:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
-  background: linear-gradient(135deg, #6d28d9, #be185d);
+  box-shadow: 0 8px 20px rgba(255, 142, 0, 0.35);
+  background: var(--orange);
 }
 
 .modern-search-button:disabled {
@@ -342,8 +383,8 @@ a:hover {
 
 .modern-cta-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
-  background: linear-gradient(135deg, #6d28d9, #be185d);
+  box-shadow: 0 8px 20px rgba(255, 142, 0, 0.35);
+  background: var(--orange);
   color: white;
 }
 
@@ -1456,7 +1497,7 @@ a[class*="bg-gradient"] {
 .prose h3 { color: var(--purple); font-weight: 600; margin-bottom: 0.5rem; }
 
 /* Hover states */
-.hover\:text-pink:hover { color: var(--pink); }
+.hover\:text-orange:hover { color: var(--orange); }
 .hover\:text-orange:hover { color: var(--orange); }
 .hover\:text-purple:hover { color: var(--purple); }
 .hover\:text-white:hover { color: var(--white); }
@@ -1468,7 +1509,7 @@ a[class*="bg-gradient"] {
 .hover\:-translate-y-1:hover { --tw-translate-y: -0.25rem; transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
 .hover\:translate-x-1:hover { --tw-translate-x: 0.25rem; transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
 
-.group:hover .group-hover\:text-pink { color: var(--pink); }
+.group:hover .group-hover\:text-orange { color: var(--orange); }
 .group:hover .group-hover\:translate-x-1 { --tw-translate-x: 0.25rem; transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
 
 @media (max-width: 768px) {
@@ -1795,7 +1836,8 @@ a[class*="bg-gradient"] {
 
 .header-login-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(130, 59, 235, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 142, 0, 0.3);
+  background: var(--orange);
   color: white;
 }
 

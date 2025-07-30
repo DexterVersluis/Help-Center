@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { DocumentationService } from '../services/documentationService';
 import {
   Box,
   Container,
@@ -17,7 +18,9 @@ import {
   Divider,
   Fade,
   Slide,
-  Grid
+  Grid,
+  Skeleton,
+  CircularProgress
 } from '@mui/material';
 import {
   Search,
@@ -43,6 +46,8 @@ import {
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [quickStartGuides, setQuickStartGuides] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   
   const supportServices = [
@@ -99,22 +104,47 @@ const Home = () => {
     }
   ];
 
-  const quickStartGuides = [
-    {
-      title: 'Getting Started with ENBOQ',
-      description: 'Complete guide to setting up your first project and understanding the basics',
-      category: 'Getting Started',
-      readTime: '5 min',
-      difficulty: 'Beginner'
-    },
-    {
-      title: 'Full ENBOQ Platform Demo',
-      description: 'Comprehensive walkthrough of the ENBOQ platform features and capabilities',
-      category: 'Getting Started',
-      readTime: '10 min',
-      difficulty: 'Beginner'
-    }
-  ];
+  // Fetch quick start guides from database
+  useEffect(() => {
+    const fetchQuickStartGuides = async () => {
+      try {
+        setLoading(true);
+        const { data: docsData, error } = await DocumentationService.getAllDocuments();
+        
+        if (error) {
+          console.error('Error fetching documents:', error);
+          return;
+        }
+
+        // Filter for quick start guides (you can adjust this filter based on your data structure)
+        const quickStartDocs = (docsData || [])
+          .filter(doc => 
+            doc.category?.name?.toLowerCase().includes('getting started') || 
+            doc.title.toLowerCase().includes('getting started') ||
+            doc.title.toLowerCase().includes('quick start') ||
+            doc.type === 'guide'
+          )
+          .slice(0, 3) // Limit to 3 guides
+          .map(doc => ({
+            id: doc.slug,
+            title: doc.title,
+            description: doc.description,
+            category: doc.category?.name || 'Getting Started',
+            readTime: doc.read_time || '5 min',
+            difficulty: doc.difficulty || 'Beginner',
+            slug: doc.slug
+          }));
+
+        setQuickStartGuides(quickStartDocs);
+      } catch (error) {
+        console.error('Error fetching quick start guides:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuickStartGuides();
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -135,7 +165,7 @@ const Home = () => {
       {/* Hero Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+          background: 'white',
           py: { xs: 8, md: 12 },
           position: 'relative',
           overflow: 'hidden'
@@ -147,11 +177,7 @@ const Home = () => {
               variant="h1"
               sx={{
                 fontSize: { xs: '2.5rem', md: '4rem' },
-                fontWeight: 'bold',
-                background: 'linear-gradient(45deg, #1976d2, #dc004e)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+                fontWeight: 900,
                 mb: 3
               }}
             >
@@ -173,7 +199,6 @@ const Home = () => {
                 p: 1,
                 mb: 6,
                 borderRadius: 3,
-                maxWidth: 600,
                 mx: 'auto'
               }}
             >
@@ -213,12 +238,17 @@ const Home = () => {
                 Popular topics:
               </Typography>
               <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
-                {['Data Management', 'API Integration', 'Workflow Setup', 'User Permissions'].map((topic) => (
+                {[
+                  { label: 'Data Management', path: '/docs?search=data+management' },
+                  { label: 'HRIS integrations', path: '/docs?search=HRIS+integrations' },
+                  { label: 'Workflow Setup', path: '/docs?search=workflow+setup' },
+                  { label: 'User Permissions', path: '/docs?search=user+permissions' }
+                ].map((topic) => (
                   <Chip
-                    key={topic}
-                    label={topic}
+                    key={topic.label}
+                    label={topic.label}
                     component={Link}
-                    to="/docs"
+                    to={topic.path}
                     clickable
                     variant="outlined"
                     sx={{
@@ -418,78 +448,106 @@ const Home = () => {
           </Box>
         </Fade>
 
-        <Box display="flex" gap={2} mb={8}>
-          {quickStartGuides.map((guide, index) => (
-            <Card
-              key={index}
-              elevation={3}
-              sx={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                borderRadius: 3,
-                border: '1px solid',
-                borderColor: 'divider',
-                minHeight: 320,
-                '&:hover': {
-                  transform: 'translateY(-6px)',
-                  boxShadow: 8,
-                  borderColor: 'primary.main'
-                }
-              }}
-            >
-              <CardContent sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={1}>
-                  <Box display="flex" flexDirection="column" gap={0.5}>
-                    <Chip 
-                      label={guide.category} 
-                      color="primary" 
-                      variant="outlined"
-                      size="small"
-                      sx={{ fontWeight: 600, fontSize: '0.7rem', alignSelf: 'flex-start' }}
-                    />
-                    <Chip 
-                      label={guide.difficulty} 
-                      color={guide.difficulty === 'Beginner' ? 'success' : guide.difficulty === 'Intermediate' ? 'warning' : 'error'}
-                      size="small"
-                      sx={{ fontSize: '0.7rem', alignSelf: 'flex-start' }}
-                    />
+        <Box display="flex" gap={3} mb={8} flexWrap="wrap">
+          {loading ? (
+            Array.from({ length: 3 }).map((_, index) => (
+              <Card key={index} elevation={3} sx={{ flex: 1, minWidth: 280, borderRadius: 3 }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Box display="flex" gap={1}>
+                      <Skeleton variant="rectangular" width={80} height={20} sx={{ borderRadius: 1 }} />
+                      <Skeleton variant="rectangular" width={60} height={20} sx={{ borderRadius: 1 }} />
+                    </Box>
+                    <Skeleton variant="text" width={40} />
                   </Box>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: '0.7rem' }}>
-                    {guide.readTime}
+                  <Skeleton variant="text" width="90%" height={28} sx={{ mb: 1 }} />
+                  <Skeleton variant="text" width="100%" height={60} sx={{ mb: 2 }} />
+                  <Skeleton variant="rectangular" width="100%" height={36} sx={{ borderRadius: 2 }} />
+                </CardContent>
+              </Card>
+            ))
+          ) : quickStartGuides.length === 0 ? (
+            <Box textAlign="center" py={4} width="100%">
+              <Typography variant="h6" color="text.secondary" gutterBottom>
+                No quick start guides available
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Check back later for helpful getting started guides.
+              </Typography>
+            </Box>
+          ) : (
+            quickStartGuides.map((guide, index) => (
+              <Card
+                key={guide.id || index}
+                elevation={3}
+                sx={{
+                  flex: 1,
+                  minWidth: 280,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  borderRadius: 3,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  '&:hover': {
+                    transform: 'translateY(-6px)',
+                    boxShadow: 8,
+                    borderColor: 'primary.main'
+                  }
+                }}
+              >
+                <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Box display="flex" gap={1}>
+                      <Chip 
+                        label={guide.category} 
+                        color="primary" 
+                        variant="outlined"
+                        size="small"
+                        sx={{ fontWeight: 600, fontSize: '0.7rem' }}
+                      />
+                      <Chip 
+                        label={guide.difficulty} 
+                        color={guide.difficulty === 'Beginner' ? 'success' : guide.difficulty === 'Intermediate' ? 'warning' : 'error'}
+                        size="small"
+                        sx={{ fontSize: '0.7rem' }}
+                      />
+                    </Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: '0.7rem' }}>
+                      {guide.readTime}
+                    </Typography>
+                  </Box>
+                  
+                  <Typography variant="h6" gutterBottom fontWeight={600} color="primary.main" sx={{ mb: 2 }}>
+                    {guide.title}
                   </Typography>
-                </Box>
-                
-                <Typography variant="subtitle1" gutterBottom fontWeight={600} color="primary.main">
-                  {guide.title}
-                </Typography>
-                
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.4, flex: 1, fontSize: '0.8rem' }}>
-                  {guide.description}
-                </Typography>
-                
-                <Button
-                  component={Link}
-                  to="/docs"
-                  variant="contained"
-                  fullWidth
-                  endIcon={<ArrowForward />}
-                  sx={{ 
-                    borderRadius: 2,
-                    py: 0.8,
-                    textTransform: 'none',
-                    fontSize: '0.8rem',
-                    fontWeight: 600
-                  }}
-                >
-                  Start Guide
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+                  
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.5, flex: 1 }}>
+                    {guide.description && guide.description.length > 150 
+                      ? `${guide.description.substring(0, 150)}...` 
+                      : guide.description}
+                  </Typography>
+                  
+                  <Button
+                    component={Link}
+                    to={`/docs/${guide.slug}`}
+                    variant="contained"
+                    fullWidth
+                    endIcon={<ArrowForward />}
+                    sx={{ 
+                      borderRadius: 2,
+                      py: 1,
+                      textTransform: 'none',
+                      fontWeight: 600
+                    }}
+                  >
+                    Start Guide
+                  </Button>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </Box>
-
         <Fade in timeout={1500}>
           <Paper
             elevation={4}
@@ -539,119 +597,7 @@ const Home = () => {
         </Fade>
       </Container>
 
-      {/* CTA Section */}
-      <Box
-        sx={{
-          background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 50%, #0d47a1 100%)',
-          color: 'white',
-          py: 12,
-          position: 'relative',
-          overflow: 'hidden'
-        }}
-      >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-            opacity: 0.3
-          }}
-        />
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-          <Fade in timeout={1600}>
-            <Box textAlign="center">
-              <Typography 
-                variant="h1" 
-                gutterBottom
-                sx={{ 
-                  fontWeight: 800,
-                  fontSize: { xs: '2.5rem', md: '4rem' },
-                  mb: 3
-                }}
-              >
-                Ready to Get Started?
-              </Typography>
-              <Typography 
-                variant="h4" 
-                sx={{ 
-                  mb: 6, 
-                  opacity: 0.95,
-                  fontWeight: 300,
-                  maxWidth: 800,
-                  mx: 'auto',
-                  lineHeight: 1.4
-                }}
-              >
-                Join thousands of teams who have successfully onboarded with ENBOQ. 
-                Our support team is here to ensure your success every step of the way.
-              </Typography>
-              
-              <Stack 
-                direction={{ xs: 'column', sm: 'row' }} 
-                spacing={4} 
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Button
-                  component={Link}
-                  to="/tickets/new"
-                  variant="contained"
-                  size="large"
-                  endIcon={<ArrowForward />}
-                  sx={{
-                    bgcolor: 'white',
-                    color: 'primary.main',
-                    px: 5,
-                    py: 2,
-                    fontSize: '1.2rem',
-                    fontWeight: 600,
-                    borderRadius: 3,
-                    textTransform: 'none',
-                    boxShadow: 4,
-                    '&:hover': { 
-                      bgcolor: 'grey.100',
-                      transform: 'translateY(-2px)',
-                      boxShadow: 6
-                    },
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  Get Expert Support
-                </Button>
-                <Button
-                  component={Link}
-                  to="/docs"
-                  variant="outlined"
-                  size="large"
-                  endIcon={<ArrowForward />}
-                  sx={{
-                    borderColor: 'white',
-                    color: 'white',
-                    px: 5,
-                    py: 2,
-                    fontSize: '1.2rem',
-                    fontWeight: 600,
-                    borderRadius: 3,
-                    textTransform: 'none',
-                    borderWidth: 2,
-                    '&:hover': { 
-                      borderColor: 'white', 
-                      bgcolor: 'rgba(255,255,255,0.1)',
-                      transform: 'translateY(-2px)'
-                    },
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  Browse Documentation
-                </Button>
-              </Stack>
-            </Box>
-          </Fade>
-        </Container>
-      </Box>
+
     </Box>
   );
 };

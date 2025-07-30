@@ -73,7 +73,7 @@ export default function Login() {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #823BEB 0%, #ED00B8 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -137,7 +137,7 @@ export default function Login() {
                 style={{ width: '120px', height: '120px' }}
               />
             </Box>
-            <Typography variant="h3" component="h1" gutterBottom fontWeight="bold">
+            <Typography variant="h1" component="h1" gutterBottom fontWeight="900">
               Welcome Back
             </Typography>
             <Typography variant="h6" color="text.secondary">
@@ -232,7 +232,12 @@ export default function Login() {
                   target="_blank"
                   rel="noopener noreferrer"
                   underline="hover"
-                  color="primary"
+                  sx={{
+                    color: '#823BEB',
+                    '&:hover': {
+                      color: '#FF8E00'
+                    }
+                  }}
                 >
                   Forgot your password?
                 </MuiLink>
@@ -256,9 +261,9 @@ export default function Login() {
                   borderRadius: 2,
                   fontSize: '1.1rem',
                   fontWeight: 'bold',
-                  background: 'linear-gradient(45deg, #1976d2, #dc004e)',
+                  backgroundColor: '#823BEB',
                   '&:hover': {
-                    background: 'linear-gradient(45deg, #1565c0, #c2185b)',
+                    backgroundColor: '#6B2BC7',
                   }
                 }}
               >
@@ -277,10 +282,33 @@ export default function Login() {
                 component={Link}
                 to="/docs"
                 underline="hover"
-                color="primary"
-                sx={{ fontWeight: 'medium' }}
+                sx={{ 
+                  fontWeight: 'medium',
+                  color: '#823BEB',
+                  '&:hover': {
+                    color: '#FF8E00'
+                  }
+                }}
               >
                 Visit our documentation
+              </MuiLink>
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+              No account yet?{' '}
+              <MuiLink
+                href="https://start.enboq.com/admin/register"
+                target="_blank"
+                rel="noopener noreferrer"
+                underline="hover"
+                sx={{ 
+                  fontWeight: 'medium',
+                  color: '#823BEB',
+                  '&:hover': {
+                    color: '#FF8E00'
+                  }
+                }}
+              >
+                Sign up
               </MuiLink>
             </Typography>
           </Box>
