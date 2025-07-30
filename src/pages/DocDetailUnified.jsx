@@ -37,7 +37,10 @@ import {
   Help,
   BugReport,
   Email,
-  Visibility
+  Visibility,
+  Rocket,
+  Launch,
+  TrendingUp
 } from '@mui/icons-material';
 import { DocumentationService } from '../services/documentationService';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -380,6 +383,142 @@ const DocDetailUnified = () => {
           }}
         >
           <Stack spacing={3}>
+            {/* CTA Card */}
+            <Card 
+              elevation={4}
+              sx={{ 
+                background: 'linear-gradient(135deg, #823BEB 0%, #ED00B8 100%)',
+                color: 'white',
+                borderRadius: 3,
+                overflow: 'hidden'
+              }}
+            >
+              <CardContent sx={{ p: 4, textAlign: 'center' }}>
+                <Box display="flex" justifyContent="center" mb={2}>
+                  <Box
+                    sx={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: '50%',
+                      bgcolor: 'rgba(255,255,255,0.25)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      mb: 2,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                    }}
+                  >
+                    <Rocket sx={{ fontSize: 30, color: 'white' }} />
+                  </Box>
+                </Box>
+                
+                <Typography 
+                  variant="h6" 
+                  gutterBottom 
+                  fontWeight={700}
+                  sx={{ 
+                    color: 'white',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                  }}
+                >
+                  Not yet using ENBOQ?
+                </Typography>
+                
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    mb: 3, 
+                    lineHeight: 1.5,
+                    color: 'white',
+                    fontWeight: 500,
+                    textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                  }}
+                >
+                  Get it 2 weeks for free now!
+                </Typography>
+                
+                <Button
+                  href="https://start.enboq.com/admin/register?utm_source=help_center&utm_medium=sidebar_cta&utm_campaign=docs_trial&utm_content=2_week_trial"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="contained"
+                  fullWidth
+                  endIcon={<Launch />}
+                  sx={{
+                    bgcolor: 'white',
+                    color: '#823BEB',
+                    fontWeight: 700,
+                    py: 1.5,
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    fontSize: '1rem',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    '&:hover': {
+                      bgcolor: '#f8f9fa',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 6px 20px rgba(0,0,0,0.2)'
+                    },
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  Start Free Trial
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Quick Actions
+                </Typography>
+                <Stack spacing={1}>
+                  <Button
+                    component={Link}
+                    to="/tickets/new"
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<BugReport />}
+                    sx={{ 
+                      justifyContent: 'flex-start',
+                      textTransform: 'none',
+                      borderRadius: 2
+                    }}
+                  >
+                    Get Support
+                  </Button>
+                  <Button
+                    component={Link}
+                    to="/features/new"
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<Lightbulb />}
+                    sx={{ 
+                      justifyContent: 'flex-start',
+                      textTransform: 'none',
+                      borderRadius: 2
+                    }}
+                  >
+                    Request Feature
+                  </Button>
+                  <Button
+                    component={Link}
+                    to="/roadmap"
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<TrendingUp />}
+                    sx={{ 
+                      justifyContent: 'flex-start',
+                      textTransform: 'none',
+                      borderRadius: 2
+                    }}
+                  >
+                    View Roadmap
+                  </Button>
+                </Stack>
+              </CardContent>
+            </Card>
+
             {/* Related Documentation */}
             {doc.relatedDocs && doc.relatedDocs.length > 0 && (
               <Card>

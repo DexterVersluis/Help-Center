@@ -41,7 +41,9 @@ import {
   Help,
   BugReport,
   Lightbulb,
-  Email
+  Email,
+  Rocket,
+  Launch
 } from '@mui/icons-material';
 
 const SupportDocs = () => {
@@ -318,7 +320,7 @@ const SupportDocs = () => {
       {/* Documentation Content */}
       <Container maxWidth="lg" sx={{ py: 8 }}>
         <Grid container spacing={4}>
-          <Grid size={12}>
+          <Grid size={{ xs: 12, md: 8 }}>
             {filteredDocs.length === 0 ? (
               <Paper
                 sx={{
@@ -423,116 +425,222 @@ const SupportDocs = () => {
               </Stack>
             )}
           </Grid>
+
+          {/* Sidebar */}
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Box sx={{ position: 'sticky', top: 88 }}>
+              {/* CTA Card */}
+              <Card 
+                elevation={4}
+                sx={{ 
+                  mb: 4,
+                  background: 'linear-gradient(135deg, #823BEB 0%, #ED00B8 100%)',
+                  color: 'white',
+                  borderRadius: 3,
+                  overflow: 'hidden'
+                }}
+              >
+                <CardContent sx={{ p: 4, textAlign: 'center' }}>
+                  <Box display="flex" justifyContent="center" mb={2}>
+                    <Box
+                      sx={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: '50%',
+                        bgcolor: 'rgba(255,255,255,0.25)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mb: 2,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                      }}
+                    >
+                      <Rocket sx={{ fontSize: 30, color: 'white' }} />
+                    </Box>
+                  </Box>
+                  
+                  <Typography 
+                    variant="h6" 
+                    gutterBottom 
+                    fontWeight={700}
+                    sx={{ 
+                      color: 'white',
+                      textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    Not yet using ENBOQ?
+                  </Typography>
+                  
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      mb: 3, 
+                      lineHeight: 1.5,
+                      color: 'white',
+                      fontWeight: 500,
+                      textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    Get it 2 weeks for free now!
+                  </Typography>
+                  
+                  <Button
+                    href="https://start.enboq.com/admin/register?utm_source=help_center&utm_medium=sidebar_cta&utm_campaign=docs_trial&utm_content=2_week_trial"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="contained"
+                    fullWidth
+                    endIcon={<Launch />}
+                    sx={{
+                      bgcolor: 'white',
+                      color: '#823BEB',
+                      fontWeight: 700,
+                      py: 1.5,
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontSize: '1rem',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                      '&:hover': {
+                        bgcolor: '#f8f9fa',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 20px rgba(0,0,0,0.2)'
+                      },
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    Start Free Trial
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions */}
+              <Card sx={{ mb: 4 }}>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    Quick Actions
+                  </Typography>
+                  <Stack spacing={1}>
+                    <Button
+                      component={Link}
+                      to="/tickets/new"
+                      variant="outlined"
+                      fullWidth
+                      startIcon={<BugReport />}
+                      sx={{ 
+                        justifyContent: 'flex-start',
+                        textTransform: 'none',
+                        borderRadius: 2
+                      }}
+                    >
+                      Get Support
+                    </Button>
+                    <Button
+                      component={Link}
+                      to="/features/new"
+                      variant="outlined"
+                      fullWidth
+                      startIcon={<Lightbulb />}
+                      sx={{ 
+                        justifyContent: 'flex-start',
+                        textTransform: 'none',
+                        borderRadius: 2
+                      }}
+                    >
+                      Request Feature
+                    </Button>
+                    <Button
+                      component={Link}
+                      to="/roadmap"
+                      variant="outlined"
+                      fullWidth
+                      startIcon={<TrendingUp />}
+                      sx={{ 
+                        justifyContent: 'flex-start',
+                        textTransform: 'none',
+                        borderRadius: 2
+                      }}
+                    >
+                      View Roadmap
+                    </Button>
+                  </Stack>
+                </CardContent>
+              </Card>
+
+              {/* Popular Docs */}
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    Popular Guides
+                  </Typography>
+                  <Stack spacing={2}>
+                    {popularDocs.slice(0, 2).map((doc, index) => (
+                      <Paper
+                        key={doc.id}
+                        component={Link}
+                        to={`/docs/${doc.id}`}
+                        sx={{
+                          p: 2,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 2,
+                          textDecoration: 'none',
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            backgroundColor: 'primary.light',
+                            color: 'white',
+                            transform: 'translateX(4px)'
+                          }
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            borderRadius: '50%',
+                            bgcolor: 'primary.main',
+                            color: 'white',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            flexShrink: 0
+                          }}
+                        >
+                          {index + 1}
+                        </Box>
+                        <Box flexGrow={1} sx={{ minWidth: 0 }}>
+                          <Typography 
+                            variant="body2" 
+                            fontWeight="medium" 
+                            sx={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              lineHeight: 1.3,
+                              fontSize: '0.875rem'
+                            }}
+                          >
+                            {doc.title}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {doc.views} views
+                          </Typography>
+                        </Box>
+                        <ArrowForward fontSize="small" />
+                      </Paper>
+                    ))}
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Box>
+          </Grid>
         </Grid>
 
       </Container>
 
-      {/* Popular Guides and Quick Links - Full Width */}
-      <Container maxWidth="lg" sx={{ py: 6 }}>
-        <Grid container spacing={4}>
-          <Grid size={12}>
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                {/* Popular Guides */}
-                <Card sx={{ height: '100%' }}>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Popular Guides
-                    </Typography>
-                    <Stack spacing={2}>
-                      {popularDocs.map((doc, index) => (
-                        <Paper
-                          key={doc.id}
-                          component={Link}
-                          to={`/docs/${doc.id}`}
-                          sx={{
-                            p: 2,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 2,
-                            textDecoration: 'none',
-                            transition: 'all 0.3s ease',
-                            '&:hover': {
-                              backgroundColor: 'primary.light',
-                              color: 'white'
-                            }
-                          }}
-                        >
-                          <Avatar
-                            sx={{
-                              width: 32,
-                              height: 32,
-                              bgcolor: 'primary.main',
-                              fontSize: '0.875rem'
-                            }}
-                          >
-                            {index + 1}
-                          </Avatar>
-                          <Box flexGrow={1}>
-                            <Typography variant="body2" fontWeight="medium" noWrap>
-                              {doc.title}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {doc.views} views
-                            </Typography>
-                          </Box>
-                          <ArrowForward fontSize="small" />
-                        </Paper>
-                      ))}
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid size={{ xs: 12, md: 6 }}>
-                {/* Quick Links */}
-                <Card sx={{ height: '100%' }}>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Quick Links
-                    </Typography>
-                    <Stack spacing={1}>
-                      {[
-                        { label: 'Frequently Asked Questions', to: '/faq', icon: Help },
-                        { label: 'Submit Support Ticket', to: '/tickets/new', icon: BugReport },
-                        { label: 'Request New Feature', to: '/features', icon: Lightbulb },
-                        { label: 'Contact Support Team', to: 'mailto:support@enboq.com', icon: Email }
-                      ].map((link) => (
-                        <Paper
-                          key={link.label}
-                          component={link.to.startsWith('mailto:') ? 'a' : Link}
-                          to={link.to.startsWith('mailto:') ? undefined : link.to}
-                          href={link.to.startsWith('mailto:') ? link.to : undefined}
-                          sx={{
-                            p: 2,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            textDecoration: 'none',
-                            transition: 'all 0.3s ease',
-                            '&:hover': {
-                              backgroundColor: 'primary.light',
-                              color: 'white'
-                            }
-                          }}
-                        >
-                          <Box display="flex" alignItems="center" gap={1}>
-                            <link.icon fontSize="small" />
-                            <Typography variant="body2">
-                              {link.label}
-                            </Typography>
-                          </Box>
-                          <ArrowForward fontSize="small" />
-                        </Paper>
-                      ))}
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Container>    </Box>
+    </Box>
   );
 };
 

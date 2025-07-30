@@ -39,6 +39,9 @@ const FeatureRequests = lazy(() =>
 const FeatureRequestForm = lazy(() => 
   import(/* webpackChunkName: "features" */ './pages/FeatureRequestForm')
 );
+const Roadmap = lazy(() => 
+  import(/* webpackChunkName: "roadmap" */ './pages/Roadmap')
+);
 
 function App() {
   return (
@@ -80,6 +83,7 @@ function App() {
                           <FeatureRequestForm />
                         </ProtectedRoute>
                       } />
+                      <Route path="/roadmap" element={<Roadmap />} />
                     </Routes>
                   </Suspense>
                 </Layout>

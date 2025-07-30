@@ -34,7 +34,8 @@ import {
   BugReport,
   Lightbulb,
   Dashboard,
-  Launch
+  Launch,
+  Timeline
 } from '@mui/icons-material';
 
 const Header = () => {
@@ -193,6 +194,20 @@ const Header = () => {
           <ListItem disablePadding>
             <ListItemButton 
               component={Link} 
+              to="/roadmap" 
+              onClick={() => setMobileDrawerOpen(false)}
+              sx={{
+                backgroundColor: isActivePath('/roadmap') ? 'rgba(0,0,0,0.1)' : 'transparent'
+              }}
+            >
+              <ListItemIcon><Timeline /></ListItemIcon>
+              <ListItemText primary="Roadmap" />
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem disablePadding>
+            <ListItemButton 
+              component={Link} 
               to="/features" 
               onClick={() => setMobileDrawerOpen(false)}
               sx={{
@@ -287,6 +302,22 @@ const Header = () => {
                 }}
               >
                 FAQ
+              </Button>
+
+              <Button
+                color="inherit"
+                component={Link}
+                to="/roadmap"
+                startIcon={<Timeline />}
+                sx={{ 
+                  textTransform: 'none',
+                  backgroundColor: isActivePath('/roadmap') ? 'rgba(255,255,255,0.2)' : 'transparent',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.1)'
+                  }
+                }}
+              >
+                Roadmap
               </Button>
 
               <Button

@@ -21,7 +21,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Alert
+  Alert,
+  Avatar
 } from '@mui/material';
 import {
   Search,
@@ -894,19 +895,34 @@ const FAQ = () => {
       </Container>
 
       {/* CTA Section */}
-      <Box
-        sx={{
-          background: 'linear-gradient(45deg, #1976d2, #dc004e)',
-          color: 'white',
-          py: 8,
-          textAlign: 'center'
-        }}
-      >
-        <Container maxWidth="md">
-          <Typography variant="h3" gutterBottom>
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Paper
+          elevation={4}
+          sx={{
+            p: 6,
+            background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
+            borderRadius: 4,
+            textAlign: 'center'
+          }}
+        >
+          <Box display="flex" justifyContent="center" mb={3}>
+            <Avatar
+              sx={{
+                width: 80,
+                height: 80,
+                bgcolor: 'primary.main',
+                boxShadow: 3
+              }}
+            >
+              <Help sx={{ fontSize: 40 }} />
+            </Avatar>
+          </Box>
+          
+          <Typography variant="h3" gutterBottom fontWeight={700} color="primary.main">
             Still have questions about our onboarding software?
           </Typography>
-          <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
+          
+          <Typography variant="h6" color="text.secondary" sx={{ mb: 4, maxWidth: 700, mx: 'auto', lineHeight: 1.6 }}>
             Can't find what you're looking for? Our expert support team is here to help you understand how ENBOQ's 
             employee onboarding and preboarding platform can transform your new hire experience.
           </Typography>
@@ -919,10 +935,19 @@ const FAQ = () => {
               size="large"
               startIcon={<BugReport />}
               endIcon={<ArrowForward />}
-              sx={{
-                bgcolor: 'white',
-                color: 'primary.main',
-                '&:hover': { bgcolor: 'grey.100' }
+              sx={{ 
+                borderRadius: 3,
+                px: 4,
+                py: 1.5,
+                textTransform: 'none',
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                boxShadow: 2,
+                '&:hover': {
+                  boxShadow: 4,
+                  transform: 'translateY(-2px)'
+                },
+                transition: 'all 0.3s ease'
               }}
             >
               Submit Support Ticket
@@ -933,28 +958,73 @@ const FAQ = () => {
               size="large"
               startIcon={<Email />}
               sx={{
-                borderColor: 'white',
-                color: 'white',
-                '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' }
+                borderRadius: 3,
+                px: 4,
+                py: 1.5,
+                textTransform: 'none',
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                borderWidth: 2,
+                color: 'primary.main',
+                borderColor: 'primary.main',
+                '&:hover': { 
+                  borderColor: 'primary.dark',
+                  bgcolor: 'primary.main',
+                  color: 'white',
+                  transform: 'translateY(-2px)'
+                },
+                transition: 'all 0.3s ease'
               }}
             >
               Email Support Team
             </Button>
           </Stack>
 
-          <Stack direction="row" spacing={4} justifyContent="center" sx={{ opacity: 0.8 }}>
-            <Typography variant="body2">
-              • Average response time: 2 hours
-            </Typography>
-            <Typography variant="body2">
-              • 24/7 support available
-            </Typography>
-            <Typography variant="body2">
-              • Free 14-day trial
-            </Typography>
-          </Stack>
-        </Container>
-      </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: { xs: 2, sm: 4 },
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Box display="flex" alignItems="center" gap={1}>
+              <Chip 
+                label="2 hours" 
+                color="success" 
+                size="small" 
+                sx={{ fontWeight: 600 }}
+              />
+              <Typography variant="body2" color="text.secondary" fontWeight={500}>
+                Average response time
+              </Typography>
+            </Box>
+            <Box display="flex" alignItems="center" gap={1}>
+              <Chip 
+                label="24/7" 
+                color="primary" 
+                size="small" 
+                sx={{ fontWeight: 600 }}
+              />
+              <Typography variant="body2" color="text.secondary" fontWeight={500}>
+                Support available
+              </Typography>
+            </Box>
+            <Box display="flex" alignItems="center" gap={1}>
+              <Chip 
+                label="14 days" 
+                color="secondary" 
+                size="small" 
+                sx={{ fontWeight: 600 }}
+              />
+              <Typography variant="body2" color="text.secondary" fontWeight={500}>
+                Free trial
+              </Typography>
+            </Box>
+          </Box>
+        </Paper>
+      </Container>
     </Box>
   );
 };

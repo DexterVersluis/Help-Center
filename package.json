@@ -4,10 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build && npm run generate-sitemap",
+    "dev": "npm run generate-sitemap && vite",
+    "dev:only": "vite",
+    "build": "vite build && npm run generate-sitemap && npm run copy-seo-files",
     "build:only": "vite build",
     "generate-sitemap": "node scripts/generateSitemap.js",
+    "refresh-sitemap": "node scripts/refreshSitemap.js",
+    "copy-seo-files": "cp public/sitemap.xml dist/ && cp public/robots.txt dist/",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -29,6 +32,7 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
+    "dotenv": "^17.2.1",
     "eslint": "^9.30.1",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",

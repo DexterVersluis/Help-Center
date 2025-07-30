@@ -41,6 +41,12 @@ class SitemapService {
         lastmod: new Date().toISOString(),
         changefreq: 'weekly',
         priority: '0.7'
+      },
+      {
+        url: '/roadmap',
+        lastmod: new Date().toISOString(),
+        changefreq: 'weekly',
+        priority: '0.8'
       }
     ];
   }
@@ -57,13 +63,16 @@ class SitemapService {
 
       // Filter and limit docs for sitemap
       const validDocs = (docs || [])
-        .filter(doc => doc.slug && doc.slug.trim()) // Only include docs with valid slugs
+        .filter(doc => doc.slug && doc.slug.trim() && doc.is_published) // Only include published docs with valid slugs
         .slice(0, SITEMAP_CONFIG.maxUrls - 10); // Reserve space for static pages
 
       return validDocs.map(doc => {
         // Determine priority based on doc properties
         let priority = '0.8';
-        if (doc.category?.name?.toLowerCase().includes('getting started')) {
+        const categoryName = doc.category?.name?.toLowerCase() || '';
+        const docTitle = doc.title?.toLowerCase() || '';
+        
+        if (categoryName.includes('getting started') || docTitle.includes('getting started')) {
           priority = '0.9';
         } else if (doc.type === 'guide') {
           priority = '0.8';
@@ -73,7 +82,7 @@ class SitemapService {
 
         // Determine change frequency based on doc type
         let changefreq = 'weekly';
-        if (doc.type === 'guide' || doc.category?.name?.toLowerCase().includes('getting started')) {
+        if (doc.type === 'guide' || categoryName.includes('getting started') || docTitle.includes('getting started')) {
           changefreq = 'monthly';
         } else if (doc.type === 'reference') {
           changefreq = 'weekly';

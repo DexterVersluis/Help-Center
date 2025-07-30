@@ -5,10 +5,10 @@ This implementation provides a fully automated, database-driven sitemap.xml that
 ## 🚀 Features
 
 - **Dynamic Generation**: Automatically includes all documentation pages from your database
-- **Smart Caching**: 1-hour cache for performance with manual refresh capability
+- **File-Based Serving**: Serves pre-generated sitemap files for reliability
 - **SEO Optimized**: Proper priorities, change frequencies, and last modified dates
 - **Development & Production**: Works in both dev server and production builds
-- **Admin Interface**: Built-in management interface for monitoring and control
+- **Real Database Integration**: Pulls actual content from Supabase database
 
 ## 📁 Files Created
 
@@ -57,16 +57,22 @@ public/
 
 ### Accessing the Sitemap
 - **Production**: `https://help.enboq.com/sitemap.xml`
-- **Development**: `http://localhost:5176/sitemap.xml`
-- **Stats Endpoint**: `http://localhost:5176/sitemap-stats` (dev only)
+- **Development**: `http://localhost:5173/sitemap.xml` (or whatever port Vite uses)
+- **Stats Endpoint**: `http://localhost:5173/sitemap-stats` (dev only)
 
 ### Manual Generation
 ```bash
 # Generate sitemap file
 npm run generate-sitemap
 
+# Refresh during development
+npm run refresh-sitemap
+
 # Build with sitemap generation
 npm run build
+
+# Start dev server (auto-generates sitemap)
+npm run dev
 ```
 
 ### Programmatic Access

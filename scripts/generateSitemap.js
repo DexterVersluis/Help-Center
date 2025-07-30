@@ -1,42 +1,31 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 // ES module compatibility
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Mock the DocumentationService for build-time generation
-const mockDocumentationService = {
-  async getAllDocuments() {
-    // In a real scenario, you'd connect to your database here
-    // For now, return some sample docs or read from a JSON file
-    return {
-      data: [
-        {
-          slug: 'getting-started',
-          updated_at: '2024-01-15T10:00:00Z',
-          created_at: '2024-01-01T10:00:00Z'
-        },
-        {
-          slug: 'user-management',
-          updated_at: '2024-01-20T10:00:00Z',
-          created_at: '2024-01-05T10:00:00Z'
-        },
-        {
-          slug: 'gamification-setup',
-          updated_at: '2024-01-25T10:00:00Z',
-          created_at: '2024-01-10T10:00:00Z'
-        }
-      ],
-      error: null
-    };
-  }
-};
+// Supabase client for build-time generation
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
 
-class StaticSitemapGenerator {
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ Missing Supabase environment variables');
+  console.error('Make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in .env');
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+class BuildTimeSitemapGenerator {
   constructor() {
-    this.baseUrl = 'https://help.enboq.com';
+    this.baseUrl = process.env.VITE_SITE_URL || 'https://help.enboq.com';
   }
 
   getStaticPages() {
@@ -64,27 +53,81 @@ class StaticSitemapGenerator {
         lastmod: new Date().toISOString(),
         changefreq: 'weekly',
         priority: '0.7'
+      },
+      {
+        url: '/roadmap',
+        lastmod: new Date().toISOString(),
+        changefreq: 'weekly',
+        priority: '0.8'
       }
     ];
   }
 
   async getDocumentationPages() {
     try {
-      const { data: docs, error } = await mockDocumentationService.getAllDocuments();
+      console.log('🔍 Fetching documentation from database...');
       
+      // Query the documentation table directly
+      const { data: docs, error } = await supabase
+        .from('documentation')
+        .select(`
+          slug,
+          title,
+          description,
+          type,
+          difficulty,
+          created_at,
+          updated_at,
+          category:doc_categories(name, slug)
+        `)
+        .eq('is_published', true)
+        .order('created_at', { ascending: false });
+
       if (error) {
-        console.error('Error fetching docs for sitemap:', error);
+        console.error('❌ Database error:', error);
         return [];
       }
 
-      return (docs || []).map(doc => ({
-        url: `/docs/${doc.slug}`,
-        lastmod: doc.updated_at || doc.created_at || new Date().toISOString(),
-        changefreq: 'weekly',
-        priority: '0.8'
-      }));
+      if (!docs || docs.length === 0) {
+        console.warn('⚠️ No documentation found in database');
+        return [];
+      }
+
+      console.log(`📚 Found ${docs.length} documentation entries`);
+
+      // Filter and process docs
+      const validDocs = docs
+        .filter(doc => doc.slug && doc.slug.trim())
+        .map(doc => {
+          // Determine priority based on doc properties
+          let priority = '0.8';
+          if (doc.category?.name?.toLowerCase().includes('getting started')) {
+            priority = '0.9';
+          } else if (doc.type === 'guide') {
+            priority = '0.8';
+          } else if (doc.type === 'reference') {
+            priority = '0.7';
+          }
+
+          // Determine change frequency
+          let changefreq = 'weekly';
+          if (doc.type === 'guide' || doc.category?.name?.toLowerCase().includes('getting started')) {
+            changefreq = 'monthly';
+          }
+
+          return {
+            url: `/docs/${doc.slug}`,
+            lastmod: doc.updated_at || doc.created_at || new Date().toISOString(),
+            changefreq,
+            priority
+          };
+        });
+
+      console.log(`✅ Processed ${validDocs.length} valid documentation pages`);
+      return validDocs;
+
     } catch (error) {
-      console.error('Error generating documentation sitemap entries:', error);
+      console.error('❌ Error fetching documentation:', error);
       return [];
     }
   }
@@ -140,6 +183,12 @@ ${urlsetClose}`;
       const pages = await this.generateSitemapData();
       console.log(`📄 Generated ${pages.length} pages in sitemap`);
       
+      // Log breakdown
+      const staticCount = this.getStaticPages().length;
+      const docCount = pages.length - staticCount;
+      console.log(`   - ${staticCount} static pages`);
+      console.log(`   - ${docCount} documentation pages`);
+      
       return true;
     } catch (error) {
       console.error('❌ Error generating sitemap:', error);
@@ -150,7 +199,7 @@ ${urlsetClose}`;
 
 // Generate sitemap when script is run directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const generator = new StaticSitemapGenerator();
+  const generator = new BuildTimeSitemapGenerator();
   const publicDir = path.join(__dirname, '..', 'public');
   const sitemapPath = path.join(publicDir, 'sitemap.xml');
   
@@ -162,4 +211,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   generator.writeSitemapToFile(sitemapPath);
 }
 
-export default StaticSitemapGenerator;
+export default BuildTimeSitemapGenerator;
