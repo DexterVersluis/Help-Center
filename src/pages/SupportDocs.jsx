@@ -212,27 +212,23 @@ const SupportDocs = () => {
       {/* Hero Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+          background: 'white',
           py: { xs: 8, md: 12 },
           position: 'relative',
           overflow: 'hidden'
         }}
       >
-        <Container maxWidth={false}>
+        <Container maxWidth="lg">
           <Box textAlign="center" maxWidth="800px" mx="auto">
             <Typography
               variant="h1"
               sx={{
                 fontSize: { xs: '2.5rem', md: '4rem' },
-                fontWeight: 'bold',
-                background: 'linear-gradient(45deg, #1976d2, #dc004e)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+                fontWeight: 900,
                 mb: 3
               }}
             >
-              Support Documentation
+              All documentation
             </Typography>
             
             <Typography
@@ -243,47 +239,42 @@ const SupportDocs = () => {
               Comprehensive guides, tutorials, and references to help you master ENBOQ
             </Typography>
             
-            {/* Search and Filter */}
+            {/* Search Bar */}
             <Paper
               elevation={3}
               sx={{
-                p: 2,
+                p: 1,
                 mb: 6,
-                maxWidth: 800,
+                borderRadius: 3,
                 mx: 'auto'
               }}
             >
-              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  placeholder="Search documentation... Try 'API setup' or 'getting started'"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Search />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <FormControl sx={{ minWidth: 200 }}>
-                  <InputLabel>Category</InputLabel>
-                  <Select
-                    value={selectedCategory}
-                    label="Category"
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                  >
-                    <MenuItem value="all">All Categories</MenuItem>
-                    {categories.map(category => (
-                      <MenuItem key={category.slug} value={category.name}>
-                        {category.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Stack>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search ENBOQ docs... Try 'How do I create a workflow?'"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Button
+                        variant="contained"
+                        disabled={!searchTerm.trim()}
+                        sx={{ borderRadius: 2 }}
+                      >
+                        Search
+                      </Button>
+                    </InputAdornment>
+                  ),
+                  sx: { '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }
+                }}
+              />
             </Paper>
 
             {/* Popular Topics */}

@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { FeatureRequestService } from '../services/featureRequestService';
 import {
   Box,
   Container,
@@ -30,14 +32,27 @@ import {
 
 const FeatureRequestForm = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated, loading } = useAuth();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     category: '',
     useCase: '',
-    priority: 'medium',
-    email: ''
+    priority: 'medium'
   });
+  const [submitting, setSubmitting] = useState(false);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      navigate('/login', { 
+        state: { 
+          from: '/features/new',
+          message: 'Please log in to submit a feature request'
+        }
+      });
+    }
+  }, [isAuthenticated, loading, navigate]);
 
   const categories = [
     'UI/UX',
@@ -69,29 +84,34 @@ const FeatureRequestForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const featureId = `FEAT-${Date.now().toString().slice(-6)}`;
-    const feature = {
-      id: featureId,
-      ...formData,
-      status: 'under-review',
-      votes: 1,
-      comments: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      author: formData.email
-    };
+    if (!isAuthenticated || !user) {
+      alert('Please log in to submit a feature request');
+      return;
+    }
 
-    const existingFeatures = JSON.parse(localStorage.getItem('featureRequests') || '[]');
-    localStorage.setItem('featureRequests', JSON.stringify([feature, ...existingFeatures]));
-    
-    localStorage.setItem(`voted_${featureId}`, 'true');
+    try {
+      setSubmitting(true);
+      
+      const { data, error } = await FeatureRequestService.createFeatureRequest(formData, user.id);
+      
+      if (error) {
+        console.error('Error submitting feature request:', error);
+        alert('Error submitting feature request. Please try again.');
+        return;
+      }
 
-    navigate('/features', { 
-      state: { message: 'Feature request submitted successfully!' }
-    });
+      navigate('/features', { 
+        state: { message: 'Feature request submitted successfully!' }
+      });
+    } catch (error) {
+      console.error('Error submitting feature request:', error);
+      alert('Error submitting feature request. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -99,47 +119,33 @@ const FeatureRequestForm = () => {
       {/* Hero Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
-          py: { xs: 6, md: 8 },
+          background: 'white',
+          py: { xs: 8, md: 12 },
           position: 'relative',
           overflow: 'hidden'
         }}
       >
-        <Container maxWidth="md">
-          <Fade in timeout={800}>
-            <Box textAlign="center">
-              <Box
-                sx={{
-                  width: 80,
-                  height: 80,
-                  background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-                  borderRadius: 4,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  mx: 'auto',
-                  mb: 3
-                }}
-              >
-                <LightbulbIcon sx={{ fontSize: 40, color: 'white' }} />
-              </Box>
-              <Typography
-                variant="h3"
-                component="h1"
-                sx={{
-                  fontWeight: 800,
-                  mb: 2,
-                  fontSize: { xs: '2rem', md: '3rem' }
-                }}
-              >
-                Request a New Feature
-              </Typography>
-              <Typography variant="h6" sx={{ opacity: 0.9, maxWidth: '500px', mx: 'auto' }}>
-                Help us improve ENBOQ by sharing your ideas and suggestions
-              </Typography>
-            </Box>
-          </Fade>
+        <Container maxWidth="lg">
+          <Box textAlign="center" maxWidth="800px" mx="auto">
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: '2.5rem', md: '4rem' },
+                fontWeight: 900,
+                mb: 3
+              }}
+            >
+              Request a New Feature
+            </Typography>
+            
+            <Typography
+              variant="h5"
+              color="text.secondary"
+              sx={{ mb: 6, lineHeight: 1.6 }}
+            >
+              Help us improve ENBOQ by sharing your ideas and suggestions
+            </Typography>
+          </Box>
         </Container>
       </Box>
 
@@ -157,21 +163,7 @@ const FeatureRequestForm = () => {
           >
             <form onSubmit={handleSubmit}>
               <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Email Address"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="your.email@example.com"
-                    variant="outlined"
-                    helperText="We'll use this to follow up on your request and notify you of updates"
-                    sx={{}}
-                  />
-                </Grid>
+
 
                 <Grid item xs={12}>
                   <TextField
@@ -318,16 +310,17 @@ const FeatureRequestForm = () => {
                       startIcon={<SendIcon />}
                       endIcon={<ArrowRightIcon />}
                       size="large"
+                      disabled={submitting}
                       sx={{
-                        
-                        background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: 4
-                        }
+                        borderRadius: 3,
+                        px: 5,
+                        py: 2,
+                        textTransform: 'none',
+                        fontSize: '1.2rem',
+                        fontWeight: 600
                       }}
                     >
-                      Submit Request
+                      {submitting ? 'Submitting...' : 'Submit Request'}
                     </Button>
                   </Box>
                 </Grid>

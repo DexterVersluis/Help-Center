@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { FeatureRequestService } from '../services/featureRequestService';
 import FeatureCard from '../components/FeatureCard';
 import {
   Box,
@@ -33,83 +35,44 @@ import {
 } from '@mui/icons-material';
 
 const FeatureRequests = () => {
+  const { user, isAuthenticated } = useAuth();
   const [features, setFeatures] = useState([]);
   const [filteredFeatures, setFilteredFeatures] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
+  const [loading, setLoading] = useState(true);
+  const [userVotes, setUserVotes] = useState({});
 
+  // Load feature requests from database
   useEffect(() => {
-    const savedFeatures = JSON.parse(localStorage.getItem('featureRequests') || '[]');
-    if (savedFeatures.length === 0) {
-      const sampleFeatures = [
-        {
-          id: 'FEAT-001',
-          title: 'Dark Mode Support',
-          description: 'Add a dark mode theme option for better user experience during night time usage.',
-          status: 'in-progress',
-          votes: 45,
-          comments: 12,
-          category: 'UI/UX',
-          createdAt: '2024-01-15T10:00:00Z',
-          updatedAt: '2024-01-20T14:30:00Z',
-          author: 'user@example.com'
-        },
-        {
-          id: 'FEAT-002',
-          title: 'Advanced Search Filters',
-          description: 'Implement more granular search filters including date ranges, custom fields, and saved search queries.',
-          status: 'planned',
-          votes: 32,
-          comments: 8,
-          category: 'Search',
-          createdAt: '2024-01-10T09:15:00Z',
-          updatedAt: '2024-01-18T11:45:00Z',
-          author: 'admin@enboq.com'
-        },
-        {
-          id: 'FEAT-003',
-          title: 'Mobile App Push Notifications',
-          description: 'Add push notification support for mobile apps to keep users informed about important updates.',
-          status: 'completed',
-          votes: 67,
-          comments: 23,
-          category: 'Mobile',
-          createdAt: '2023-12-20T16:20:00Z',
-          updatedAt: '2024-01-25T09:10:00Z',
-          author: 'mobile@example.com'
-        },
-        {
-          id: 'FEAT-004',
-          title: 'Bulk Operations',
-          description: 'Allow users to perform bulk operations on multiple items simultaneously for improved efficiency.',
-          status: 'under-review',
-          votes: 28,
-          comments: 5,
-          category: 'Productivity',
-          createdAt: '2024-01-08T13:45:00Z',
-          updatedAt: '2024-01-12T10:20:00Z',
-          author: 'power@example.com'
-        },
-        {
-          id: 'FEAT-005',
-          title: 'API Rate Limiting Dashboard',
-          description: 'Provide a dashboard to monitor API usage and rate limiting status for developers.',
-          status: 'rejected',
-          votes: 15,
-          comments: 3,
-          category: 'API',
-          createdAt: '2024-01-05T11:30:00Z',
-          updatedAt: '2024-01-07T15:15:00Z',
-          author: 'dev@example.com'
+    const loadFeatureRequests = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await FeatureRequestService.getAllFeatureRequests();
+        
+        if (error) {
+          console.error('Error loading feature requests:', error);
+          return;
         }
-      ];
-      localStorage.setItem('featureRequests', JSON.stringify(sampleFeatures));
-      setFeatures(sampleFeatures);
-    } else {
-      setFeatures(savedFeatures);
-    }
-  }, []);
+
+        setFeatures(data || []);
+
+        // Load user votes if authenticated
+        if (isAuthenticated && user && data?.length > 0) {
+          const featureIds = data.map(f => f.id);
+          const { data: votes } = await FeatureRequestService.getUserVotes(featureIds, user.id);
+          setUserVotes(votes || {});
+        }
+      } catch (error) {
+        console.error('Error loading feature requests:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFeatureRequests();
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     let filtered = features;
@@ -171,172 +134,163 @@ const FeatureRequests = () => {
     });
   }, []);
 
-  const handleVote = useCallback((featureId, voteType) => {
-    const currentVote = localStorage.getItem(`voted_${featureId}`);
-    
-    // If user already voted the same way, do nothing
-    if (currentVote === voteType) return;
-    
-    const updatedFeatures = features.map(feature => {
-      if (feature.id === featureId) {
-        let newVotes = feature.votes;
-        
-        // Remove previous vote if exists
-        if (currentVote === 'up') {
-          newVotes -= 1;
-        } else if (currentVote === 'down') {
-          newVotes += 1;
-        }
-        
-        // Apply new vote
-        if (voteType === 'up') {
-          newVotes += 1;
-        } else if (voteType === 'down') {
-          newVotes -= 1;
-        }
-        
-        localStorage.setItem(`voted_${featureId}`, voteType);
-        return { ...feature, votes: newVotes };
+  const handleVote = useCallback(async (featureId, voteType) => {
+    if (!isAuthenticated || !user) {
+      // Redirect to login or show login modal
+      alert('Please log in to vote on feature requests');
+      return;
+    }
+
+    try {
+      const { data, error } = await FeatureRequestService.voteOnFeatureRequest(featureId, user.id, voteType);
+      
+      if (error) {
+        console.error('Error voting:', error);
+        return;
       }
-      return feature;
-    });
-    
-    setFeatures(updatedFeatures);
-    localStorage.setItem('featureRequests', JSON.stringify(updatedFeatures));
-  }, [features]);
+
+      // Update local state
+      setUserVotes(prev => ({
+        ...prev,
+        [featureId]: voteType
+      }));
+
+      // Update the feature's vote count
+      setFeatures(prev => prev.map(feature => {
+        if (feature.id === featureId) {
+          return {
+            ...feature,
+            votes: feature.votes + (data?.voteChange || 0)
+          };
+        }
+        return feature;
+      }));
+
+    } catch (error) {
+      console.error('Error voting on feature request:', error);
+    }
+  }, [isAuthenticated, user]);
 
   const hasVoted = useCallback((featureId) => {
-    return localStorage.getItem(`voted_${featureId}`) || null;
-  }, []);
+    return userVotes[featureId] || null;
+  }, [userVotes]);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
       {/* Hero Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
+          background: 'white',
           py: { xs: 8, md: 12 },
           position: 'relative',
           overflow: 'hidden'
         }}
       >
         <Container maxWidth="lg">
-          <Fade in timeout={800}>
-            <Box textAlign="center">
-              <Typography
-                variant="h2"
-                component="h1"
-                sx={{
-                  fontWeight: 800,
-                  mb: 3,
-                  fontSize: { xs: '2.5rem', md: '4rem' },
-                  background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-                }}
-              >
-                Feature Requests
-              </Typography>
+          <Box textAlign="center" maxWidth="800px" mx="auto">
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: '2.5rem', md: '4rem' },
+                fontWeight: 900,
+                mb: 3
+              }}
+            >
+              Feature Requests
+            </Typography>
+            
+            <Typography
+              variant="h5"
+              color="text.secondary"
+              sx={{ mb: 6, lineHeight: 1.6 }}
+            >
+              Share your ideas and vote on features you'd like to see
+            </Typography>
               
-              <Typography
-                variant="h5"
-                sx={{ mb: 6, opacity: 0.9, maxWidth: '600px', mx: 'auto' }}
-              >
-                Share your ideas and vote on features you'd like to see
-              </Typography>
-              
-              {/* Search and Filter Section */}
-              <Paper
-                elevation={3}
-                sx={{
-                  p: 2,
-                  mb: 6,
-                  maxWidth: 800,
-                  mx: 'auto'
+            {/* Search Bar */}
+            <Paper
+              elevation={3}
+              sx={{
+                p: 1,
+                mb: 6,
+                borderRadius: 3,
+                mx: 'auto'
+              }}
+            >
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search ENBOQ docs... Try 'How do I create a workflow?'"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Button
+                        variant="contained"
+                        disabled={!searchTerm.trim()}
+                        sx={{ borderRadius: 2 }}
+                      >
+                        Search
+                      </Button>
+                    </InputAdornment>
+                  ),
+                  sx: { '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }
                 }}
-              >
-                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                  <TextField
-                    fullWidth
+              />
+            </Paper>
+
+            {/* Popular Topics */}
+            <Box>
+              <Typography variant="h6" sx={{ mb: 2, color: 'text.secondary' }}>
+                Popular topics:
+              </Typography>
+              <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
+                {[
+                  { label: 'Data Management', path: '/docs?search=data+management' },
+                  { label: 'HRIS integrations', path: '/docs?search=HRIS+integrations' },
+                  { label: 'Workflow Setup', path: '/docs?search=workflow+setup' },
+                  { label: 'User Permissions', path: '/docs?search=user+permissions' }
+                ].map((topic) => (
+                  <Chip
+                    key={topic.label}
+                    label={topic.label}
+                    component={Link}
+                    to={topic.path}
+                    clickable
                     variant="outlined"
-                    placeholder="Search feature requests... Try 'dark mode' or 'mobile app'"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
+                    sx={{
+                      borderRadius: 3,
+                      '&:hover': {
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                        transform: 'translateY(-2px)'
+                      },
+                      transition: 'all 0.3s ease'
                     }}
                   />
-                  <FormControl sx={{ minWidth: 150 }}>
-                    <InputLabel>Status</InputLabel>
-                    <Select
-                      value={statusFilter}
-                      label="Status"
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                      <MenuItem value="all">All Status</MenuItem>
-                      <MenuItem value="under-review">Under Review</MenuItem>
-                      <MenuItem value="planned">Planned</MenuItem>
-                      <MenuItem value="in-progress">In Progress</MenuItem>
-                      <MenuItem value="completed">Completed</MenuItem>
-                      <MenuItem value="rejected">Rejected</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <FormControl sx={{ minWidth: 150 }}>
-                    <InputLabel>Sort By</InputLabel>
-                    <Select
-                      value={sortBy}
-                      label="Sort By"
-                      onChange={(e) => setSortBy(e.target.value)}
-                    >
-                      <MenuItem value="newest">Newest First</MenuItem>
-                      <MenuItem value="oldest">Oldest First</MenuItem>
-                      <MenuItem value="votes">Most Voted</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Stack>
-              </Paper>
-
-              {/* Create New Feature Request Button */}
-              <Zoom in timeout={1000}>
-                <Button
-                  component={Link}
-                  to="/features/new"
-                  variant="contained"
-                  size="large"
-                  startIcon={<LightbulbIcon />}
-                  endIcon={<ArrowRightIcon />}
-                  sx={{
-                    py: 2,
-                    px: 4,
-                    borderRadius: 3,
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
-                    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-                    boxShadow: '0 8px 32px rgba(254, 107, 139, 0.3)',
-                    '&:hover': {
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 12px 40px rgba(254, 107, 139, 0.4)',
-                    },
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  Request New Feature
-                </Button>
-              </Zoom>
+                ))}
+              </Stack>
             </Box>
-          </Fade>
+
+          </Box>
         </Container>
       </Box>
 
       {/* Feature Requests Content Section */}
       <Container maxWidth="lg" sx={{ py: 6 }}>
-        {filteredFeatures.length === 0 ? (
+        {loading ? (
+          <Box display="flex" justifyContent="center" py={8}>
+            <Typography variant="h6" color="text.secondary">
+              Loading feature requests...
+            </Typography>
+          </Box>
+        ) : filteredFeatures.length === 0 ? (
           <Fade in timeout={600}>
             <Paper
               elevation={4}
@@ -403,48 +357,49 @@ const FeatureRequests = () => {
       </Container>
 
       {/* CTA Section */}
-      <Box
-        sx={{
-          py: 12,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
-          textAlign: 'center'
-        }}
-      >
-        <Container maxWidth="md">
-          <Typography variant="h3" component="h2" fontWeight="bold" sx={{ mb: 3 }}>
+      <Container maxWidth="lg" sx={{ py: 10 }}>
+        <Paper
+          elevation={4}
+          sx={{
+            p: 6,
+            background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
+            borderRadius: 4,
+            textAlign: 'center'
+          }}
+        >
+          <LightbulbIcon
+            sx={{
+              fontSize: 80,
+              color: 'primary.main',
+              mb: 3
+            }}
+          />
+          <Typography variant="h3" gutterBottom fontWeight={700} color="primary.main">
             Have an idea for a new feature?
           </Typography>
-          <Typography variant="h6" sx={{ mb: 6, opacity: 0.9 }}>
+          <Typography variant="h6" color="text.secondary" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
             We love hearing from our users! Share your ideas and help shape the future of ENBOQ.
           </Typography>
-          
           <Button
             component={Link}
-            to="/features/new"
+            to={isAuthenticated ? "/features/new" : "/login"}
             variant="contained"
             size="large"
             startIcon={<LightbulbIcon />}
             endIcon={<ArrowRightIcon />}
-            sx={{
-              py: 2,
-              px: 4,
+            sx={{ 
               borderRadius: 3,
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-              boxShadow: '0 8px 32px rgba(254, 107, 139, 0.3)',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 12px 40px rgba(254, 107, 139, 0.4)',
-              },
-              transition: 'all 0.3s ease'
+              px: 5,
+              py: 2,
+              textTransform: 'none',
+              fontSize: '1.2rem',
+              fontWeight: 600
             }}
           >
-            Submit Feature Request
+            {isAuthenticated ? 'Submit Feature Request' : 'Login to Submit Request'}
           </Button>
-        </Container>
-      </Box>
+        </Paper>
+      </Container>
     </Box>
   );
 };

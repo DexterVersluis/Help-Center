@@ -587,7 +587,7 @@ const FAQ = () => {
       {/* Hero Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+          background: 'white',
           py: { xs: 8, md: 12 },
           position: 'relative',
           overflow: 'hidden'
@@ -595,22 +595,11 @@ const FAQ = () => {
       >
         <Container maxWidth="lg">
           <Box textAlign="center" maxWidth="800px" mx="auto">
-            <Chip
-              icon={<EmojiEvents />}
-              label="Employee Onboarding & Preboarding Software"
-              color="primary"
-              sx={{ mb: 3 }}
-            />
-            
             <Typography
               variant="h1"
               sx={{
                 fontSize: { xs: '2.5rem', md: '4rem' },
-                fontWeight: 'bold',
-                background: 'linear-gradient(45deg, #1976d2, #dc004e)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+                fontWeight: 900,
                 mb: 3
               }}
             >
@@ -625,95 +614,78 @@ const FAQ = () => {
               Everything you need to know about ENBOQ's employee onboarding platform, gamification features, buddy matching, and preboarding solutions
             </Typography>
 
-            {/* Feature Tags */}
-            <Stack direction="row" spacing={2} justifyContent="center" flexWrap="wrap" sx={{ mb: 6 }}>
-              <Chip icon={<Rocket />} label="Onboarding Software" variant="outlined" />
-              <Chip icon={<People />} label="Preboarding Platform" variant="outlined" />
-              <Chip icon={<SportsEsports />} label="Employee Gamification" variant="outlined" />
-              <Chip icon={<AutoAwesome />} label="AI-Powered Features" variant="outlined" />
-            </Stack>
-            
-            {/* Search and Filter */}
+            {/* Search Bar */}
             <Paper
               elevation={3}
               sx={{
-                p: 2,
+                p: 1,
                 mb: 6,
-                maxWidth: 800,
+                borderRadius: 3,
                 mx: 'auto'
               }}
             >
-              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  placeholder="Search 70+ FAQs... Try 'buddy matching', 'gamification', or 'pricing'"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Search />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <FormControl sx={{ minWidth: 200 }}>
-                  <InputLabel>Category</InputLabel>
-                  <Select
-                    value={selectedCategory}
-                    label="Category"
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                  >
-                    <MenuItem value="all">All Categories ({faqData.length})</MenuItem>
-                    {categories.map(category => {
-                      const count = faqData.filter(faq => faq.category === category).length;
-                      return (
-                        <MenuItem key={category} value={category}>
-                          {category} ({count})
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-              </Stack>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search ENBOQ docs... Try 'How do I create a workflow?'"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Button
+                        variant="contained"
+                        disabled={!searchTerm.trim()}
+                        sx={{ borderRadius: 2 }}
+                      >
+                        Search
+                      </Button>
+                    </InputAdornment>
+                  ),
+                  sx: { '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }
+                }}
+              />
             </Paper>
 
-            {/* Quick Stats */}
-            <Grid container spacing={3} maxWidth="600px" mx="auto">
-              <Grid item xs={6} md={3}>
-                <Typography variant="h4" color="primary" fontWeight="bold">
-                  {faqData.length}+
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  FAQ Answers
-                </Typography>
-              </Grid>
-              <Grid item xs={6} md={3}>
-                <Typography variant="h4" color="secondary" fontWeight="bold">
-                  {categories.length}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Categories
-                </Typography>
-              </Grid>
-              <Grid item xs={6} md={3}>
-                <Typography variant="h4" color="warning.main" fontWeight="bold">
-                  24/7
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Support
-                </Typography>
-              </Grid>
-              <Grid item xs={6} md={3}>
-                <Typography variant="h4" color="success.main" fontWeight="bold">
-                  99.9%
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Uptime
-                </Typography>
-              </Grid>
-            </Grid>
+            {/* Popular Topics */}
+            <Box>
+              <Typography variant="h6" sx={{ mb: 2, color: 'text.secondary' }}>
+                Popular topics:
+              </Typography>
+              <Stack direction="row" spacing={2} flexWrap="wrap" justifyContent="center">
+                {[
+                  { label: 'Data Management', path: '/docs?search=data+management' },
+                  { label: 'HRIS integrations', path: '/docs?search=HRIS+integrations' },
+                  { label: 'Workflow Setup', path: '/docs?search=workflow+setup' },
+                  { label: 'User Permissions', path: '/docs?search=user+permissions' }
+                ].map((topic) => (
+                  <Chip
+                    key={topic.label}
+                    label={topic.label}
+                    component={Link}
+                    to={topic.path}
+                    clickable
+                    variant="outlined"
+                    sx={{
+                      borderRadius: 3,
+                      '&:hover': {
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                        transform: 'translateY(-2px)'
+                      },
+                      transition: 'all 0.3s ease'
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+
+
           </Box>
         </Container>
       </Box>

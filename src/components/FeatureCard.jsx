@@ -11,7 +11,6 @@ import {
 import {
   ThumbUp as ThumbsUpIcon,
   ThumbDown as ThumbsDownIcon,
-  ChatBubbleOutline as MessageCircleIcon,
   CalendarToday as CalendarIcon
 } from '@mui/icons-material';
 
@@ -155,12 +154,7 @@ const FeatureCard = memo(({
                   <Typography variant="body2" fontWeight="medium">
                     #{feature.id}
                   </Typography>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <MessageCircleIcon fontSize="small" color="action" />
-                    <Typography variant="body2" color="text.secondary">
-                      {feature.comments} comments
-                    </Typography>
-                  </Box>
+
                   <Typography variant="body2" color="text.secondary">
                     by {feature.author}
                   </Typography>
