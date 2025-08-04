@@ -46,6 +46,15 @@ import { DocumentationService } from '../services/documentationService';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { DocumentDetailSkeleton } from '../components/SkeletonLoaders';
 import LazyImage from '../components/LazyImage';
+import { 
+  generateOptimizedTitle, 
+  generateOptimizedDescription, 
+  generateOptimizedKeywords,
+  generateBreadcrumbs,
+  generateArticleSchema,
+  optimizeImageAlt,
+  preloadCriticalResources
+} from '../utils/seoUtils';
 
 const DocDetailUnified = () => {
   const { id } = useParams();
@@ -55,6 +64,11 @@ const DocDetailUnified = () => {
   const [error, setError] = useState(null);
   const [isHelpful, setIsHelpful] = useState(null);
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
+
+  // Preload critical resources for better performance
+  useEffect(() => {
+    preloadCriticalResources();
+  }, []);
 
   useEffect(() => {
     const loadDocument = async () => {
@@ -166,20 +180,24 @@ const DocDetailUnified = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg" sx={{ py: 4 }} component="main">
       <SEO
-        title={`${doc.title} - ENBOQ Help Center`}
-        description={doc.description || `Learn about ${doc.title} in ENBOQ's employee onboarding platform. Step-by-step guide with detailed instructions.`}
-        keywords={`${doc.title}, ENBOQ documentation, ${doc.category?.name || 'onboarding'}, employee onboarding platform, ${doc.type || 'guide'}`}
+        title={generateOptimizedTitle(doc)}
+        description={generateOptimizedDescription(doc)}
+        keywords={generateOptimizedKeywords(doc)}
         url={`/docs/${doc.slug}`}
+        type="article"
+        article={generateArticleSchema(doc)}
+        breadcrumbs={generateBreadcrumbs(doc)}
       />
       {/* Breadcrumbs */}
-      <Breadcrumbs sx={{ mb: 4 }}>
+      <Breadcrumbs component="nav" aria-label="breadcrumb navigation" sx={{ mb: 4 }}>
         <Button
           component={Link}
           to="/docs"
           startIcon={<ArrowBack />}
           color="primary"
+          aria-label="Back to documentation"
         >
           Documentation
         </Button>
@@ -187,9 +205,9 @@ const DocDetailUnified = () => {
       </Breadcrumbs>
 
       <Box display="flex" gap={4}>
-        <Box flex={1}>
+        <Box component="article" flex={1} itemScope itemType="https://schema.org/Article">
           {/* Header */}
-          <Paper sx={{ p: 4, mb: 4 }}>
+          <Paper component="header" sx={{ p: 4, mb: 4 }}>
             {/* Date at the top */}
             <Box display="flex" alignItems="center" gap={1} mb={2}>
               <CalendarToday fontSize="small" color="action" />
@@ -200,12 +218,14 @@ const DocDetailUnified = () => {
             
             {/* Title and Description - Full Width */}
             <Box mb={3}>
-              <Typography variant="h1" component="h1" gutterBottom color="primary">
+              <Typography variant="h1" component="h1" gutterBottom color="primary" sx={{ fontSize: { xs: '2rem', md: '2.5rem' } }}>
                 {doc.title}
               </Typography>
-              <Typography variant="h6" color="text.secondary" paragraph>
-                {doc.description}
-              </Typography>
+              {doc.description && (
+                <Typography variant="h2" component="h2" color="text.secondary" paragraph sx={{ fontSize: '1.25rem', fontWeight: 400 }}>
+                  {doc.description}
+                </Typography>
+              )}
             </Box>
 
             {/* Tags */}
@@ -234,7 +254,9 @@ const DocDetailUnified = () => {
             <Paper sx={{ p: 4, mb: 4 }}>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <PlayArrow color="secondary" />
-                <Typography variant="h5">Video Tutorial</Typography>
+                <Typography variant="h3" component="h3" sx={{ fontSize: '1.5rem', fontWeight: 600 }}>
+                  Video Tutorial: {doc.title}
+                </Typography>
               </Box>
               <Box
                 sx={{
@@ -265,16 +287,16 @@ const DocDetailUnified = () => {
 
           {/* Step-by-Step Guide */}
           {doc.steps && doc.steps.length > 0 && (
-            <Paper sx={{ p: 4, mb: 4 }}>
-              <Typography variant="h5" gutterBottom>
-                Step-by-Step Guide
+            <Paper component="section" sx={{ p: 4, mb: 4 }} aria-labelledby="step-guide-heading">
+              <Typography id="step-guide-heading" variant="h3" component="h3" gutterBottom sx={{ fontSize: '1.5rem', fontWeight: 600 }}>
+                Step-by-Step Guide: {doc.title}
               </Typography>
-              <Stepper orientation="vertical">
+              <Stepper orientation="vertical" role="list" aria-label="Step-by-step instructions">
                 {doc.steps.map((step, index) => (
-                  <Step key={step.id} active={true} completed={false}>
+                  <Step key={step.id} active={true} completed={false} role="listitem">
                     <StepLabel>
-                      <Typography variant="h6">
-                        {step.title}
+                      <Typography variant="h4" component="h4" sx={{ fontSize: '1.25rem', fontWeight: 600 }}>
+                        Step {index + 1}: {step.title}
                       </Typography>
                     </StepLabel>
                     <StepContent>
@@ -284,10 +306,10 @@ const DocDetailUnified = () => {
                       
                       {/* Step Image */}
                       {step.image_url && (
-                        <Box sx={{ mb: 3 }}>
+                        <Box component="figure" sx={{ mb: 3, m: 0 }}>
                           <LazyImage
                             src={step.image_url}
-                            alt={step.image_alt || step.title}
+                            alt={optimizeImageAlt(step, doc.title)}
                             style={{
                               width: '100%',
                               height: 'auto',
@@ -297,6 +319,11 @@ const DocDetailUnified = () => {
                             }}
                             skeletonHeight={300}
                           />
+                          {step.image_alt && (
+                            <Typography component="figcaption" variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', textAlign: 'center' }}>
+                              {step.image_alt}
+                            </Typography>
+                          )}
                         </Box>
                       )}
                       
@@ -333,7 +360,7 @@ const DocDetailUnified = () => {
 
           {/* Feedback */}
           <Paper sx={{ p: 4 }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h3" component="h3" gutterBottom sx={{ fontSize: '1.5rem', fontWeight: 600 }}>
               Was this helpful?
             </Typography>
             <Typography color="text.secondary" paragraph>
@@ -372,6 +399,9 @@ const DocDetailUnified = () => {
 
         {/* Sidebar */}
         <Box 
+          component="aside"
+          role="complementary"
+          aria-label="Related content and actions"
           sx={{ 
             width: 300, 
             flexShrink: 0,
@@ -413,12 +443,14 @@ const DocDetailUnified = () => {
                 </Box>
                 
                 <Typography 
-                  variant="h6" 
+                  variant="h5" 
+                  component="h5"
                   gutterBottom 
                   fontWeight={700}
                   sx={{ 
                     color: 'white',
-                    textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                    textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                    fontSize: '1.1rem'
                   }}
                 >
                   Not yet using ENBOQ?
@@ -437,39 +469,39 @@ const DocDetailUnified = () => {
                   Get it 2 weeks for free now!
                 </Typography>
                 
-                <Button
-                  href="https://start.enboq.com/admin/register?utm_source=help_center&utm_medium=sidebar_cta&utm_campaign=docs_trial&utm_content=2_week_trial"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant="contained"
-                  fullWidth
-                  endIcon={<Launch />}
-                  sx={{
-                    bgcolor: 'white',
-                    color: '#823BEB',
-                    fontWeight: 700,
-                    py: 1.5,
-                    borderRadius: 2,
-                    textTransform: 'none',
-                    fontSize: '1rem',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                    '&:hover': {
-                      bgcolor: '#f8f9fa',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 6px 20px rgba(0,0,0,0.2)'
-                    },
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  Start Free Trial
-                </Button>
-              </CardContent>
+                  <Button
+                    href="https://start.enboq.com/admin/register?utm_source=help_center&utm_medium=sidebar_cta&utm_campaign=docs_trial&utm_content=2_week_trial"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="contained"
+                    fullWidth
+                    endIcon={<Launch />}
+                    aria-label="Start free trial of ENBOQ onboarding software"
+                    sx={{
+                      bgcolor: 'white',
+                      color: '#823BEB',
+                      fontWeight: 700,
+                      py: 1.5,
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontSize: '1rem',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                      '&:hover': {
+                        bgcolor: '#f8f9fa',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 20px rgba(0,0,0,0.2)'
+                      },
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    Start Free Trial
+                  </Button>              </CardContent>
             </Card>
 
             {/* Quick Actions */}
             <Card>
               <CardContent>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h5" component="h5" gutterBottom sx={{ fontSize: '1.1rem', fontWeight: 600 }}>
                   Quick Actions
                 </Typography>
                 <Stack spacing={1}>
@@ -523,31 +555,31 @@ const DocDetailUnified = () => {
             {doc.relatedDocs && doc.relatedDocs.length > 0 && (
               <Card>
                 <CardContent>
-                  <Typography variant="h6" gutterBottom>
+                  <Typography variant="h5" component="h5" gutterBottom sx={{ fontSize: '1.1rem', fontWeight: 600 }}>
                     Related Documentation
                   </Typography>
                   <Stack spacing={1}>
-                    {doc.relatedDocs.map((relatedDoc) => (
-                      <Paper
-                        key={relatedDoc.id}
-                        component={Link}
-                        to={`/docs/${relatedDoc.slug}`}
-                        sx={{
-                          p: 2,
-                          textDecoration: 'none',
-                          transition: 'all 0.3s ease',
-                          '&:hover': {
-                            backgroundColor: 'primary.light',
-                            color: 'white'
-                          }
-                        }}
-                      >
-                        <Typography variant="body2" fontWeight="medium">
-                          {relatedDoc.title}
-                        </Typography>
-                      </Paper>
-                    ))}
-                  </Stack>
+                     {doc.relatedDocs.map((relatedDoc) => (
+                       <Paper
+                         key={relatedDoc.id}
+                         component={Link}
+                         to={`/docs/${relatedDoc.slug}`}
+                         aria-label={`Read related guide: ${relatedDoc.title}`}
+                         sx={{
+                           p: 2,
+                           textDecoration: 'none',
+                           transition: 'all 0.3s ease',
+                           '&:hover': {
+                             backgroundColor: 'primary.light',
+                             color: 'white'
+                           }
+                         }}
+                       >
+                         <Typography variant="body2" fontWeight="medium">
+                           {relatedDoc.title}
+                         </Typography>
+                       </Paper>
+                     ))}                  </Stack>
                 </CardContent>
               </Card>
             )}
@@ -555,7 +587,7 @@ const DocDetailUnified = () => {
             {/* Need More Help */}
             <Card>
               <CardContent>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h5" component="h5" gutterBottom sx={{ fontSize: '1.1rem', fontWeight: 600 }}>
                   Need More Help?
                 </Typography>
                 <Stack spacing={1}>

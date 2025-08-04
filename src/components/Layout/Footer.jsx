@@ -393,7 +393,7 @@ const Footer = () => {
                   🇳🇱
                 </Typography>
                 <MuiLink
-                  href="tel:+31208084792"
+                  href="tel:+31357994575"
                   sx={{
                     color: '#ED00B8',
                     textDecoration: 'none',
@@ -403,34 +403,10 @@ const Footer = () => {
                     '&:hover': { color: '#FF8E00' }
                   }}
                 >
-                  +31 20 808 4792
+                  +31 35 799 4575
                 </MuiLink>
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography 
-                  sx={{ 
-                    color: '#ED00B8',
-                    fontSize: '14px',
-                    fontFamily: '"Nunito", sans-serif',
-                    fontWeight: 600
-                  }}
-                >
-                  🇬🇧
-                </Typography>
-                <MuiLink
-                  href="tel:+442045713731"
-                  sx={{
-                    color: '#ED00B8',
-                    textDecoration: 'none',
-                    fontSize: '14px',
-                    fontFamily: '"Nunito", sans-serif',
-                    fontWeight: 600,
-                    '&:hover': { color: '#FF8E00' }
-                  }}
-                >
-                  +44 20 4571 3731
-                </MuiLink>
-              </Box>
+
             </Box>
           </Box>
         </Box>
