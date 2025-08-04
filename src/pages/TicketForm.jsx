@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { TicketService } from '../services/ticketService';
+import { FileUploadService } from '../services/fileUploadService';
+import { validateVideoUrl, getSupportedPlatforms } from '../utils/videoUtils';
+import { TicketFormSkeleton } from '../components/skeletons/TicketSkeletons';
+import AttachmentGridForm from '../components/AttachmentGridForm';
 import SEO from '../components/SEO';
 import {
   Box,
@@ -30,6 +35,8 @@ import {
 const TicketForm = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
+  const [videoUrlError, setVideoUrlError] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -46,9 +53,15 @@ const TicketForm = () => {
   // Show loading if user data is still being fetched
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-        <Typography>Loading...</Typography>
-      </Box>
+      <>
+        <SEO
+          title="Submit Support Ticket - ENBOQ Help Center"
+          description="Get expert help with ENBOQ's employee onboarding platform. Submit a support ticket for technical issues, feature requests, or general questions."
+          keywords="ENBOQ support, submit ticket, technical support, onboarding platform help, customer service"
+          url="/tickets/new"
+        />
+        <TicketFormSkeleton />
+      </>
     );
   }
 
@@ -70,6 +83,13 @@ const TicketForm = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    // Special handling for video URL validation
+    if (name === 'videoUrl') {
+      const validation = validateVideoUrl(value);
+      setVideoUrlError(validation.valid ? '' : validation.error);
+    }
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -78,38 +98,95 @@ const TicketForm = () => {
 
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files);
+    
+    // Validate files before adding
+    const validation = FileUploadService.validateFiles(files);
+    if (!validation.valid) {
+      alert('File validation failed:\n' + validation.errors.join('\n'));
+      return;
+    }
+    
+    // Convert File objects to preview format
+    const fileObjects = files.map(file => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      url: URL.createObjectURL(file), // Create preview URL
+      file: file // Keep original file for upload
+    }));
+    
     setFormData(prev => ({
       ...prev,
-      attachments: [...prev.attachments, ...files]
+      attachments: [...prev.attachments, ...fileObjects]
     }));
   };
 
   const removeAttachment = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      attachments: prev.attachments.filter((_, i) => i !== index)
-    }));
+    setFormData(prev => {
+      const newAttachments = prev.attachments.filter((_, i) => i !== index);
+      // Clean up object URLs to prevent memory leaks
+      const removedFile = prev.attachments[index];
+      if (removedFile.url && removedFile.url.startsWith('blob:')) {
+        URL.revokeObjectURL(removedFile.url);
+      }
+      return {
+        ...prev,
+        attachments: newAttachments
+      };
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const ticketId = `ENBOQ-${Date.now()}`;
-    const ticket = {
-      id: ticketId,
-      ...formData,
-      email: userEmail, // Include the user's email
-      status: 'open',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+    if (!user) {
+      alert('Please log in to submit a ticket');
+      return;
+    }
 
-    const existingTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-    localStorage.setItem('tickets', JSON.stringify([ticket, ...existingTickets]));
+    // Validate video URL before submission
+    if (formData.videoUrl) {
+      const videoValidation = validateVideoUrl(formData.videoUrl);
+      if (!videoValidation.valid) {
+        setVideoUrlError(videoValidation.error);
+        alert('Please fix the video URL error before submitting.');
+        return;
+      }
+    }
 
-    navigate(`/tickets/${ticketId}`, { 
-      state: { message: 'Ticket submitted successfully!' }
-    });
+    try {
+      setSubmitting(true);
+      
+      // Convert attachment objects back to File objects for upload
+      const formDataForSubmission = {
+        ...formData,
+        attachments: formData.attachments.map(att => att.file || att)
+      };
+      
+      const { data, error } = await TicketService.createTicket(formDataForSubmission, user.id);
+      
+      if (error) {
+        console.error('Error submitting ticket:', error);
+        alert('Error submitting ticket. Please try again.');
+        return;
+      }
+
+      // Clean up object URLs
+      formData.attachments.forEach(att => {
+        if (att.url && att.url.startsWith('blob:')) {
+          URL.revokeObjectURL(att.url);
+        }
+      });
+
+      navigate(`/tickets/${data.id}`, { 
+        state: { message: 'Ticket submitted successfully!' }
+      });
+    } catch (error) {
+      console.error('Error submitting ticket:', error);
+      alert('Error submitting ticket. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -328,16 +405,17 @@ Example: 'I was trying to upload a PDF document for a new employee's onboarding 
                 {/* Row 5: Loom Video */}
                 <TextField
                   fullWidth
-                  label="Loom Video (Optional)"
+                  label="Video URL (Optional)"
                   name="videoUrl"
                   value={formData.videoUrl}
                   onChange={handleInputChange}
-                  placeholder="e.g., https://www.loom.com/share/your-video-id or any video URL showing the issue"
+                  placeholder="e.g., https://www.youtube.com/watch?v=... or https://www.loom.com/share/..."
                   variant="outlined"
-                  helperText="Share a Loom, screen recording, or any video URL that demonstrates the issue"
+                  error={!!videoUrlError}
+                  helperText={videoUrlError || `Supported platforms: ${getSupportedPlatforms().slice(0, 3).join(', ')}, and more`}
                   InputProps={{
                     startAdornment: (
-                      <VideoIcon sx={{ mr: 1, color: 'action.active' }} />
+                      <VideoIcon sx={{ mr: 1, color: videoUrlError ? 'error.main' : 'action.active' }} />
                     ),
                   }}
                   sx={{
@@ -406,24 +484,28 @@ Example: 'I was trying to upload a PDF document for a new employee's onboarding 
 
                   {formData.attachments.length > 0 && (
                     <Box sx={{ mt: 3 }}>
-                      <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-                        Attached Files:
-                      </Typography>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        {formData.attachments.map((file, index) => (
-                          <Chip
-                            key={index}
-                            label={`${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)`}
-                            onDelete={() => removeAttachment(index)}
-                            deleteIcon={<CloseIcon />}
-                            variant="outlined"
-                            color="primary"
-                            sx={{ 
-                              maxWidth: 300,
-                              borderRadius: 2
-                            }}
-                          />
-                        ))}
+                      <AttachmentGridForm 
+                        attachments={formData.attachments} 
+                        title="Selected Files"
+                        onRemove={removeAttachment}
+                      />
+                      <Box sx={{ mt: 2, textAlign: 'center' }}>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => {
+                            // Clean up all object URLs
+                            formData.attachments.forEach(att => {
+                              if (att.url && att.url.startsWith('blob:')) {
+                                URL.revokeObjectURL(att.url);
+                              }
+                            });
+                            setFormData(prev => ({ ...prev, attachments: [] }));
+                          }}
+                          sx={{ borderRadius: 2 }}
+                        >
+                          Clear All Files
+                        </Button>
                       </Box>
                     </Box>
                   )}
@@ -445,29 +527,29 @@ Example: 'I was trying to upload a PDF document for a new employee's onboarding 
                   >
                     Cancel
                   </Button>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    startIcon={<SendIcon />}
-                    size="large"
-                    sx={{
-                      px: 4,
-                      py: 1.5,
-                      fontWeight: 700,
-                      borderRadius: 2,
-                      textTransform: 'none',
-                      fontSize: '1rem',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 6px 20px rgba(0,0,0,0.2)'
-                      },
-                      transition: 'all 0.3s ease'
-                    }}
-                  >
-                    Submit Ticket
-                  </Button>
-                </Box>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      startIcon={<SendIcon />}
+                      size="large"
+                      disabled={submitting}
+                      sx={{
+                        px: 4,
+                        py: 1.5,
+                        fontWeight: 700,
+                        borderRadius: 2,
+                        textTransform: 'none',
+                        fontSize: '1rem',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0 6px 20px rgba(0,0,0,0.2)'
+                        },
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      {submitting ? 'Submitting...' : 'Submit Ticket'}
+                    </Button>                </Box>
               </Box>
             </form>
           </Paper>

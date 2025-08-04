@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useLocation, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { TicketService } from '../services/ticketService';
+import { TicketDetailSkeleton } from '../components/skeletons/TicketSkeletons';
+import AttachmentGrid from '../components/AttachmentGrid';
 import SEO from '../components/SEO';
+import VideoEmbed from '../components/VideoEmbed';
 import {
   Box,
   Container,
@@ -34,18 +39,54 @@ import {
 const TicketDetail = () => {
   const { id } = useParams();
   const location = useLocation();
+  const { user, isAuthenticated, loading } = useAuth();
   const [ticket, setTicket] = useState(null);
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState([]);
+  const [loadingTicket, setLoadingTicket] = useState(true);
+  const [submittingComment, setSubmittingComment] = useState(false);
 
   useEffect(() => {
-    const tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-    const foundTicket = tickets.find(t => t.id === id);
-    setTicket(foundTicket);
+    const loadTicket = async () => {
+      if (!isAuthenticated || !user || !id) {
+        setLoadingTicket(false);
+        return;
+      }
 
-    const savedComments = JSON.parse(localStorage.getItem(`comments_${id}`) || '[]');
-    setComments(savedComments);
-  }, [id]);
+      try {
+        const { data, error } = await TicketService.getTicketById(id, user.id);
+        
+        if (error) {
+          console.error('Error loading ticket:', error);
+          // Fallback to localStorage for backward compatibility
+          const tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+          const foundTicket = tickets.find(t => t.id === id);
+          setTicket(foundTicket);
+          
+          const savedComments = JSON.parse(localStorage.getItem(`comments_${id}`) || '[]');
+          setComments(savedComments);
+        } else {
+          setTicket(data);
+          setComments(data?.comments || []);
+        }
+      } catch (error) {
+        console.error('Error loading ticket:', error);
+        // Fallback to localStorage for backward compatibility
+        const tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+        const foundTicket = tickets.find(t => t.id === id);
+        setTicket(foundTicket);
+        
+        const savedComments = JSON.parse(localStorage.getItem(`comments_${id}`) || '[]');
+        setComments(savedComments);
+      } finally {
+        setLoadingTicket(false);
+      }
+    };
+
+    if (!loading) {
+      loadTicket();
+    }
+  }, [id, isAuthenticated, user, loading]);
 
   const getStatusChipProps = (status) => {
     const statusMap = {
@@ -105,33 +146,71 @@ const TicketDetail = () => {
     }
   };
 
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || !user || !ticket) return;
 
-    const comment = {
-      id: Date.now(),
-      text: newComment,
-      author: ticket.email,
-      createdAt: new Date().toISOString(),
-      isCustomer: true
-    };
+    try {
+      setSubmittingComment(true);
+      
+      const { data, error } = await TicketService.addComment(ticket.id, user.id, newComment, true);
+      
+      if (error) {
+        console.error('Error adding comment:', error);
+        // Fallback to localStorage for backward compatibility
+        const comment = {
+          id: Date.now(),
+          text: newComment,
+          author: ticket.email,
+          createdAt: new Date().toISOString(),
+          isCustomer: true
+        };
 
-    const updatedComments = [...comments, comment];
-    setComments(updatedComments);
-    localStorage.setItem(`comments_${id}`, JSON.stringify(updatedComments));
-    setNewComment('');
-
-    const tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-    const updatedTickets = tickets.map(t => 
-      t.id === id ? { ...t, updatedAt: new Date().toISOString() } : t
-    );
-    localStorage.setItem('tickets', JSON.stringify(updatedTickets));
+        const updatedComments = [...comments, comment];
+        setComments(updatedComments);
+        localStorage.setItem(`comments_${id}`, JSON.stringify(updatedComments));
+        
+        const tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+        const updatedTickets = tickets.map(t => 
+          t.id === id ? { ...t, updatedAt: new Date().toISOString() } : t
+        );
+        localStorage.setItem('tickets', JSON.stringify(updatedTickets));
+      } else {
+        // Add the new comment to the current list
+        setComments(prevComments => [...prevComments, data]);
+        
+        // Update ticket's updated timestamp
+        setTicket(prevTicket => ({
+          ...prevTicket,
+          updatedAt: new Date().toISOString()
+        }));
+      }
+      
+      setNewComment('');
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      alert('Error adding comment. Please try again.');
+    } finally {
+      setSubmittingComment(false);
+    }
   };
+
+  if (loadingTicket) {
+    return (
+      <>
+        <SEO
+          title="Loading Ticket - ENBOQ Help Center"
+          description="Loading ticket details..."
+          url={`/tickets/${id}`}
+        />
+        <TicketDetailSkeleton />
+      </>
+    );
+  }
 
   if (!ticket) {
     return (
-      <Container maxWidth="xl" sx={{ py: 8, px: { xs: 2, sm: 3, md: 4 } }}>
+      <Container maxWidth="lg" sx={{ py: 8 }}>
         <Paper elevation={2} sx={{ p: 8, textAlign: 'center', borderRadius: 3, maxWidth: 600, mx: 'auto' }}>
           <Typography variant="h4" gutterBottom>
             Ticket Not Found
@@ -156,12 +235,12 @@ const TicketDetail = () => {
   return (
     <Box>
       <SEO
-        title={`${ticket.subject} - Support Ticket #${ticket.id} - ENBOQ Help Center`}
-        description={`View details and updates for support ticket #${ticket.id}: ${ticket.subject}. Track your ENBOQ platform support request.`}
-        keywords={`ENBOQ support ticket, ticket ${ticket.id}, ${ticket.subject}, customer support, help desk`}
+        title={`${ticket.title} - Support Ticket ${ticket.ticketNumber || ticket.id} - ENBOQ Help Center`}
+        description={`View details and updates for support ticket ${ticket.ticketNumber || ticket.id}: ${ticket.title}. Track your ENBOQ platform support request.`}
+        keywords={`ENBOQ support ticket, ticket ${ticket.ticketNumber || ticket.id}, ${ticket.title}, customer support, help desk`}
         url={`/tickets/${ticket.id}`}
       />
-      <Container maxWidth="xl" sx={{ py: 4, px: { xs: 2, sm: 3, md: 4 } }}>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
         <Box sx={{ mb: 4 }}>
           <Button
             component={Link}
@@ -199,7 +278,7 @@ const TicketDetail = () => {
               </Box>
               <Box display="flex" alignItems="center" gap={1} color="text.secondary">
                 <TagIcon fontSize="small" />
-                <Typography variant="body2">Ticket ID: {ticket.id}</Typography>
+                <Typography variant="body2">Ticket ID: {ticket.ticketNumber || ticket.id}</Typography>
               </Box>
             </Box>
             
@@ -235,148 +314,136 @@ const TicketDetail = () => {
           </Box>
         </Paper>
 
-        {/* Content Area - Main content with fixed sidebar */}
-        <Box display="flex" gap={2} alignItems="flex-start">
-          <Box flex="1" minWidth="0">
-            <Paper elevation={2} sx={{ p: 4, borderRadius: 3 }}>
-              <Box mb={4}>
-                <Typography variant="h6" gutterBottom fontWeight="bold">
-                  Description
-                </Typography>
-                <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
-                  {ticket.description}
-                </Typography>
-              </Box>
+        {/* Main Content */}
+        <Paper elevation={2} sx={{ p: 4, borderRadius: 3, mb: 4 }}>
+          <Box mb={4}>
+            <Typography variant="h6" gutterBottom fontWeight="bold">
+              Description
+            </Typography>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+              {ticket.description}
+            </Typography>
+          </Box>
 
-              {ticket.attachments && ticket.attachments.length > 0 && (
-                <Box mb={4}>
-                  <Typography variant="h6" gutterBottom fontWeight="bold">
-                    Attachments
-                  </Typography>
-                  <Grid container spacing={1}>
-                    {ticket.attachments.map((file, index) => (
-                      <Grid item key={index}>
-                        <Chip
-                          icon={<AttachFileIcon />}
-                          label={file.name}
-                          variant="outlined"
-                          color="primary"
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
+          {ticket.videoUrl && (
+            <Box mb={4}>
+              <Typography variant="h6" gutterBottom fontWeight="bold">
+                Video
+              </Typography>
+              <VideoEmbed url={ticket.videoUrl} title={`Video for ticket ${ticket.ticketNumber || ticket.id}`} />
+            </Box>
+          )}
+
+          {ticket.attachments && ticket.attachments.length > 0 && (
+            <Box mb={4}>
+              <AttachmentGrid attachments={ticket.attachments} />
+            </Box>
+          )}
+
+          <Divider sx={{ my: 4 }} />
+
+          <Box>
+            <Box display="flex" alignItems="center" gap={1} mb={3}>
+              <MessageCircleIcon color="primary" />
+              <Typography variant="h6" fontWeight="bold">
+                Comments ({comments.length})
+              </Typography>
+            </Box>
+
+            <List sx={{ mb: 3 }}>
+              {comments.map((comment) => (
+                <ListItem
+                  key={comment.id}
+                  sx={{
+                    bgcolor: comment.isCustomer ? 'primary.50' : 'secondary.50',
+                    borderRadius: 2,
+                    mb: 2,
+                    alignItems: 'flex-start'
+                  }}
+                >
+                  <ListItemAvatar>
+                    <Avatar sx={{ bgcolor: comment.isCustomer ? 'primary.main' : 'secondary.main' }}>
+                      {comment.isCustomer ? <UserIcon /> : <SupportIcon />}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
+                      <Box display="flex" justifyContent="space-between" alignItems="center">
+                        <Typography variant="subtitle2" fontWeight="bold">
+                          {comment.isCustomer ? 'You' : 'Support Team'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {formatRelativeTime(comment.createdAt)}
+                        </Typography>
+                      </Box>
+                    }
+                    secondary={
+                      <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', mt: 1 }}>
+                        {comment.text}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+
+            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+              <form onSubmit={handleCommentSubmit}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={4}
+                  placeholder="Add a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  variant="outlined"
+                  sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                />
+                <Box display="flex" justifyContent="flex-end">
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    startIcon={<SendIcon />}
+                    disabled={!newComment.trim() || submittingComment}
+                    sx={{
+                      borderRadius: 2
+                    }}
+                  >
+                    {submittingComment ? 'Adding...' : 'Add Comment'}
+                  </Button>
                 </Box>
-              )}
-
-              <Divider sx={{ my: 4 }} />
-
-              <Box>
-                <Box display="flex" alignItems="center" gap={1} mb={3}>
-                  <MessageCircleIcon color="primary" />
-                  <Typography variant="h6" fontWeight="bold">
-                    Comments ({comments.length})
-                  </Typography>
-                </Box>
-
-                <List sx={{ mb: 3 }}>
-                  {comments.map((comment) => (
-                    <ListItem
-                      key={comment.id}
-                      sx={{
-                        bgcolor: comment.isCustomer ? 'primary.50' : 'secondary.50',
-                        borderRadius: 2,
-                        mb: 2,
-                        alignItems: 'flex-start'
-                      }}
-                    >
-                      <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: comment.isCustomer ? 'primary.main' : 'secondary.main' }}>
-                          {comment.isCustomer ? <UserIcon /> : <SupportIcon />}
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={
-                          <Box display="flex" justifyContent="space-between" alignItems="center">
-                            <Typography variant="subtitle2" fontWeight="bold">
-                              {comment.isCustomer ? 'You' : 'Support Team'}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {formatRelativeTime(comment.createdAt)}
-                            </Typography>
-                          </Box>
-                        }
-                        secondary={
-                          <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', mt: 1 }}>
-                            {comment.text}
-                          </Typography>
-                        }
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-
-                <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-                  <form onSubmit={handleCommentSubmit}>
-                    <TextField
-                      fullWidth
-                      multiline
-                      rows={4}
-                      placeholder="Add a comment..."
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      variant="outlined"
-                      sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-                    />
-                    <Box display="flex" justifyContent="flex-end">
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        startIcon={<SendIcon />}
-                        disabled={!newComment.trim()}
-                        sx={{
-                          borderRadius: 2
-                        }}
-                      >
-                        Add Comment
-                      </Button>
-                    </Box>
-                  </form>
-                </Paper>
-              </Box>
+              </form>
             </Paper>
           </Box>
+        </Paper>
 
-          <Box flex="0 0 280px" maxWidth="280px">
-            <Box sx={{ position: 'sticky', top: 24 }}>
-              <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
-                <Typography variant="h6" gutterBottom fontWeight="bold">
-                  Want to checkout what you can already do?
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  Explore our resources while you wait for a response.
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  <Button
-                    component={Link}
-                    to="/docs"
-                    variant="text"
-                    sx={{ justifyContent: 'flex-start', color: 'primary.main' }}
-                  >
-                    → Browse Documentation
-                  </Button>
-                  <Button
-                    component={Link}
-                    to="/faq"
-                    variant="text"
-                    sx={{ justifyContent: 'flex-start', color: 'primary.main' }}
-                  >
-                    → View FAQ
-                  </Button>
-                </Box>
-              </Paper>
-            </Box>
+        {/* Help Resources */}
+        <Paper elevation={2} sx={{ p: 4, borderRadius: 3, bgcolor: 'grey.50' }}>
+          <Typography variant="h6" gutterBottom fontWeight="bold">
+            Need more help?
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Explore our resources while you wait for a response.
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            <Button
+              component={Link}
+              to="/docs"
+              variant="outlined"
+              sx={{ borderRadius: 2 }}
+            >
+              Browse Documentation
+            </Button>
+            <Button
+              component={Link}
+              to="/faq"
+              variant="outlined"
+              sx={{ borderRadius: 2 }}
+            >
+              View FAQ
+            </Button>
           </Box>
-        </Box>
+        </Paper>
       </Container>
     </Box>
   );

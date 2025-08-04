@@ -64,9 +64,7 @@ const Header = () => {
 
   const ticketsOptions = [
     { label: 'Submit Ticket', value: '/tickets/new', icon: <BugReport />, description: 'Create a new support ticket' },
-    { label: 'My Tickets', value: '/tickets', icon: <Description />, description: 'View your tickets' },
-    { label: 'Open Tickets', value: '/tickets?status=open', icon: <Description />, description: 'Active support requests' },
-    { label: 'Closed Tickets', value: '/tickets?status=closed', icon: <Description />, description: 'Resolved tickets' }
+    { label: 'My Tickets', value: '/tickets', icon: <Description />, description: 'View your tickets' }
   ];
 
 

@@ -125,24 +125,26 @@ export default function Login() {
         }}
       />
 
-      <Container maxWidth="sm">
+      <Container maxWidth="md">
         <Paper
           elevation={24}
           sx={{
-            p: 6,
+            p: 4,
             borderRadius: 4,
             background: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)'
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            maxWidth: 600,
+            mx: 'auto'
           }}
         >
           {/* Logo and Header */}
-          <Box textAlign="center" mb={4}>
-            <Box sx={{ mb: 3 }}>
+          <Box textAlign="center" mb={3}>
+            <Box sx={{ mb: 2 }}>
               <img 
                 src="/assets/Enboq-Logo-NoPayoff-Svg.svg" 
                 alt="Enboq" 
-                style={{ width: '120px', height: '120px' }}
+                style={{ width: '80px', height: '80px' }}
               />
             </Box>
             <Typography variant="h1" component="h1" gutterBottom fontWeight="900">
@@ -157,7 +159,7 @@ export default function Login() {
           <Alert 
             severity="info" 
             sx={{ 
-              mb: 3, 
+              mb: 2, 
               borderRadius: 2,
               backgroundColor: 'rgba(25, 118, 210, 0.08)',
               border: '1px solid rgba(25, 118, 210, 0.2)'
@@ -170,7 +172,7 @@ export default function Login() {
 
           {/* Login Form */}
           <Box component="form" onSubmit={handleSubmit}>
-            <Stack spacing={3}>
+            <Stack spacing={2}>
               <TextField
                 fullWidth
                 id="username"
@@ -280,7 +282,7 @@ export default function Login() {
             </Stack>
           </Box>
 
-          <Divider sx={{ my: 4 }} />
+          <Divider sx={{ my: 3 }} />
 
           {/* Footer */}
           <Box textAlign="center">

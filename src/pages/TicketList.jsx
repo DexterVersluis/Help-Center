@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { TicketService } from '../services/ticketService';
 import TicketCard from '../components/TicketCard';
+import { TicketListSkeleton } from '../components/skeletons/TicketSkeletons';
 import SEO from '../components/SEO';
 import {
   Box,
@@ -32,17 +35,49 @@ import {
 } from '@mui/icons-material';
 
 const TicketList = () => {
+  const { user, isAuthenticated, loading } = useAuth();
   const [tickets, setTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
+  const [loadingTickets, setLoadingTickets] = useState(true);
 
   useEffect(() => {
-    const savedTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-    setTickets(savedTickets);
-    setFilteredTickets(savedTickets);
-  }, []);
+    const loadTickets = async () => {
+      if (!isAuthenticated || !user) {
+        setLoadingTickets(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await TicketService.getUserTickets(user.id);
+        
+        if (error) {
+          console.error('Error loading tickets:', error);
+          // Fallback to localStorage for backward compatibility
+          const savedTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+          setTickets(savedTickets);
+          setFilteredTickets(savedTickets);
+        } else {
+          setTickets(data || []);
+          setFilteredTickets(data || []);
+        }
+      } catch (error) {
+        console.error('Error loading tickets:', error);
+        // Fallback to localStorage for backward compatibility
+        const savedTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+        setTickets(savedTickets);
+        setFilteredTickets(savedTickets);
+      } finally {
+        setLoadingTickets(false);
+      }
+    };
+
+    if (!loading) {
+      loadTickets();
+    }
+  }, [isAuthenticated, user, loading]);
 
   useEffect(() => {
     let filtered = tickets;
@@ -87,14 +122,43 @@ const TicketList = () => {
   }, []);
 
   const formatDate = useCallback((dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) {
+      return 'just now';
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+    } else if (diffInSeconds < 2592000) {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days} day${days === 1 ? '' : 's'} ago`;
+    } else if (diffInSeconds < 31536000) {
+      const months = Math.floor(diffInSeconds / 2592000);
+      return `${months} month${months === 1 ? '' : 's'} ago`;
+    } else {
+      const years = Math.floor(diffInSeconds / 31536000);
+      return `${years} year${years === 1 ? '' : 's'} ago`;
+    }
   }, []);
+
+  if (loadingTickets) {
+    return (
+      <>
+        <SEO
+          title="Support Tickets - ENBOQ Help Center"
+          description="View and manage your ENBOQ support tickets. Get help with employee onboarding platform issues, track ticket status, and communicate with our support team."
+          keywords="ENBOQ support tickets, help desk, customer support, onboarding platform support, technical assistance"
+          url="/tickets"
+        />
+        <TicketListSkeleton />
+      </>
+    );
+  }
 
   return (
     <Box>
@@ -108,7 +172,7 @@ const TicketList = () => {
       <Box
         sx={{
           background: 'white',
-          py: { xs: 8, md: 12 },
+          py: { xs: 4, md: 6 },
           position: 'relative',
           overflow: 'hidden'
         }}
@@ -264,7 +328,7 @@ const TicketList = () => {
       </Box>
 
       {/* Tickets Content Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
         {filteredTickets.length === 0 ? (
           <Paper
             sx={{
@@ -310,19 +374,18 @@ const TicketList = () => {
             )}
           </Paper>
         ) : (
-          <Grid container spacing={3}>
+          <Stack spacing={4}>
             {filteredTickets.map((ticket, index) => (
-              <Grid item xs={12} key={ticket.id}>
-                <TicketCard
-                  ticket={ticket}
-                  index={index}
-                  getStatusChipProps={getStatusChipProps}
-                  getPriorityChipProps={getPriorityChipProps}
-                  formatDate={formatDate}
-                />
-              </Grid>
+              <TicketCard
+                key={ticket.id}
+                ticket={ticket}
+                index={index}
+                getStatusChipProps={getStatusChipProps}
+                getPriorityChipProps={getPriorityChipProps}
+                formatDate={formatDate}
+              />
             ))}
-          </Grid>
+          </Stack>
         )}
       </Container>
     </Box>

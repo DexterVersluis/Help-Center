@@ -306,30 +306,30 @@ const Home = () => {
           </Box>
         </Fade>
 
-        <Grid container spacing={3}>
+        <Box display="flex" gap={3}>
           {supportServices.map((service, index) => {
             const Icon = service.icon;
             return (
-              <Grid item xs={12} sm={6} lg={2.4} key={index}>
-                <Card
-                  elevation={2}
-                  sx={{
-                    height: '100%',
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                    borderRadius: 3,
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    minHeight: 280,
-                    '&:hover': {
-                      transform: 'translateY(-8px)',
-                      boxShadow: 8,
-                      borderColor: `${service.color}.main`
-                    }
-                  }}
-                >
+              <Card
+                key={index}
+                elevation={2}
+                sx={{
+                  flex: 1,
+                  p: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  borderRadius: 3,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  minHeight: 280,
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: 8,
+                    borderColor: `${service.color}.main`
+                  }
+                }}
+              >
                 <Box textAlign="center" mb={2}>
                   <Avatar
                     sx={{
@@ -370,10 +370,9 @@ const Home = () => {
                   Get Started
                 </Button>
               </Card>
-              </Grid>
             );
           })}
-        </Grid>
+        </Box>
       </Container>
 
       {/* Onboarding Features */}

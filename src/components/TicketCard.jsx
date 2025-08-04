@@ -6,7 +6,7 @@ import {
   Typography,
   Chip,
   Box,
-  Fade
+  Stack
 } from '@mui/material';
 import {
   AccessTime as ClockIcon,
@@ -22,110 +22,70 @@ const TicketCard = memo(({
   formatDate 
 }) => {
   return (
-    <Fade in timeout={400 + index * 100}>
-      <Card
-        component={Link}
-        to={`/tickets/${ticket.id}`}
-        sx={{
-          textDecoration: 'none',
-          
-          transition: 'all 0.3s ease',
-          '&:hover': {
-            transform: 'translateY(-4px)',
-            boxShadow: 8,
-            '& .ticket-arrow': {
-              transform: 'translateX(8px)'
-            }
-          },
-          background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-          border: '1px solid',
-          borderColor: 'grey.200'
-        }}
-      >
-        <CardContent sx={{ p: 4 }}>
-          <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={3}>
-            <Box flex={1}>
-              <Box display="flex" alignItems="center" gap={2} mb={2}>
-                <Typography
-                  variant="h5"
-                  component="h3"
-                  fontWeight="bold"
-                  color="primary.main"
-                  sx={{ 
-                    transition: 'color 0.3s ease',
-                    '&:hover': { color: 'secondary.main' }
-                  }}
-                >
-                  {ticket.title}
-                </Typography>
-                <Chip
-                  label={ticket.status}
-                  size="small"
-                  {...getStatusChipProps(ticket.status)}
-                />
-              </Box>
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                sx={{
-                  mb: 2,
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
-                }}
-              >
-                {ticket.description}
-              </Typography>
-            </Box>
+    <Card
+      component={Link}
+      to={`/tickets/${ticket.id}`}
+      sx={{
+        textDecoration: 'none',
+        transition: 'all 0.3s ease',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: 6
+        }
+      }}
+    >
+      <CardContent sx={{ p: 4 }}>
+        <Box>
+          <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+            <Typography variant="h5" component="h3" color="text.primary">
+              {ticket.title}
+            </Typography>
             <Box display="flex" alignItems="center" gap={2}>
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                <Chip
+                  label={ticket.priority.toUpperCase()}
+                  size="small"
+                  {...getPriorityChipProps(ticket.priority)}
+                />
+                <Chip
+                  label={ticket.category}
+                  color="warning"
+                  variant="outlined"
+                  size="small"
+                />
+              </Stack>
               <Chip
-                label={ticket.priority.toUpperCase()}
+                label={ticket.status}
                 size="small"
-                {...getPriorityChipProps(ticket.priority)}
+                {...getStatusChipProps(ticket.status)}
               />
-              <ArrowRightIcon
-                className="ticket-arrow"
-                sx={{
-                  color: 'action.active',
-                  transition: 'all 0.3s ease'
-                }}
-              />
+              <ArrowRightIcon color="action" />
             </Box>
           </Box>
           
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            pt={2}
-            borderTop={1}
-            borderColor="grey.200"
-          >
-            <Box display="flex" alignItems="center" gap={3}>
-              <Box display="flex" alignItems="center" gap={1}>
-                <TagIcon fontSize="small" color="action" />
-                <Typography variant="body2" fontWeight="medium">
-                  {ticket.id}
+          <Typography color="text.secondary" paragraph>
+            {ticket.description}
+          </Typography>
+          
+          <Box display="flex" justifyContent="flex-end" alignItems="center">
+            <Box display="flex" alignItems="center" gap={2}>
+              <Box display="flex" alignItems="center" gap={0.5}>
+                <TagIcon fontSize="small" />
+                <Typography variant="body2" color="text.secondary">
+                  {ticket.ticketNumber || ticket.id}
                 </Typography>
               </Box>
-              <Chip
-                label={ticket.category}
-                size="small"
-                variant="outlined"
-                color="warning"
-              />
-            </Box>
-            <Box display="flex" alignItems="center" gap={1}>
-              <ClockIcon fontSize="small" color="action" />
-              <Typography variant="body2" color="text.secondary">
-                {formatDate(ticket.createdAt)}
-              </Typography>
+              <Box display="flex" alignItems="center" gap={0.5}>
+                <ClockIcon fontSize="small" />
+                <Typography variant="body2" color="text.secondary">
+                  {formatDate(ticket.createdAt)}
+                </Typography>
+              </Box>
             </Box>
           </Box>
-        </CardContent>
-      </Card>
-    </Fade>
+        </Box>
+      </CardContent>
+    </Card>
   );
 });
 
